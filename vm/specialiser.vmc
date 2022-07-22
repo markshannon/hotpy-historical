@@ -1,0 +1,1092 @@
+#include <assert.h>
+#include "hotpy.h"
+#include "optimise.h"
+#include "specialiser.h"
+#include "guard.h"
+
+locals {
+    uint8_t* ip_start;
+    R_trace_record trace;
+    int have_profile_guard;
+    R_specialiser specialiser;
+    R_type_state start_state;
+    R_type_state loop_state;
+    unsigned no_deletes;
+    unsigned no_lines;
+    unsigned loop_offset;
+    int second_loop_pass;
+    int start_depth;
+}
+
+skip [private] : #@ DROP;
+skip2 [private] : skip skip;
+skip4 [private] : skip2 skip2;
+
+__preamble [private](R_bytelist bytes, R_type_state state, R_trace_record t -- ) {
+    int i;
+    start_depth = gvmt_stack_depth();
+    second_loop_pass = 0;
+    ip_start = gvmt_ip();
+    trace = t;
+    specialiser = make_specialiser(t, bytes);
+    start_state = state;
+    have_profile_guard = 0;
+    // Push lots of info_not_knowns to stack
+    for (i = 0; i < 10; i++) {
+        GVMT_PUSH(info_not_known());
+    }
+    if (state == NULL) {
+        specialiser->frame = unknown_frame(t->initial_code_object->params, t->initial_code_object->locals);
+        specialiser->frozen_back = empty_tuple;
+        no_deletes = 0;
+        no_lines = 0;
+        specialiser->no_overflows = 0;
+        if (t->is_loop) {
+            int i;
+            for (i = 0; i < LEN(specialiser->frame); i++) {
+                R_type_info value = (R_type_info)ITEM(specialiser->frame, i);
+                type_info_make_variable(value);
+            }
+        }
+    } else {
+        specialiser->frame = thaw_frame(state->frame);
+        assert(LEN(specialiser->frame) == t->initial_code_object->locals);
+        specialiser->frozen_back = state->back;
+        if (LEN(state->back)) {
+           list_append(specialiser->back, (R_object)thaw_frame(state->back));
+           list_append(specialiser->back_ips, ITEM(state->back, LEN(state->back)-1));
+        }
+        no_deletes = (t->initial_code_object->kind & NO_DELETES) != 0;
+        no_lines = (t->initial_code_object->kind & FUNCTION_NO_TRACE) != 0;
+        specialiser->no_overflows = (t->initial_code_object->kind & FUNCTION_NO_OVERFLOW) != 0;
+    }
+}
+
+//__enter [private] ( -- ) {
+//    specialiser_trace(gvmt_ip());
+//}
+
+nop: ;
+
+name (int ##name -- R_type_info object) {
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    object = optimise_constant(ti->value1, specialiser->out);
+}
+
+drop=5(R_object x --)  { COPY; }
+
+drop_under (R_object nos, R_object tos -- R_object tos) { COPY; }
+
+copy (R_object x -- R_object x, R_object x)  { COPY; }
+
+swap (R_object x, R_object x1 -- R_object x1, R_object x) { COPY; }
+
+over (R_object x, R_object x1 -- R_object x, R_object x1, R_object x)  {
+    COPY;
+}
+
+rotate (R_object x1, R_object x2, R_object x3 --
+        R_object x2, R_object x3, R_object x1)  { COPY; }
+
+rotate4 (R_object x1, R_object x2, R_object x3, R_object x4 --
+        R_object x2, R_object x3, R_object x4, R_object x1)  { COPY; }
+
+rrot (R_object x1, R_object x2, R_object x3 --
+        R_object x3, R_object x1, R_object x2)  { COPY; }
+
+flip3 (R_object x1, R_object x2, R_object x3 --
+       R_object x3, R_object x2, R_object x1)  { COPY; }
+
+two_copy (R_object x, R_object x1 -- R_object x, R_object x1, R_object x, R_object x1) {
+    COPY;
+}
+
+//********* Operators ********
+
+binary(uint8_t #index, R_type_info l, R_type_info r -- R_type_info value) {
+    R_info_item3 ti = (R_info_item3)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item3);
+    if (match_expected_types_binary(l, r, ti, specialiser)) {
+        value = optimise_binary_operator(index, l, r, specialiser, ti->ip);
+    } else {
+        COPY;
+        insert_deoptimise_check(specialiser, ti->ip);
+        value = info_not_known();
+    }
+    with_observed_value(value, ti->value3);
+}
+
+inplace(uint8_t #index, R_type_info l, R_type_info r -- R_type_info value) {
+    R_info_item3 ti = (R_info_item3)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item3);
+    with_observed_value(l, ti->value1);
+    with_observed_value(r, ti->value2);
+    if (match_expected_types_binary(l, r, ti, specialiser)) {
+        value = optimise_inplace_operator(index, l, r, specialiser, ti->ip);
+    } else {
+        COPY;
+        insert_deoptimise_check(specialiser, ti->ip);
+        value = info_not_known();
+    }
+    with_observed_value(value, ti->value3);
+}
+
+unary(uint8_t #index, R_type_info nos, R_type_info o -- R_type_info nos, R_type_info value) {
+    R_info_item2 ti = (R_info_item2)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item2);
+    with_observed_value(o, ti->value1);
+    if (match_expected_type_tos(o, NULL, ti, specialiser)) {
+        value = optimise_unary_operator(index, o, specialiser, ti->ip);
+    } else {
+        COPY;
+        insert_deoptimise_check(specialiser, ti->ip);
+        value = info_not_known();
+    }
+    with_observed_value(value, ti->value2);
+}
+
+next: skip2 error;
+
+iter: error;
+
+getitem: error;
+
+setitem: error;
+
+delitem(R_object seq, R_object index -- ) { COPY; }
+
+contains: error;
+
+truth(R_type_info o  -- R_type_info b) {
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item1);
+    b = specialise_truth(o, specialiser, ti);
+}
+
+is(R_type_info o1, R_type_info o2 -- R_type_info b) {
+    b = optimise_is(o1, o2, specialiser->out);
+}
+
+not(R_type_info o -- R_type_info b) {
+    b = definite_type(type_bool);
+    if (is_constant(o)) {
+        if (o->value == (R_object)TRUE) {
+            bytelist_append_nolock(specialiser->out, OPCODE(drop));
+            bytelist_append_nolock(specialiser->out, OPCODE(false));
+            b = type_info_constant((R_object)FALSE);
+        } else if (o->value == (R_object)FALSE) {
+            bytelist_append_nolock(specialiser->out, OPCODE(drop));
+            bytelist_append_nolock(specialiser->out, OPCODE(true));
+            b = type_info_constant((R_object)TRUE);
+        } else {
+            COPY;
+        }
+    } else if (is_definite(o)) {
+        if (get_type_from_info(o) == type_bool) {
+            bytelist_append_nolock(specialiser->out, OPCODE(fast_not));
+        } else {
+            COPY;
+        }
+    } else {
+        COPY;
+    }
+}
+
+fast_not( R_type_info o -- R_type_info b) {
+    COPY;
+    b = definite_type(type_bool);
+}
+
+type_check (R_object o, R_type c -- R_type_info b) {
+    COPY;
+    b = definite_type(type_bool);
+}
+
+none ( -- R_type_info n) {
+    COPY;
+    n = type_info_constant((R_object)None);
+}
+
+true ( -- R_type_info n) {
+    COPY;
+    n = type_info_constant((R_object)TRUE);
+}
+
+false ( -- R_type_info n) {
+    COPY;
+    n = type_info_constant((R_object)FALSE);
+}
+
+byte (int8_t #val -- R_type_info i) {
+    COPY;
+    i = type_info_constant((R_object)PY_SMALL_INT(val));
+}
+
+constant(unsigned ##index -- R_type_info object) {
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    object = optimise_constant(ti->value1, specialiser->out);
+}
+
+line(unsigned ##lineno --) {
+    //if ((no_lines & 1) == 0)
+        COPY;
+}
+
+fast_line(unsigned ##lineno --) {
+    //if ((no_lines & 1) == 0)
+        COPY;
+}
+
+import(R_object file -- R_type_info object) {
+    not_worth_optimising();
+    object = NULL;
+}
+
+list(... vector, uint8_t #count -- R_type_info l) {
+    COPY;
+    l = definite_type(type_list);
+    gvmt_drop(count);
+}
+
+list_append(R_type_info list, R_object o -- ) {
+    COPY;
+}
+
+pack (... vector, uint8_t #count -- R_type_info t) {
+    // Actually pack here - result is a tuple of types
+    R_tuple tuple = pack_tuple_reverse(count, vector);
+    gvmt_drop(count);
+    t = pack_info(tuple);
+    COPY;
+}
+
+sequence_to_list_or_tuple(R_type_info sequence -- R_type_info sequence) {
+    R_type t;
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item1);
+    with_observed_value(sequence, ti->value1);
+    t = get_type_from_info(sequence);
+    if (t == type_tuple || t == type_list) {
+        ensure_type_tos(sequence, ti->ip, specialiser);
+    } else {
+        COPY;
+        insert_deoptimise_check(specialiser, ti->ip);
+        sequence = probable_type(type_list);
+    }
+}
+
+as_tuple(R_type_info sequence -- R_type_info tuple) {
+    R_type t;
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item1);
+    with_observed_value(sequence, ti->value1);
+    t = get_type_from_info(sequence);
+    if (t == type_tuple) {
+        ensure_type_tos(sequence, ti->ip, specialiser);
+        tuple = sequence;
+    } else {
+        COPY;
+        tuple = definite_type(type_tuple);
+    }
+}
+
+unpack (uint8_t #count, R_type_info object -- ) {
+    GVMT_Value* vector = gvmt_insert(count);
+    unpack_info(object, count, vector);
+    COPY;
+}
+
+empty_tuple( -- R_type_info t) {
+    COPY;
+    t = pack_info(empty_tuple);
+}
+
+tuple_concat(R_type_info t1, R_type_info t2 -- R_type_info t3) {
+    t3 = tuple_concat_info(t1, t2);
+    COPY;
+}
+
+copy_dict(R_type_info d -- R_type_info d) {
+    COPY;
+    d = definite_type(type_dict);
+}
+
+dict_insert(R_type_info d, R_type_info key, R_type_info value -- R_type_info d) {
+    COPY;
+    // Don't worry about keyword args for now.
+}
+
+make_class(int ##index -- ) {
+    not_worth_optimising();
+}
+
+new_scope( -- ) {
+    not_worth_optimising();
+}
+
+pop_scope( -- ) {
+    not_worth_optimising();
+}
+
+make_func(int #args -- ) {
+    not_worth_optimising();
+}
+
+make_closure(int #args -- ) {
+    not_worth_optimising();
+}
+
+error (--) {
+    char buf[100];
+    sprintf(buf, "Instruction '%s' should not be on trace",
+            gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    raise_char(type_InternalError, buf);
+}
+
+dictionary( -- R_type_info d) {
+    COPY;
+    d = definite_type(type_dict);
+}
+
+yield: error;
+
+slice(R_type_info o1, R_type_info o2, R_type_info o3 -- R_type_info s) {
+    // Should probably make a constant here if all o1, o2, o3 are constants.
+    s = info_slice(o1, o2, o3);
+    COPY;
+}
+
+f_call_direct(R_type_info callable, R_type_info t, R_type_info d -- R_type_info o) {
+    R_info_item3 ti = (R_info_item3)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item3);
+    with_observed_value(callable, ti->value1);
+    // Most likely a builtin-function call, so optimise that.
+    if (d == NULL) {
+        o = specialise_f_call(callable, t, d, specialiser, ti);
+    } else {
+        COPY;
+        insert_deoptimise_check(specialiser, ti->ip);
+        o = probable_type(TYPE(ti->value3));
+    }
+}
+
+pack_params: pack 0 ;
+
+store_frame(R_type_info value, uintptr_t #index --) {
+    assert(value != NULL);
+    TYPE_ASSERT(value, type_info);
+    ITEM(specialiser->frame, index) = (R_object)value;
+    assert(value->kind);
+    COPY;
+}
+
+load_frame(uintptr_t #index -- R_type_info value) {
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item1);
+    assert(index < LEN(specialiser->frame));
+    value = (R_type_info)ITEM(specialiser->frame, index);
+    assert(value != NULL);
+    //if (is_constant(value)) {
+    //    optimise_constant(value->value, specialiser->out);
+    //} else
+    if (value->kind || (no_deletes & 1)) {
+        bytelist_append_nolock(specialiser->out, OPCODE(fast_load_frame));
+        bytelist_append_nolock(specialiser->out, index);
+    } else {
+        COPY;
+        specialiser->uninitialised_loads->bytes[index] = 1;
+    }
+    with_observed_value(value, ti->value1);
+    assert(value->kind);
+}
+
+// This should only appear in side-exit tails, so don't worry about them.
+load_from_cache(uintptr_t #index -- R_type_info value) {
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    value = info_not_known();
+    with_observed_value(value, ti->value1);
+    COPY;
+}
+
+store_to_cache(uintptr_t #index, R_type_info value -- ) {
+    COPY;
+}
+
+clear_cache(uintptr_t #index -- ) {
+    COPY;
+}
+
+fast_load_frame: load_frame ;
+
+delete(uintptr_t #index -- ) {
+    assert ((no_deletes & 1) == 0);
+    ITEM(specialiser->frame, index) = (R_object)info_uninitialised();
+    COPY;
+}
+
+name_ [private] (unsigned ##index -- R_str name) {
+    R_info_item2 ti = (R_info_item2)get_trace_info(trace, gvmt_ip()-ip_start);
+    name = (R_str)ti->value2;
+    TYPE_ASSERT(name, str);
+}
+
+value_in_object_dict_or_exit[protected] (int ####addr, R_type_info key, R_type_info obj -- R_type_info out) {
+    R_info_item2 ti = (R_info_item2)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item2);
+    with_observed_value(obj, ti->value1);
+    if (match_expected_type_nos(obj, (R_info_item3)ti, specialiser) &&
+        is_constant(key) && TYPE(key->value) == type_str) {
+        out = specialise_value_in_object_dict_or_exit(obj,
+                    (R_str)key->value, specialiser, ti->ip);
+    } else {
+        COPY;
+        out = info_not_known();
+    }
+}
+
+value_not_in_object_dict_or_exit(int ####addr, R_type_info key, R_type_info obj -- ) {
+    R_info_item2 ti = (R_info_item2)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item2);
+    with_observed_value(obj, ti->value1);
+    if (match_expected_type_nos(obj, (R_info_item3)ti, specialiser) &&
+        is_constant(key) && TYPE(key->value) == type_str) {
+        specialise_value_not_in_object_dict_or_exit(obj,
+            (R_str)key->value, specialiser, ti->ip);
+    } else {
+        COPY;
+    }
+}
+
+get_class_attr(R_type_info obj, R_type_info key --  R_type_info attr) {
+    attr = specialise_get_class_attr(obj, key, specialiser);
+}
+
+has_class_attr(R_type_info obj, R_type_info key --  R_type_info b) {
+    b = specialise_has_class_attr(obj, key, specialiser);
+}
+
+set_in_object_dict(R_type_info value, R_type_info key, R_type_info obj -- ) {
+    R_info_item3 ti = (R_info_item3)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item3);
+    with_observed_value(obj, ti->value2);
+    specialise_set_in_object_dict(obj, key, specialiser, ti->ip);
+}
+
+load_special(R_type_info obj, unsigned #index -- R_type_info o) {
+    R_str name = (R_str)ITEM(standard_names, index);
+    R_info_item3 ti = (R_info_item3)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item3);
+    with_observed_value(obj, ti->value1);
+    if (match_expected_type_tos(obj, NULL, (R_info_item2)ti, specialiser)) {
+        o = specialise_load_special(obj, name, specialiser, ti->ip);
+    } else {
+        COPY;
+        insert_deoptimise_check(specialiser, ti->ip+OPCODE_LENGTH(load_special));
+        o = info_not_known();
+
+    }
+}
+
+has_special(R_type_info obj, unsigned #index -- R_type_info o) {
+    R_str name = (R_str)ITEM(standard_names, index);
+    R_info_item2 ti = (R_info_item2)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item2);
+    with_observed_value(obj, ti->value1);
+    if (match_expected_type_tos(obj, NULL, ti, specialiser)) {
+        o = specialise_has_special(obj, name, specialiser, ti->ip);
+    } else {
+        COPY;
+        o = definite_type(type_bool);
+    }
+}
+
+has_dict(R_type_info obj -- R_type_info o) {
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item1);
+    with_observed_value(obj, ti->value1);
+    if (match_expected_type_tos(obj, NULL, (R_info_item2)ti, specialiser)) {
+        o = specialise_has_dict(obj, specialiser, ti->ip);
+    } else {
+        COPY;
+        o = definite_type(type_bool);
+    }
+}
+
+load_attr: skip2 error;
+
+store_attr: skip2 error;
+
+delete_attr_ [private] (R_str name, R_type_info obj -- ) {
+    not_worth_optimising();
+}
+
+delete_attr: name_ delete_attr_ ;
+
+load(unsigned ##name -- ) {
+    not_worth_optimising();
+}
+
+store(unsigned ##name, R_object value --) {
+    not_worth_optimising();
+}
+
+load_local(unsigned ##name -- ) {
+    not_worth_optimising();
+}
+
+store_local(unsigned ##name, R_object value --) {
+    not_worth_optimising();
+}
+
+current_exception( -- ) {
+    not_worth_optimising();
+}
+
+delete_local(unsigned ##name -- ) {
+    not_worth_optimising();
+}
+
+load_global_ [private] (R_str name -- R_type_info val) {
+    R_info_item3 ti = (R_info_item3)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item3);
+    val = optimise_load_global(name, specialiser, ti->value1, ti->value3, ti->ip);
+}
+
+store_global_ [private] (R_type_info val, R_str name -- ) {
+    R_info_item3 ti = (R_info_item3)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item3);
+    optimise_store_global(name, specialiser, ti->value1, ti->ip);
+}
+
+delete_global(int ##index -- ) {
+    COPY;
+}
+
+debug( -- ) {
+    if (global_debug == TRUE)
+        bytelist_append_nolock(specialiser->out, OPCODE(true));
+    else
+        bytelist_append_nolock(specialiser->out, OPCODE(false));
+}
+
+load_global: name_ load_global_;
+store_global: name_ store_global_;
+
+load_deref(int ##args -- R_type_info value) {
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    value = probable_type(TYPE(ti->value1));
+    COPY;
+}
+
+store_deref(int ##args, R_type_info val  --) {
+    COPY;
+}
+
+on_true: skip2 error ;
+on_false: skip2 error ;
+
+protect: skip2 error ;
+
+value_in_object_dict_or_jump2: error ;
+
+next_exit: error ;
+
+trace_protect(int #stop, int ####addr -- ) {
+    // Could optimise this by caching the exception-handler?
+    COPY;
+}
+
+make_exception_handler(int #stop, int ####stack_addr, int ####ip_addr -- ) {
+    COPY;
+}
+
+pop_handler( -- ) {
+    COPY;
+}
+
+pop_caller_handler( -- ) {
+    COPY;
+}
+
+gen_exit ( -- ) {
+    COPY;
+}
+
+type(R_type_info obj -- R_type_info t) {
+    R_type type = get_type_from_info(obj);
+    if (type) {
+        void* addr = gvmt_pin((GVMT_Object)type);
+        if (!is_definite(obj)) {
+           R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+           ensure_type_tos(obj, ti->ip, specialiser);
+        }
+        bytelist_append_nolock(specialiser->out, OPCODE(drop));
+        bytelist_append_nolock(specialiser->out, OPCODE(fast_constant));
+        bytelist_append_long(specialiser->out, (int32_t)addr);
+        t = type_info_constant((R_object)type);
+    } else {
+        t = definite_type(type_type);
+        COPY;
+    }
+}
+
+subtype(R_type_info t1, R_type_info t2 -- R_type_info b) {
+    // Both type objects, should be constants.
+    if (is_constant(t1) && is_constant(t2)) {
+        R_type type1 = (R_type)t1->value;
+        R_type type2 = (R_type)t2->value;
+        if (TYPE(type1) == type_type && TYPE(type2) == type_type) {
+            bytelist_append_nolock(specialiser->out, OPCODE(drop));
+            bytelist_append_nolock(specialiser->out, OPCODE(drop));
+            if (is_subclass_of(type1, type2)) {
+                b  = type_info_constant((R_object)TRUE);
+                bytelist_append_nolock(specialiser->out, OPCODE(true));
+            } else {
+                b  = type_info_constant((R_object)FALSE);
+                bytelist_append_nolock(specialiser->out, OPCODE(false));
+            }
+        } else {
+            b = definite_type(type_bool);
+            COPY;
+        }
+    } else {
+        b = definite_type(type_bool);
+        COPY;
+    }
+}
+
+profile_return ( -- ) {
+    if (THREAD_STATE->profiler == NULL) {
+        if (!have_profile_guard) {
+            add_sys_profile_guard(specialiser->trace);
+            have_profile_guard = 1;
+        }
+    } else {
+        COPY;
+    }
+}
+
+raise(R_object o -- ) {
+    COPY;
+}
+
+reraise(R_object o -- ) {
+    COPY;
+}
+
+/****** Trace specific opcodes ************/
+
+pop_frame ( -- ) {
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    R_code_object code = (R_code_object)ti->value1;
+    TYPE_ASSERT(ti, info_item1);
+    TYPE_ASSERT(code, code_object);
+    if (LIST_SIZE(specialiser->back)) {
+        R_int next_ip = (R_int)list_pop(specialiser->back_ips);
+        specialiser->next_ip = (uint8_t*)int_from_py_int(next_ip);
+        specialiser->frame = (R_array)list_pop(specialiser->back);
+        if (LIST_SIZE(specialiser->back)) {
+            R_array back_frame = (R_array)ITEM(specialiser->back->array, LIST_SIZE(specialiser->back)-1);
+            R_int back_ip = (R_int)ITEM(specialiser->back_ips->array,  LIST_SIZE(specialiser->back_ips)-1);
+            specialiser->frozen_back = freeze_frame(back_frame, (uint8_t*)int_from_py_int(back_ip));
+        } else {
+            specialiser->frozen_back = empty_tuple;
+        }
+    } else {
+        specialiser->frame = unknown_frame(code->params, code->locals);
+        specialiser->frozen_back = empty_tuple;
+    }
+    no_deletes >>= 1;
+    no_lines >>= 1;
+    specialiser->no_overflows >>= 1;
+    COPY;
+}
+
+gen_check(unsigned ####addr, unsigned ####exit, R_type_info gen -- R_type_info gen) {
+    COPY;
+}
+
+gen_enter: error ;
+
+gen_link(R_type_info gen -- ) {
+    int i, depth;
+    R_code_object code;
+    R_tuple tmp;
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item1);
+    depth = gvmt_stack_depth();
+    gvmt_drop(depth - start_depth);
+    // Push lots of info_not_knowns to stack
+    for (i = 0; i < 10; i++) {
+        GVMT_PUSH(info_not_known());
+    }
+    code = (R_code_object)ti->value1;
+    TYPE_ASSERT(code, code_object);
+    list_append(specialiser->back, (R_object)specialiser->frame);
+    specialiser->frozen_back = freeze_frame(specialiser->frame, specialiser->next_ip);
+    list_append(specialiser->back_ips, (R_object)HotPyLong_FromSsize_t((intptr_t)specialiser->next_ip));
+    specialiser->frame = unknown_frame(code->params, code->locals);
+    no_deletes <<= 1;
+    no_deletes |= (code->kind & NO_DELETES) != 0;
+    no_lines <<= 1;
+    no_lines |= (code->kind & FUNCTION_NO_TRACE) != 0;
+    specialiser->no_overflows <<= 1;
+    specialiser->no_overflows |= (code->kind & FUNCTION_NO_OVERFLOW) != 0;
+    COPY;
+}
+
+do_yield[private](R_type_info val -- R_type_info val) {
+    int i, depth = gvmt_stack_depth();
+    gvmt_drop(depth - start_depth);
+    // Push lots of info_not_knowns to stack
+    for (i = 0; i < 10; i++) {
+        GVMT_PUSH(info_not_known());
+    }
+}
+
+gen_yield: skip4 do_yield pop_frame ;
+
+fast_frame[protected](... stack, uint8_t #count, unsigned ####addr -- ) {
+    R_function func = (R_function)gvmt_pinned_object((void*)addr);
+    R_code_object code;
+    R_tuple frozen_frame;
+    GVMT_Value *params = stack + count - 1;
+    int i;
+    code = func->__code__;
+    TYPE_ASSERT(code, code_object);
+    list_append(specialiser->back, (R_object)specialiser->frame);
+    specialiser->frozen_back = freeze_frame(specialiser->frame, (uint8_t*)specialiser->next_ip);
+    list_append(specialiser->back_ips, (R_object)HotPyLong_FromSsize_t((intptr_t)specialiser->next_ip));
+    specialiser->frame = create_array(code->locals);
+    specialiser->next_ip = NULL;
+    no_deletes <<= 1;
+    no_deletes |= (code->kind & NO_DELETES) != 0;
+    no_lines <<= 1;
+    no_lines |= (code->kind & FUNCTION_NO_TRACE) != 0;
+    specialiser->no_overflows <<= 1;
+    specialiser->no_overflows |= (code->kind & FUNCTION_NO_OVERFLOW) != 0;
+    COPY;
+    for (i = 0; i < count; i++) {
+        R_object o = (R_object)gvmt_stack_read_object(params-i);
+        TYPE_ASSERT(o, type_info);
+        ITEM(specialiser->frame, i) = o;
+    }
+    for (; i < code->locals; i++) {
+        ITEM(specialiser->frame, i) = (R_object)info_not_known();
+    }
+    gvmt_drop(count);
+}
+
+new_enter(unsigned ####addr, R_type_info cls, R_type_info t, R_type_info d
+          -- R_type_info new, R_type_info t, R_type_info d) {
+    t = tuple_prepend_info(cls, t);
+    new = type_info_constant((R_object)gvmt_pinned_object((void*)addr));
+    COPY;
+}
+
+
+set_next_ip(unsigned ####addr -- ) {
+   specialiser->next_ip = (uint8_t*)addr;
+   COPY;
+}
+
+_make_frame[private](R_type_info f -- ) {
+    R_function func;
+    R_code_object code;
+    R_tuple tmp;
+    R_info_item1 ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    TYPE_ASSERT(ti, info_item1);
+    func = (R_function)ti->value1;
+    code = func->__code__;
+    TYPE_ASSERT(code, code_object);
+    list_append(specialiser->back, (R_object)specialiser->frame);
+    specialiser->frozen_back = freeze_frame(specialiser->frame, specialiser->next_ip);
+    list_append(specialiser->back_ips, (R_object)HotPyLong_FromSsize_t((intptr_t)specialiser->next_ip));
+    specialiser->frame = create_array(code->locals);
+    no_deletes <<= 1;
+    no_deletes |= (code->kind & NO_DELETES) != 0;
+    no_lines <<= 1;
+    no_lines |= (code->kind & FUNCTION_NO_TRACE) != 0;
+    specialiser->no_overflows <<= 1;
+    specialiser->no_overflows |= (code->kind & FUNCTION_NO_OVERFLOW) != 0;
+    COPY;
+    type_info_make_constant(f, (R_object)func); // Is this correct?
+}
+
+prepare_bm_call(R_type_info bm, R_type_info t, R_type_info d --
+        R_type_info callable, R_type_info t, R_type_info d) {
+    R_info_item1  ti = (R_info_item1)get_trace_info(trace, gvmt_ip()-ip_start);
+    R_type_info self = bound_method_info_get_object(bm);
+    callable = bound_method_info_get_callable(bm);
+    TYPE_ASSERT(ti, info_item1);
+    TYPE_ASSERT(ti->value1, bound_method);
+    with_observed_value(callable, ((R_bound_method)ti->value1)->callable);
+    with_observed_value(self, ((R_bound_method)ti->value1)->object);
+    t = tuple_prepend_info(self, t);
+    COPY;
+}
+
+make_frame: PICK_R _make_frame ;
+
+init_frame(R_type_info func, R_type_info t, R_object d -- ) {
+    if (is_constant(func) && TYPE(func->value) == type_function) {
+        info_frame_init_from_tuple(specialiser->frame, (R_function)func->value, t);
+    } else {
+        info_frame_init_from_tuple(specialiser->frame, NULL, t);
+    }
+    COPY;
+}
+
+bool_exit [private](int ####addr, R_type_info b -- ) {
+    R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)addr);
+    exit->state = make_type_state(specialiser->frame, specialiser->frozen_back, NULL);
+    COPY;
+}
+
+exit_on_true: bool_exit;
+
+exit_on_false: bool_exit;
+
+/** End of trace */
+
+// Do back & return exits actually need type-state?
+
+trace_exit (unsigned ####addr -- ) {
+    R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)addr);
+    if (exit->state == NULL) {
+        exit->state = make_type_state(specialiser->frame, specialiser->frozen_back, NULL);
+    }
+    COPY;
+    gvmt_ireturn_r((GVMT_Object)specialiser);
+}
+
+
+interpret (unsigned ####address -- ) {
+    COPY;
+    gvmt_ireturn_r((GVMT_Object)specialiser);
+}
+
+return_exit: interpret ;
+
+recursion_exit: skip4 interpret ;
+
+jump (int16_t ##offset -- ) {
+    int i, new_offset;
+    assert(gvmt_ip()+offset == ip_start);
+    if (second_loop_pass == 0) {
+        loop_state = make_type_state(specialiser->frame, specialiser->frozen_back, NULL);
+        bytelist_append_nolock(specialiser->out, OPCODE(loop_start_nop));
+        loop_offset = specialiser->out->size;
+        second_loop_pass = 1;
+        gvmt_far_jump(ip_start);
+    } else {
+        R_array frame = thaw_frame(loop_state->frame);
+        for (i = 0; i < LEN(specialiser->frame); i++) {
+            R_type_info end = (R_type_info)ITEM(specialiser->frame, i);
+            R_type_info start = (R_type_info)ITEM(frame, i);
+            if (!is_initialised(end) && is_initialised(start)) {
+                void* addr = make_mono_exit(trace->start, specialiser->trace->pinned_objects, NULL);
+                if (debug_optimise) {
+                    fprintf(stderr, "Contradictory initialisation for local %d in loop\n", i);
+                }
+                bytelist_append_nolock(specialiser->out, OPCODE(trace_exit));
+                bytelist_append_long(specialiser->out, (intptr_t)addr);
+                gvmt_ireturn_r((GVMT_Object)specialiser);
+            }
+            if (type_info_is_wider(end, start) || type_info_contadictory(start, end)) {
+                if (debug_optimise) {
+                    fprintf(stderr, "Contradictory type for local %d in loop\n", i);
+                }
+                ensure_local_type(specialiser, trace->start, i, start);
+            }
+        }
+        new_offset = loop_offset-specialiser->out->size;
+        if (optimiser_controls.compile) {
+            bytelist_append_nolock(specialiser->out, OPCODE(counting_end_loop));
+            bytelist_append_nolock(specialiser->out, 0);
+            bytelist_append_long(specialiser->out, (intptr_t)gvmt_pin((GVMT_Object)specialiser->trace));
+        } else {
+            bytelist_append_nolock(specialiser->out, OPCODE(jump));
+        }
+        bytelist_append_short(specialiser->out, new_offset);
+        assert(trace->is_loop);
+        gvmt_ireturn_r((GVMT_Object)specialiser);
+    }
+}
+
+counting_end_loop: skip skip4 skip2 error;
+
+check_initialised: skip error ;
+
+pick_[private](--) {
+    COPY;
+}
+
+pick: PICK_R pick_ ;
+
+bind(R_type_info obj, R_type_info func -- R_type_info bm) {
+    bm = info_bound_method(obj, func);
+    COPY;
+}
+
+fast_constant(unsigned ####addr -- R_type_info c) {
+    R_object obj = (R_object)gvmt_pinned_object((void*)addr);
+    c = type_info_constant(obj);
+    COPY;
+}
+
+load_slot(R_type_info desc, R_type_info obj -- R_type_info result) {
+    result = specialise_load_slot(desc, obj, specialiser);
+}
+
+store_slot(R_type_info value, R_type_info desc, R_type_info obj -- ) {
+    specialise_store_slot(desc, obj, specialiser);
+}
+
+load_slot_imm: skip error;
+store_slot_imm: skip error;
+
+
+check_keys: skip2 skip4 skip4 error ;
+fast_get: skip4 skip4 error ;
+
+ensure_value_drop(unsigned ####addr, unsigned ####exit_addr, R_type_info value -- ) {
+    R_object obj = (R_object)gvmt_pinned_object((void*)addr);
+    type_info_make_constant(value, obj);
+    COPY;
+}
+
+ensure_value: PICK_R ensure_value_drop;
+
+return: error ;
+
+done_if: skip2 error;
+continue: skip2 error;
+break: skip2 error;
+end_loop: skip skip2 error;
+end_protect: skip2 error;
+
+fast_load_global: skip4 skip2 error;
+fast_store_global: skip4 skip2 error;
+
+type_ensure(unsigned ####cls_addr, unsigned ####exit_addr, R_type_info value -- R_type_info value) {
+    R_type cls = (R_type)gvmt_pinned_object((void*)cls_addr);
+    if (with_observed_type(value, cls)) {
+        if (!is_definite(value)) {
+            make_type_definite(value);
+            COPY;
+        }
+    } else {
+        COPY;
+    }
+}
+
+type_ensure2(unsigned ####cls_addr, unsigned ####exit_addr, R_type_info value, R_object ignore -- R_type_info value, R_object ignore) {
+    R_type cls = (R_type)gvmt_pinned_object((void*)cls_addr);
+    if (with_observed_type(value, cls)) {
+        if (!is_definite(value)) {
+            make_type_definite(value);
+            COPY;
+        }
+    } else {
+        COPY;
+    }
+}
+
+type_ensure_drop: skip4 skip4 error;
+
+ensure_tagged: skip4 error;
+ensure_tagged_drop: skip4 error;
+ensure_tagged2: skip4 error;
+native_call: skip skip4 error ;
+native_call_no_prot: native_call ;
+native_call_protect: native_call skip4 ;
+deoptimise_check: skip4 skip4 error ;
+
+fast_load_attr: skip2 skip2 skip4 error;
+fast_store_attr: skip2 skip2 skip4 error;
+
+unpack_native_params: skip4 error;
+
+i_add: skip4 error ;
+i_sub: skip4 error;
+i_mul: error;
+i_prod: skip error;
+i_div: error;
+
+i_add_no_overflow: error ;
+i_sub_no_overflow: error;
+
+f_call: error;
+
+i_inc_no_overflow: skip error;
+i_dec_no_overflow: skip error;
+
+i_inc: skip skip4 error;
+i_dec: skip skip4 error;
+
+i_comp_lt: error;
+i_comp_gt: i_comp_lt ;
+i_comp_eq: i_comp_lt ;
+i_comp_ne: i_comp_lt ;
+i_comp_le: i_comp_lt ;
+i_comp_ge: i_comp_lt ;
+
+f_lt: error;
+f_gt: error;
+f_eq: error;
+f_ne: error;
+f_le: error;
+f_ge: error;
+
+i_exit_eq: skip4 error ;
+i_exit_ne: skip4 error ;
+
+f_add: error;
+f_sub: error;
+f_mul: error;
+f_div: error;
+f_neg: error;
+i2f: error;
+i2d: error;
+
+d_add: error;
+d_sub: error;
+d_mul: error;
+d_div: error;
+d_idiv: error;
+d_neg: error;
+
+i_rshift: error;
+
+d2f: error;
+f2d: error;
+d_byte: skip error;
+
+check_valid: error ;
+
+tail_call: error;
+
+loop_start_nop: error;
+
+array_setitem_int: error;
+array_getitem_int: error;
+
+copy_store_frame: skip error;
+copy_store_to_cache: skip error;
+
+fast_load_frame_fast_load_frame: skip skip error ;
+fast_load_frame_load_from_cache: skip skip error ;
+load_from_cache_fast_load_frame: skip skip error ;
+load_from_cache_load_from_cache: skip skip error ;
+
+store_frame_fast_load_frame: skip skip error ;
+store_frame_load_from_cache: skip skip error ;
+store_to_cache_fast_load_frame: skip skip error ;
+store_to_cache_load_from_cache: skip skip error ;
+
+drop_fast_load_frame: skip error ;
+drop_load_from_cache: skip error ;
+
+fast_line_set_next_ip: skip2 skip4 error ;
+

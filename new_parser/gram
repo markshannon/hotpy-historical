@@ -1,0 +1,81 @@
+encoding_decl :  NAME
+dotted_as_names :  dotted_as_name  ( COMMA dotted_as_name )*
+import_as_name :  NAME ( AS NAME )?
+try_stmt :  TRY COLON suite  ( ( except_clause COLON suite )+ ( ELSE COLON suite )? ( FINALLY COLON suite )? | FINALLY COLON suite )
+test_nocond :   ( or_test | lambdef_nocond )
+dotted_name :  NAME  ( DOT NAME )*
+small_stmt :   ( expr_stmt | del_stmt | pass_stmt | flow_stmt | import_stmt | global_stmt | nonlocal_stmt | assert_stmt )
+augassign :   ( PLUSEQUAL | MINUSEQUAL | STAREQUAL | SLASHEQUAL | PERCENTEQUAL | AMPEREQUAL | VBAREQUAL | CIRCUMFLEXEQUAL | LEFTSHIFTEQUAL | RIGHTSHIFTEQUAL | DOUBLESTAREQUAL | DOUBLESLASHEQUAL )
+import_from :  FROM  ( (  ( DOT | ELLIPSIS ) )* dotted_name | (  ( DOT | ELLIPSIS ) )+ ) IMPORT  ( STAR | LPAREN import_as_names RPAREN | import_as_names )
+if_stmt :  IF test COLON suite ( ELIF test COLON suite )* ( ELSE COLON suite )?
+import_as_names :  import_as_name ( COMMA import_as_name )*  trailing COMMA
+return_stmt :  RETURN ( testlist )?
+not_test :   ( NOT not_test | comparison )
+testlist_comp :  test  ( comp_for | ( COMMA test )*  trailing COMMA )
+except_clause :  EXCEPT ( test ( AS NAME )? )?
+comp_if :  IF test_nocond ( comp_iter )?
+typedargslist :   ( ( tfpdef ( ASSIGN test )? COMMA )*  ( STAR ( tfpdef )? ( COMMA tfpdef ( ASSIGN test )? )* ( COMMA DOUBLESTAR tfpdef )? | DOUBLESTAR tfpdef ) | tfpdef ( ASSIGN test )? ( COMMA tfpdef ( ASSIGN test )? )*  trailing COMMA )
+import_name :  IMPORT dotted_as_names
+flow_stmt :   ( break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt )
+with_stmt :  WITH test ( with_var )? COLON suite
+comp_op :   ( LESS | GREATER | EQUAL | GREATEREQUAL | LESSEQUAL | NOTEQUAL | IN | NOT IN | IS | IS NOT )
+raise_stmt :  RAISE ( test ( FROM test )? )?
+atom :   ( LPAREN (  ( yield_expr | testlist_comp ) )? RPAREN | LBRACK ( testlist_comp )? RBRACK | LCURLY ( dictorsetmaker )? RCURLY | NAME | FLOAT | INTEGER | ( STRING )+ | ELLIPSIS | NONE | TRUE | FALSE )
+power :  atom ( trailer )* ( DOUBLESTAR factor )?
+parameters :  LPAREN ( typedargslist )? RPAREN
+arglist :  ( argument COMMA )*  ( argument ( COMMA )? | STAR test ( COMMA argument )* ( COMMA DOUBLESTAR test )? | DOUBLESTAR test )
+continue_stmt :  CONTINUE
+shift_expr :  arith_expr  (  ( LEFTSHIFT | RIGHTSHIFT ) arith_expr )*
+comp_for :  FOR exprlist IN or_test ( comp_iter )?
+dotted_as_name :  dotted_name ( AS NAME )?
+lambdef_nocond :  LAMBDA ( varargslist )? COLON test_nocond
+dictorsetmaker :   ( test COLON test  ( comp_for | ( COMMA test COLON test )*  trailing COMMA ) | test  ( comp_for | ( COMMA test )*  trailing COMMA ) )
+factor :   (  ( PLUS | MINUS | TILDE ) factor | power )
+test :   ( or_test ( IF or_test ELSE test )? | lambdef )
+global_stmt :  GLOBAL NAME ( COMMA NAME )*
+subscript :   ( test | ( test )? COLON ( test )? ( sliceop )? )
+star_expr :  ( STAR )? expr
+decorators :  ( decorator )+
+compound_stmt :   ( if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated )
+and_expr :  shift_expr  ( AMPER shift_expr )*
+break_stmt :  BREAK
+yield_expr :  YIELD ( testlist )?
+nonlocal_stmt :  NONLOCAL NAME ( COMMA NAME )*
+comparison :  star_expr  ( comp_op star_expr )*
+simple_stmt :  small_stmt ( SEMI small_stmt )* ( SEMI )? NEWLINE
+subscriptlist :  subscript ( COMMA subscript )*  trailing COMMA
+testlist :  test ( COMMA test )*  trailing COMMA
+classdef :  CLASS NAME ( LPAREN ( arglist )? RPAREN )? COLON suite
+stmt :   ( simple_stmt | compound_stmt )
+argument :   ( test ( comp_for )? | test ASSIGN test )
+assert_stmt :  ASSERT test ( COMMA test )?
+for_stmt :  FOR exprlist IN testlist COLON suite ( ELSE COLON suite )?
+and_test :  not_test  ( AND not_test )*
+lambdef :  LAMBDA ( varargslist )? COLON test
+suite :   ( simple_stmt | NEWLINE INDENT ( stmt )+ DEDENT )
+funcdef :  DEF NAME parameters ( ARROW test )? COLON suite
+decorated :  decorators  ( classdef | funcdef )
+expr_stmt :  testlist  ( augassign  ( yield_expr | testlist ) | ( ASSIGN  ( yield_expr | testlist ) )* )
+exprlist :  star_expr ( COMMA star_expr )*  trailing COMMA
+decorator :  AT dotted_name ( LPAREN ( arglist )? RPAREN )? NEWLINE
+vfpdef :  NAME
+sliceop :  COLON ( test )?
+eval_input :  testlist ( NEWLINE )* ENDMARKER
+term :  factor  (  ( STAR | SLASH | PERCENT | DOUBLESLASH ) factor )*
+pass_stmt :  PASS
+xor_expr :  and_expr  ( CIRCUMFLEX and_expr )*
+file_input :  (  ( NEWLINE | stmt ) )* ENDMARKER
+with_var :  AS expr
+expr :  xor_expr  ( VBAR xor_expr )*
+del_stmt :  DEL exprlist
+while_stmt :  WHILE test COLON suite ( ELSE COLON suite )?
+varargslist :   ( ( vfpdef ( ASSIGN test )? COMMA )*  ( STAR ( vfpdef )? ( COMMA vfpdef ( ASSIGN test )? )* ( COMMA DOUBLESTAR vfpdef )? | DOUBLESTAR vfpdef ) | vfpdef ( ASSIGN test )? ( COMMA vfpdef ( ASSIGN test )? )*  trailing COMMA )
+testlist1 :  test  ( COMMA test )*
+trailer :   ( LPAREN ( arglist )? RPAREN | LBRACK subscriptlist RBRACK | DOT NAME )
+import_stmt :   ( import_name | import_from )
+single_input :   ( NEWLINE | simple_stmt | compound_stmt NEWLINE )
+arith_expr :  term  (  ( PLUS | MINUS ) term )*
+comp_iter :   ( comp_for | comp_if )
+tfpdef :  NAME ( COLON test )?
+yield_stmt :  yield_expr
+or_test :  and_test  ( OR and_test )*

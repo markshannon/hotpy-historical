@@ -1,0 +1,8062 @@
+Function __str__ kind:8192 1 parameters, 1 locals:
+Code at 0xb738d1b4:
+0      :line 88 
+3      :constant 4 
+6      :return 
+
+Function divmod kind:8192 2 parameters, 2 locals:
+Code at 0xb738d200:
+0      :line 157 
+3      :load_frame 0(u) 
+5      :load_frame 1(v) 
+7      :binary truediv 
+9      :load_frame 0(u) 
+11     :load_frame 1(v) 
+13     :binary mod 
+15     :pack 2 
+17     :return 
+
+Function filter kind:8704 2 parameters, 4 locals:
+Code at 0xb738d25c:
+0      :line 160 
+3      :load_frame 0(function) 
+5      :none 
+6      :is 
+7      :on_false 48 
+10     :line 161 
+13     :load_frame 1(iterable) 
+15     :iter 
+16     :store_frame 2(1) 
+18     :for_loop 44 
+21     :load_frame 2(1) 
+23     :next 
+24     :store_frame 3(item) 
+26     :line 162 
+29     :load_frame 3(item) 
+31     :on_false 40 
+34     :line 163 
+37     :load_frame 3(item) 
+39     :yield 
+40     :end_loop 21 
+44     :exit_loop 
+45     :done_if 88 
+48     :line 165 
+51     :load_frame 1(iterable) 
+53     :iter 
+54     :store_frame 2(1) 
+56     :for_loop 87 
+59     :load_frame 2(1) 
+61     :next 
+62     :store_frame 3(item) 
+64     :line 166 
+67     :load_frame 0(function) 
+69     :load_frame 3(item) 
+71     :pack_params 1 
+73     :f_call 
+74     :on_false 83 
+77     :line 167 
+80     :load_frame 3(item) 
+82     :yield 
+83     :end_loop 59 
+87     :exit_loop 
+88     :none 
+89     :return 
+
+Function globals kind:8192 0 parameters, 0 locals:
+Code at 0xb738d308:
+0      :line 205 
+3      :none 
+4      :return 
+
+Function lib_import kind:8192 1 parameters, 1 locals:
+Code at 0xb738d350:
+0      :line 209 
+3      :none 
+4      :return 
+
+Function static kind:8192 1 parameters, 1 locals:
+Code at 0xb738d39c:
+0      :line 213 
+3      :load_frame 0(f) 
+5      :return 
+
+Function c_name kind:8192 1 parameters, 1 locals:
+Code at 0xb738d3e8:
+0      :line 217 
+3      :none 
+4      :return 
+
+Function _pure kind:8192 1 parameters, 1 locals:
+Code at 0xb738d434:
+0      :line 226 
+3      :none 
+4      :return 
+
+Function setattr kind:8192 3 parameters, 3 locals:
+Code at 0xb738d480:
+0      :line 230 
+3      :none 
+4      :return 
+
+Function _method kind:9216 2 parameters, 2 locals:
+Code at 0xb738d4d4:
+0      :line 234 
+3      :load_global setattr 
+6      :load_deref 1 0 
+9      :load_deref 1 1 
+12     :load_frame 1(func) 
+14     :pack_params 3 
+16     :f_call 
+17     :drop 
+18     :line 235 
+21     :load_deref 1 1 
+24     :load_frame 1(func) 
+26     :store_attr __name__ 
+29     :line 236 
+32     :load_frame 1(func) 
+34     :return 
+
+Function method kind:8192 2 parameters, 3 locals:
+Code at 0xb738d540:
+0      :line 233 
+3      :empty_tuple 
+4      :dictionary 
+5      :make_closure 9 
+7      :store_frame 2(_method) 
+9      :line 237 
+12     :load_frame 2(_method) 
+14     :return 
+
+Function _no_trace kind:8192 1 parameters, 1 locals:
+Code at 0xb738d59c:
+0      :line 241 
+3      :none 
+4      :return 
+
+Function _globals_to_consts kind:8192 1 parameters, 1 locals:
+Code at 0xb738d5e8:
+0      :line 245 
+3      :none 
+4      :return 
+
+Function object_allocate kind:8192 1 parameters, 1 locals:
+Code at 0xb738d634:
+0      :line 250 
+3      :none 
+4      :return 
+
+Function object_new kind:8204 3 parameters, 3 locals:
+Code at 0xb738d680:
+0      :line 256 
+3      :load_global object_allocate 
+6      :load_frame 0(cls) 
+8      :pack_params 1 
+10     :f_call 
+11     :return 
+
+Function object_init kind:8204 3 parameters, 3 locals:
+Code at 0xb738d6d8:
+0      :line 261 
+3      :none 
+4      :return 
+
+Function __init__ kind:8192 4 parameters, 4 locals:
+Code at 0xb738d72c:
+0      :line 299 
+3      :load_frame 2(_stop) 
+5      :none 
+6      :is 
+7      :on_false 33 
+10     :line 300 
+13     :byte 0 
+15     :load_frame 0(self) 
+17     :store_attr _start 
+20     :line 301 
+23     :load_frame 1(_start) 
+25     :load_frame 0(self) 
+27     :store_attr _stop 
+30     :done_if 53 
+33     :line 303 
+36     :load_frame 1(_start) 
+38     :load_frame 0(self) 
+40     :store_attr _start 
+43     :line 304 
+46     :load_frame 2(_stop) 
+48     :load_frame 0(self) 
+50     :store_attr _stop 
+53     :line 305 
+56     :load_frame 3(_step) 
+58     :byte 0 
+60     :binary eq 
+62     :on_false 81 
+65     :line 306 
+68     :load_global ValueError 
+71     :constant 13 
+74     :pack_params 1 
+76     :f_call 
+77     :raise 
+78     :done_if 91 
+81     :line 308 
+84     :load_frame 3(_step) 
+86     :load_frame 0(self) 
+88     :store_attr _step 
+91     :none 
+92     :return 
+
+Function __len__ kind:8192 1 parameters, 1 locals:
+Code at 0xb738d7dc:
+0      :line 311 
+3      :load_frame 0(self) 
+5      :load_attr _step 
+8      :byte 1 
+10     :binary eq 
+12     :on_false 34 
+15     :line 312 
+18     :load_frame 0(self) 
+20     :load_attr _stop 
+23     :load_frame 0(self) 
+25     :load_attr _start 
+28     :binary sub 
+30     :return 
+31     :done_if 57 
+34     :line 314 
+37     :load_frame 0(self) 
+39     :load_attr _stop 
+42     :load_frame 0(self) 
+44     :load_attr _start 
+47     :binary sub 
+49     :load_frame 0(self) 
+51     :load_attr _step 
+54     :binary floordiv 
+56     :return 
+57     :none 
+58     :return 
+
+Function __iter__ kind:8192 1 parameters, 1 locals:
+Code at 0xb738d85c:
+0      :line 317 
+3      :load_frame 0(self) 
+5      :load_attr _step 
+8      :byte 1 
+10     :binary eq 
+12     :on_false 44 
+15     :line 318 
+18     :load_global irange_iterator 
+21     :load_global __irange_1 
+24     :load_frame 0(self) 
+26     :load_attr _start 
+29     :load_frame 0(self) 
+31     :load_attr _stop 
+34     :pack_params 2 
+36     :f_call 
+37     :pack_params 1 
+39     :f_call 
+40     :return 
+41     :done_if 124 
+44     :line 319 
+47     :load_frame 0(self) 
+49     :load_attr _step 
+52     :byte 0 
+54     :binary lt 
+56     :on_false 93 
+59     :line 320 
+62     :load_global irange_iterator 
+65     :load_global __irange_dec 
+68     :load_frame 0(self) 
+70     :load_attr _start 
+73     :load_frame 0(self) 
+75     :load_attr _stop 
+78     :load_frame 0(self) 
+80     :load_attr _step 
+83     :pack_params 3 
+85     :f_call 
+86     :pack_params 1 
+88     :f_call 
+89     :return 
+90     :done_if 124 
+93     :line 322 
+96     :load_global irange_iterator 
+99     :load_global __irange_inc 
+102    :load_frame 0(self) 
+104    :load_attr _start 
+107    :load_frame 0(self) 
+109    :load_attr _stop 
+112    :load_frame 0(self) 
+114    :load_attr _step 
+117    :pack_params 3 
+119    :f_call 
+120    :pack_params 1 
+122    :f_call 
+123    :return 
+124    :none 
+125    :return 
+
+Function __getitem__ kind:8192 2 parameters, 3 locals:
+Code at 0xb738d920:
+0      :line 325 
+3      :load_frame 1(index) 
+5      :byte 0 
+7      :binary lt 
+9      :on_false 25 
+12     :line 326 
+15     :load_global IndexError 
+18     :constant 14 
+21     :pack_params 1 
+23     :f_call 
+24     :raise 
+25     :line 327 
+28     :load_frame 0(self) 
+30     :load_attr _start 
+33     :load_frame 1(index) 
+35     :load_frame 0(self) 
+37     :load_attr _step 
+40     :binary mul 
+42     :binary add 
+44     :store_frame 2(result) 
+46     :line 328 
+49     :load_frame 0(self) 
+51     :load_attr _step 
+54     :byte 0 
+56     :binary lt 
+58     :on_false 85 
+61     :line 329 
+64     :load_frame 2(result) 
+66     :load_frame 0(self) 
+68     :load_attr _stop 
+71     :binary gt 
+73     :on_false 82 
+76     :line 330 
+79     :load_frame 2(result) 
+81     :return 
+82     :done_if 106 
+85     :line 332 
+88     :load_frame 2(result) 
+90     :load_frame 0(self) 
+92     :load_attr _stop 
+95     :binary lt 
+97     :on_false 106 
+100    :line 333 
+103    :load_frame 2(result) 
+105    :return 
+106    :line 334 
+109    :load_global IndexError 
+112    :constant 14 
+115    :pack_params 1 
+117    :f_call 
+118    :raise 
+119    :none 
+120    :return 
+
+Function __repr__ kind:8192 1 parameters, 1 locals:
+Code at 0xb738d9e8:
+0      :line 337 
+3      :load_frame 0(self) 
+5      :load_attr _step 
+8      :byte 1 
+10     :binary eq 
+12     :on_false 39 
+15     :line 338 
+18     :constant 15 
+21     :load_frame 0(self) 
+23     :load_attr _start 
+26     :load_frame 0(self) 
+28     :load_attr _stop 
+31     :pack 2 
+33     :binary mod 
+35     :return 
+36     :done_if 65 
+39     :line 341 
+42     :constant 16 
+45     :load_frame 0(self) 
+47     :load_attr _start 
+50     :load_frame 0(self) 
+52     :load_attr _stop 
+55     :load_frame 0(self) 
+57     :load_attr _step 
+60     :pack 3 
+62     :binary mod 
+64     :return 
+65     :none 
+66     :return 
+
+Function __reduce__ kind:8192 1 parameters, 1 locals:
+Code at 0xb738da70:
+0      :line 344 
+3      :load_global range 
+6      :load_frame 0(self) 
+8      :load_attr _start 
+11     :load_frame 0(self) 
+13     :load_attr _stop 
+16     :load_frame 0(self) 
+18     :load_attr _step 
+21     :pack 3 
+23     :pack 2 
+25     :return 
+
+Function __reversed__ kind:8192 1 parameters, 3 locals:
+Code at 0xb738dad0:
+0      :line 348 
+3      :load_frame 0(self) 
+5      :load_attr _start 
+8      :load_global len 
+11     :load_frame 0(self) 
+13     :pack_params 1 
+15     :f_call 
+16     :byte 1 
+18     :binary sub 
+20     :load_frame 0(self) 
+22     :load_attr _step 
+25     :binary mul 
+27     :binary add 
+29     :store_frame 1(new_start) 
+31     :line 349 
+34     :load_frame 0(self) 
+36     :load_attr _start 
+39     :load_frame 0(self) 
+41     :load_attr _step 
+44     :binary sub 
+46     :store_frame 2(new_stop) 
+48     :line 350 
+51     :load_frame 0(self) 
+53     :load_attr _step 
+56     :byte -1 
+58     :binary eq 
+60     :on_false 86 
+63     :line 351 
+66     :load_global irange_iterator 
+69     :load_global __irange_1 
+72     :load_frame 1(new_start) 
+74     :load_frame 2(new_stop) 
+76     :pack_params 2 
+78     :f_call 
+79     :pack_params 1 
+81     :f_call 
+82     :return 
+83     :done_if 158 
+86     :line 352 
+89     :load_frame 0(self) 
+91     :load_attr _step 
+94     :byte 0 
+96     :binary gt 
+98     :on_false 131 
+101    :line 353 
+104    :load_global irange_iterator 
+107    :load_global __irange_dec 
+110    :load_frame 1(new_start) 
+112    :load_frame 2(new_stop) 
+114    :load_frame 0(self) 
+116    :load_attr _step 
+119    :unary neg 
+121    :pack_params 3 
+123    :f_call 
+124    :pack_params 1 
+126    :f_call 
+127    :return 
+128    :done_if 158 
+131    :line 355 
+134    :load_global irange_iterator 
+137    :load_global __irange_inc 
+140    :load_frame 1(new_start) 
+142    :load_frame 2(new_stop) 
+144    :load_frame 0(self) 
+146    :load_attr _step 
+149    :unary neg 
+151    :pack_params 3 
+153    :f_call 
+154    :pack_params 1 
+156    :f_call 
+157    :return 
+158    :none 
+159    :return 
+
+Function __irange_1 kind:8704 2 parameters, 2 locals:
+Code at 0xb738dbbc:
+0      :line 358 
+3      :load_frame 0(start) 
+5      :load_frame 1(stop) 
+7      :binary lt 
+9      :on_false 45 
+12     :line 359 
+15     :load_frame 0(start) 
+17     :yield 
+18     :line 360 
+21     :load_frame 0(start) 
+23     :byte 1 
+25     :inplace iadd 
+27     :store_frame 0(start) 
+29     :line 358 
+32     :load_frame 0(start) 
+34     :load_frame 1(stop) 
+36     :binary lt 
+38     :on_false 45 
+41     :end_loop 12 
+45     :none 
+46     :return 
+
+Function __irange_inc kind:8704 3 parameters, 3 locals:
+Code at 0xb738dc34:
+0      :line 363 
+3      :load_frame 0(start) 
+5      :load_frame 1(stop) 
+7      :binary lt 
+9      :on_false 45 
+12     :line 364 
+15     :load_frame 0(start) 
+17     :yield 
+18     :line 365 
+21     :load_frame 0(start) 
+23     :load_frame 2(step) 
+25     :inplace iadd 
+27     :store_frame 0(start) 
+29     :line 363 
+32     :load_frame 0(start) 
+34     :load_frame 1(stop) 
+36     :binary lt 
+38     :on_false 45 
+41     :end_loop 12 
+45     :none 
+46     :return 
+
+Function __irange_dec kind:8704 3 parameters, 3 locals:
+Code at 0xb738dcb0:
+0      :line 368 
+3      :load_frame 0(start) 
+5      :load_frame 1(stop) 
+7      :binary gt 
+9      :on_false 45 
+12     :line 369 
+15     :load_frame 0(start) 
+17     :yield 
+18     :line 370 
+21     :load_frame 0(start) 
+23     :load_frame 2(step) 
+25     :inplace iadd 
+27     :store_frame 0(start) 
+29     :line 368 
+32     :load_frame 0(start) 
+34     :load_frame 1(stop) 
+36     :binary gt 
+38     :on_false 45 
+41     :end_loop 12 
+45     :none 
+46     :return 
+
+Function __init__ kind:8192 2 parameters, 2 locals:
+Code at 0xb738dd2c:
+0      :line 376 
+3      :load_frame 1(gen) 
+5      :load_frame 0(self) 
+7      :store_attr ___gen 
+10     :none 
+11     :return 
+
+Function __iter__ kind:8192 1 parameters, 1 locals:
+Code at 0xb738dd80:
+0      :line 379 
+3      :load_frame 0(self) 
+5      :return 
+
+Function __next__ kind:8192 1 parameters, 1 locals:
+Code at 0xb738ddcc:
+0      :line 382 
+3      :load_global next 
+6      :load_frame 0(self) 
+8      :load_attr __gen 
+11     :pack_params 1 
+13     :f_call 
+14     :return 
+
+Function getattr kind:8192 2 parameters, 2 locals:
+Code at 0xb738de20:
+0      :line 387 
+3      :load_frame 0(obj) 
+5      :load_special __getattribute__ 
+7      :load_frame 1(name) 
+9      :pack_params 1 
+11     :f_call 
+12     :return 
+
+Function delattr kind:8192 2 parameters, 2 locals:
+Code at 0xb738de78:
+0      :line 391 
+3      :none 
+4      :return 
+
+Function make_immutable kind:8192 1 parameters, 1 locals:
+Code at 0xb738dec8:
+0      :line 395 
+3      :none 
+4      :return 
+
+Function surrogate_new_function kind:8192 2 parameters, 2 locals:
+Code at 0xb738df14:
+0      :line 399 
+3      :none 
+4      :return 
+
+Function _surrogate_new kind:9216 2 parameters, 2 locals:
+Code at 0xb738df64:
+0      :line 403 
+3      :load_global surrogate_new_function 
+6      :load_deref 1 0 
+9      :load_frame 1(func) 
+11     :pack_params 2 
+13     :f_call 
+14     :drop 
+15     :line 404 
+18     :load_frame 1(func) 
+20     :return 
+
+Function surrogate_new kind:8192 1 parameters, 2 locals:
+Code at 0xb738dfc4:
+0      :line 402 
+3      :empty_tuple 
+4      :dictionary 
+5      :make_closure 33 
+7      :store_frame 1(_surrogate_new) 
+9      :line 405 
+12     :load_frame 1(_surrogate_new) 
+14     :return 
+
+Function new_object_no_init kind:8192 1 parameters, 1 locals:
+Code at 0xb738e01c:
+0      :line 409 
+3      :load_global object_allocate 
+6      :load_frame 0(cls) 
+8      :pack_params 1 
+10     :f_call 
+11     :return 
+
+Function type_call kind:8204 3 parameters, 4 locals:
+Code at 0xb738e06c:
+0      :line 415 
+3      :load_frame 0(cls) 
+5      :constant 6 
+8      :get_class_attr 
+9      :load_frame 0(cls) 
+11     :pack 1 
+13     :load_frame 1(args) 
+15     :tuple_concat 
+16     :load_frame 2(kws) 
+18     :copy_dict 
+19     :f_call 
+20     :store_frame 3(obj) 
+22     :line 416 
+25     :load_frame 3(obj) 
+27     :type 
+28     :load_frame 0(cls) 
+30     :subtype 
+31     :on_false 50 
+34     :line 417 
+37     :load_frame 3(obj) 
+39     :load_special __init__ 
+41     :load_frame 1(args) 
+43     :sequence_to_list_or_tuple 
+44     :as_tuple 
+45     :load_frame 2(kws) 
+47     :copy_dict 
+48     :f_call 
+49     :drop 
+50     :line 418 
+53     :load_frame 3(obj) 
+55     :return 
+
+Function alloc_and_init kind:8204 3 parameters, 4 locals:
+Code at 0xb738e0f4:
+0      :line 424 
+3      :load_global object_allocate 
+6      :load_frame 0(cls) 
+8      :pack_params 1 
+10     :f_call 
+11     :store_frame 3(obj) 
+13     :line 425 
+16     :load_frame 0(cls) 
+18     :load_attr __init__ 
+21     :load_frame 3(obj) 
+23     :pack 1 
+25     :load_frame 1(args) 
+27     :tuple_concat 
+28     :load_frame 2(kws) 
+30     :copy_dict 
+31     :f_call 
+32     :drop 
+33     :line 426 
+36     :load_frame 3(obj) 
+38     :return 
+
+Function object_repr kind:8192 1 parameters, 1 locals:
+Code at 0xb738e16c:
+0      :line 437 
+3      :none 
+4      :return 
+
+Function repr kind:8192 1 parameters, 1 locals:
+Code at 0xb738e1b8:
+0      :line 445 
+3      :none 
+4      :return 
+
+Function _bool kind:8192 2 parameters, 2 locals:
+Code at 0xb738e204:
+0      :line 449 
+3      :none 
+4      :return 
+
+Function print kind:8204 2 parameters, 6 locals:
+Code at 0xb738e254:
+0      :line 457 
+3      :constant 21 
+6      :store_frame 3(sep) 
+8      :line 458 
+11     :constant 22 
+14     :store_frame 2(end) 
+16     :line 459 
+19     :load_frame 1(kw) 
+21     :on_false 107 
+24     :line 460 
+27     :constant 23 
+30     :load_frame 1(kw) 
+32     :contains 
+33     :on_false 49 
+36     :line 461 
+39     :load_global InternalError 
+42     :constant 24 
+45     :pack_params 1 
+47     :f_call 
+48     :raise 
+49     :line 462 
+52     :constant 25 
+55     :load_frame 1(kw) 
+57     :contains 
+58     :on_false 78 
+61     :line 463 
+64     :load_global str 
+67     :load_frame 1(kw) 
+69     :constant 25 
+72     :getitem 
+73     :pack_params 1 
+75     :f_call 
+76     :store_frame 3(sep) 
+78     :line 464 
+81     :constant 26 
+84     :load_frame 1(kw) 
+86     :contains 
+87     :on_false 107 
+90     :line 465 
+93     :load_global str 
+96     :load_frame 1(kw) 
+98     :constant 26 
+101    :getitem 
+102    :pack_params 1 
+104    :f_call 
+105    :store_frame 2(end) 
+107    :line 466 
+110    :load_global len 
+113    :load_frame 0(args) 
+115    :pack_params 1 
+117    :f_call 
+118    :store_frame 4(items) 
+120    :line 467 
+123    :load_frame 4(items) 
+125    :byte 0 
+127    :binary gt 
+129    :on_false 232 
+132    :line 468 
+135    :load_global _print_string 
+138    :load_global str 
+141    :load_frame 0(args) 
+143    :byte 0 
+145    :getitem 
+146    :pack_params 1 
+148    :f_call 
+149    :pack_params 1 
+151    :f_call 
+152    :drop 
+153    :line 469 
+156    :byte 1 
+158    :store_frame 5(i) 
+160    :line 470 
+163    :load_frame 5(i) 
+165    :load_frame 4(items) 
+167    :binary lt 
+169    :on_false 232 
+172    :line 471 
+175    :load_global _print_string 
+178    :load_frame 3(sep) 
+180    :pack_params 1 
+182    :f_call 
+183    :drop 
+184    :line 472 
+187    :load_global _print_string 
+190    :load_global str 
+193    :load_frame 0(args) 
+195    :load_frame 5(i) 
+197    :getitem 
+198    :pack_params 1 
+200    :f_call 
+201    :pack_params 1 
+203    :f_call 
+204    :drop 
+205    :line 473 
+208    :load_frame 5(i) 
+210    :byte 1 
+212    :inplace iadd 
+214    :store_frame 5(i) 
+216    :line 470 
+219    :load_frame 5(i) 
+221    :load_frame 4(items) 
+223    :binary lt 
+225    :on_false 232 
+228    :end_loop 172 
+232    :line 474 
+235    :load_global _print_string 
+238    :load_frame 2(end) 
+240    :pack_params 1 
+242    :f_call 
+243    :drop 
+244    :none 
+245    :return 
+
+Function hash kind:8192 1 parameters, 1 locals:
+Code at 0xb738e3a4:
+0      :line 478 
+3      :load_frame 0(obj) 
+5      :load_special __hash__ 
+7      :pack_params 0 
+9      :f_call 
+10     :return 
+
+Function object_hash kind:8192 1 parameters, 1 locals:
+Code at 0xb738e3f4:
+0      :line 483 
+3      :none 
+4      :return 
+
+Function int_hash kind:8192 1 parameters, 1 locals:
+Code at 0xb738e440:
+0      :line 492 
+3      :none 
+4      :return 
+
+Function object_type kind:8192 2 parameters, 2 locals:
+Code at 0xb738e48c:
+0      :line 498 
+3      :none 
+4      :return 
+
+Function _new_str kind:8192 2 parameters, 2 locals:
+Code at 0xb738e4dc:
+0      :line 505 
+3      :none 
+4      :return 
+
+Function object_str kind:8192 1 parameters, 1 locals:
+Code at 0xb738e52c:
+0      :line 513 
+3      :none 
+4      :return 
+
+Function type_str kind:8192 1 parameters, 1 locals:
+Code at 0xb738e578:
+0      :line 521 
+3      :none 
+4      :return 
+
+Function type_check kind:8192 2 parameters, 2 locals:
+Code at 0xb738e5c4:
+0      :line 529 
+3      :load_frame 0(obj) 
+5      :type 
+6      :load_frame 1(cls) 
+8      :subtype 
+9      :on_true 40 
+12     :line 531 
+15     :load_global TypeError 
+18     :constant 31 
+21     :load_frame 1(cls) 
+23     :load_attr __name__ 
+26     :load_frame 0(obj) 
+28     :type 
+29     :load_attr __name__ 
+32     :pack 2 
+34     :binary mod 
+36     :pack_params 1 
+38     :f_call 
+39     :raise 
+40     :none 
+41     :return 
+
+Function function_str kind:8192 1 parameters, 1 locals:
+Code at 0xb738e638:
+0      :line 535 
+3      :load_global type_check 
+6      :load_frame 0(self) 
+8      :load_global type_check 
+11     :type 
+12     :pack_params 2 
+14     :f_call 
+15     :drop 
+16     :line 536 
+19     :constant 32 
+22     :load_frame 0(self) 
+24     :load_attr __name__ 
+27     :load_global hex 
+30     :load_global id 
+33     :load_frame 0(self) 
+35     :pack_params 1 
+37     :f_call 
+38     :pack_params 1 
+40     :f_call 
+41     :pack 2 
+43     :binary mod 
+45     :return 
+
+Function to_str kind:8192 4 parameters, 4 locals:
+Code at 0xb738e6ac:
+0      :line 546 
+3      :load_frame 2(encoding) 
+5      :none 
+6      :is 
+7      :on_false 25 
+10     :line 547 
+13     :load_frame 1(obj) 
+15     :load_attr __str__ 
+18     :pack_params 0 
+20     :f_call 
+21     :return 
+22     :done_if 42 
+25     :line 549 
+28     :load_global decode_object 
+31     :load_global x 
+34     :load_frame 2(encoding) 
+36     :load_frame 3(errors) 
+38     :pack_params 3 
+40     :f_call 
+41     :drop 
+42     :none 
+43     :return 
+
+Function id kind:8192 1 parameters, 1 locals:
+Code at 0xb738e728:
+0      :line 554 
+3      :none 
+4      :return 
+
+Function to_int kind:8192 2 parameters, 2 locals:
+Code at 0xb738e774:
+0      :line 560 
+3      :load_frame 1(number) 
+5      :load_attr __int__ 
+8      :pack_params 0 
+10     :f_call 
+11     :return 
+
+Function find_in_str kind:8192 2 parameters, 5 locals:
+Code at 0xb738e7c8:
+0      :line 567 
+3      :load_global type_check 
+6      :load_frame 0(self) 
+8      :load_global str 
+11     :pack_params 2 
+13     :f_call 
+14     :drop 
+15     :line 568 
+18     :load_global type_check 
+21     :load_frame 1(s) 
+23     :load_global str 
+26     :pack_params 2 
+28     :f_call 
+29     :drop 
+30     :line 569 
+33     :load_frame 1(s) 
+35     :load_special __len__ 
+37     :pack_params 0 
+39     :f_call 
+40     :store_frame 4(l) 
+42     :line 570 
+45     :load_global range 
+48     :byte 0 
+50     :load_frame 0(self) 
+52     :load_special __len__ 
+54     :pack_params 0 
+56     :f_call 
+57     :load_frame 4(l) 
+59     :binary sub 
+61     :pack_params 2 
+63     :f_call 
+64     :iter 
+65     :store_frame 2(1) 
+67     :for_loop 112 
+70     :load_frame 2(1) 
+72     :next 
+73     :store_frame 3(i) 
+75     :line 571 
+78     :load_global substring 
+81     :load_frame 0(self) 
+83     :load_frame 3(i) 
+85     :load_frame 3(i) 
+87     :load_frame 4(l) 
+89     :binary add 
+91     :pack_params 3 
+93     :f_call 
+94     :load_frame 1(s) 
+96     :binary eq 
+98     :on_false 108 
+101    :line 572 
+104    :load_frame 3(i) 
+106    :pop_handler 
+107    :return 
+108    :end_loop 70 
+112    :exit_loop 
+113    :line 573 
+116    :byte -1 
+118    :return 
+
+Function substring kind:8192 3 parameters, 3 locals:
+Code at 0xb738e894:
+0      :line 581 
+3      :none 
+4      :return 
+
+Function str_to_int kind:8192 1 parameters, 1 locals:
+Code at 0xb738e8e8:
+0      :line 587 
+3      :none 
+4      :return 
+
+Function to_float kind:8192 2 parameters, 2 locals:
+Code at 0xb738e934:
+0      :line 595 
+3      :load_frame 1(arg) 
+5      :load_attr __float__ 
+8      :pack_params 0 
+10     :f_call 
+11     :return 
+
+Function _ kind:8192 1 parameters, 1 locals:
+Code at 0xb738e988:
+0      :line 600 
+3      :load_frame 0(self) 
+5      :return 
+
+Function _ kind:8192 1 parameters, 1 locals:
+Code at 0xb738e9d4:
+0      :line 604 
+3      :load_frame 0(self) 
+5      :return 
+
+Function _ kind:8192 1 parameters, 1 locals:
+Code at 0xb738ea20:
+0      :line 608 
+3      :load_frame 0(self) 
+5      :return 
+
+Function _ kind:8192 1 parameters, 1 locals:
+Code at 0xb738ea6c:
+0      :line 612 
+3      :load_frame 0(self) 
+5      :return 
+
+Function _ kind:8192 1 parameters, 1 locals:
+Code at 0xb738eab8:
+0      :line 616 
+3      :load_frame 0(self) 
+5      :return 
+
+Function _ kind:8192 1 parameters, 1 locals:
+Code at 0xb738eb04:
+0      :line 620 
+3      :load_frame 0(self) 
+5      :return 
+
+Function _ kind:8192 1 parameters, 1 locals:
+Code at 0xb738eb50:
+0      :line 624 
+3      :load_frame 0(self) 
+5      :return 
+
+Function int_to_float kind:8192 1 parameters, 1 locals:
+Code at 0xb738eb9c:
+0      :line 630 
+3      :none 
+4      :return 
+
+Function float_to_int kind:8192 1 parameters, 1 locals:
+Code at 0xb738ebe8:
+0      :line 637 
+3      :none 
+4      :return 
+
+Function init_Exception kind:8196 2 parameters, 2 locals:
+Code at 0xb738ec34:
+0      :line 643 
+3      :load_frame 1(args) 
+5      :load_frame 0(self) 
+7      :store_attr args 
+10     :none 
+11     :return 
+
+Function str_Exception kind:8192 1 parameters, 3 locals:
+Code at 0xb738ec88:
+0      :line 649 
+3      :load_global type_check 
+6      :load_frame 0(self) 
+8      :load_global BaseException 
+11     :pack_params 2 
+13     :f_call 
+14     :drop 
+15     :line 650 
+18     :constant 3 
+21     :store_frame 1(s) 
+23     :line 652 
+26     :protect 104 
+29     :line 653 
+32     :load_frame 0(self) 
+34     :load_attr __traceback__ 
+37     :store_frame 2(t) 
+39     :line 654 
+42     :load_frame 2(t) 
+44     :on_false 101 
+47     :line 655 
+50     :load_frame 1(s) 
+52     :constant 39 
+55     :load_frame 2(t) 
+57     :load_attr file 
+60     :pack_params 0 
+62     :f_call 
+63     :load_frame 2(t) 
+65     :load_attr line 
+68     :pack_params 0 
+70     :f_call 
+71     :pack 2 
+73     :binary mod 
+75     :inplace iadd 
+77     :store_frame 1(s) 
+79     :line 656 
+82     :load_frame 2(t) 
+84     :load_attr previous 
+87     :store_frame 2(t) 
+89     :line 654 
+92     :load_frame 2(t) 
+94     :on_false 101 
+97     :end_loop 47 
+101    :end_protect 105 
+104    :drop 
+105    :line 659 
+108    :load_frame 1(s) 
+110    :load_frame 0(self) 
+112    :type 
+113    :load_attr __name__ 
+116    :inplace iadd 
+118    :store_frame 1(s) 
+120    :line 660 
+123    :load_global len 
+126    :load_frame 0(self) 
+128    :load_attr args 
+131    :pack_params 1 
+133    :f_call 
+134    :byte 0 
+136    :binary eq 
+138    :on_false 147 
+141    :line 661 
+144    :done_if 224 
+147    :line 662 
+150    :load_global len 
+153    :load_frame 0(self) 
+155    :load_attr args 
+158    :pack_params 1 
+160    :f_call 
+161    :byte 1 
+163    :binary eq 
+165    :on_false 199 
+168    :line 663 
+171    :load_frame 1(s) 
+173    :constant 40 
+176    :load_global str 
+179    :load_frame 0(self) 
+181    :load_attr args 
+184    :byte 0 
+186    :getitem 
+187    :pack_params 1 
+189    :f_call 
+190    :binary add 
+192    :inplace iadd 
+194    :store_frame 1(s) 
+196    :done_if 224 
+199    :line 665 
+202    :load_frame 1(s) 
+204    :constant 40 
+207    :load_global str 
+210    :load_frame 0(self) 
+212    :load_attr args 
+215    :pack_params 1 
+217    :f_call 
+218    :binary add 
+220    :inplace iadd 
+222    :store_frame 1(s) 
+224    :line 666 
+227    :load_frame 1(s) 
+229    :return 
+
+Function bool_str kind:8192 1 parameters, 1 locals:
+Code at 0xb738edbc:
+0      :line 686 
+3      :load_frame 0(self) 
+5      :true 
+6      :is 
+7      :on_false 20 
+10     :line 687 
+13     :constant 41 
+16     :return 
+17     :done_if 80 
+20     :line 688 
+23     :load_frame 0(self) 
+25     :false 
+26     :is 
+27     :on_false 40 
+30     :line 689 
+33     :constant 42 
+36     :return 
+37     :done_if 80 
+40     :line 691 
+43     :load_global type_check 
+46     :load_frame 0(self) 
+48     :load_global bool 
+51     :pack_params 2 
+53     :f_call 
+54     :drop 
+55     :line 692 
+58     :debug 
+59     :on_false 80 
+62     :false 
+63     :on_false 72 
+66     :constant 43 
+69     :on_true 80 
+72     :load_global AssertionError 
+75     :none 
+76     :pack_params 1 
+78     :f_call 
+79     :raise 
+80     :none 
+81     :return 
+
+Function __bool___int kind:8192 1 parameters, 1 locals:
+Code at 0xb738ee54:
+0      :line 700 
+3      :none 
+4      :return 
+
+Function __bool___float kind:8192 1 parameters, 1 locals:
+Code at 0xb738eea0:
+0      :line 708 
+3      :none 
+4      :return 
+
+Function int_to_str kind:8192 1 parameters, 1 locals:
+Code at 0xb738eeec:
+0      :line 717 
+3      :none 
+4      :return 
+
+Function __str___float kind:8192 1 parameters, 1 locals:
+Code at 0xb738ef38:
+0      :line 726 
+3      :none 
+4      :return 
+
+Function none_str kind:8192 1 parameters, 1 locals:
+Code at 0xb738ef84:
+0      :line 731 
+3      :constant 44 
+6      :return 
+
+Function __hash___str kind:8192 1 parameters, 1 locals:
+Code at 0xb738efd0:
+0      :line 741 
+3      :none 
+4      :return 
+
+Function make_slice kind:8192 1 parameters, 1 locals:
+Code at 0xb738f01c:
+0      :line 747 
+3      :none 
+4      :return 
+
+Function slice_new kind:8204 3 parameters, 3 locals:
+Code at 0xb738f068:
+0      :line 752 
+3      :load_global len 
+6      :load_frame 2(kws) 
+8      :pack_params 1 
+10     :f_call 
+11     :on_false 27 
+14     :line 753 
+17     :load_global TypeError 
+20     :constant 45 
+23     :pack_params 1 
+25     :f_call 
+26     :raise 
+27     :line 754 
+30     :load_global make_slice 
+33     :load_frame 1(args) 
+35     :pack_params 1 
+37     :f_call 
+38     :return 
+
+Function __str___slice kind:8192 1 parameters, 1 locals:
+Code at 0xb738f0dc:
+0      :line 760 
+3      :constant 46 
+6      :load_frame 0(self) 
+8      :load_attr start 
+11     :load_frame 0(self) 
+13     :load_attr stop 
+16     :load_frame 0(self) 
+18     :load_attr step 
+21     :pack 3 
+23     :binary mod 
+25     :return 
+
+Function __len__str kind:8192 1 parameters, 1 locals:
+Code at 0xb738f13c:
+0      :line 768 
+3      :none 
+4      :return 
+
+Function new_list kind:8192 1 parameters, 1 locals:
+Code at 0xb738f188:
+0      :line 774 
+3      :none 
+4      :return 
+
+Function _ kind:8204 3 parameters, 3 locals:
+Code at 0xb738f1d4:
+0      :line 778 
+3      :load_global new_list 
+6      :load_frame 0(cls) 
+8      :pack_params 1 
+10     :f_call 
+11     :return 
+
+Function list_init kind:8192 2 parameters, 4 locals:
+Code at 0xb738f22c:
+0      :line 784 
+3      :load_frame 1(seq) 
+5      :none 
+6      :is 
+7      :on_true 48 
+10     :line 785 
+13     :load_frame 1(seq) 
+15     :iter 
+16     :store_frame 2(1) 
+18     :for_loop 47 
+21     :load_frame 2(1) 
+23     :next 
+24     :store_frame 3(x) 
+26     :line 786 
+29     :load_global list 
+32     :load_attr append 
+35     :load_frame 0(self) 
+37     :load_frame 3(x) 
+39     :pack_params 2 
+41     :f_call 
+42     :drop 
+43     :end_loop 21 
+47     :exit_loop 
+48     :none 
+49     :return 
+
+Function make_new_list kind:8192 2 parameters, 5 locals:
+Code at 0xb738f2b0:
+0      :line 792 
+3      :list 0 
+5      :store_frame 2(1) 
+7      :load_frame 1(seq) 
+9      :iter 
+10     :store_frame 3(2) 
+12     :list_for 29 
+15     :load_frame 3(2) 
+17     :next 
+18     :store_frame 4(x) 
+20     :load_frame 2(1) 
+22     :load_frame 4(x) 
+24     :list_append 
+25     :end_loop 15 
+29     :exit_loop 
+30     :load_frame 2(1) 
+32     :return 
+
+Function make_dict kind:8192 1 parameters, 1 locals:
+Code at 0xb738f328:
+0      :line 798 
+3      :none 
+4      :return 
+
+Function dict_copy kind:8192 1 parameters, 1 locals:
+Code at 0xb738f374:
+0      :line 803 
+3      :none 
+4      :return 
+
+Function make_new_dict kind:8200 3 parameters, 6 locals:
+Code at 0xb738f3c0:
+0      :line 807 
+3      :load_frame 1(other) 
+5      :type 
+6      :load_global dict 
+9      :binary eq 
+11     :on_false 30 
+14     :line 808 
+17     :load_frame 1(other) 
+19     :load_attr copy 
+22     :pack_params 0 
+24     :f_call 
+25     :store_frame 4(result) 
+27     :done_if 70 
+30     :line 810 
+33     :dictionary 
+34     :store_frame 4(result) 
+36     :line 811 
+39     :load_frame 1(other) 
+41     :iter 
+42     :store_frame 3(1) 
+44     :for_loop 69 
+47     :load_frame 3(1) 
+49     :next 
+50     :store_frame 5(k) 
+52     :line 812 
+55     :load_frame 1(other) 
+57     :load_frame 5(k) 
+59     :getitem 
+60     :load_frame 4(result) 
+62     :load_frame 5(k) 
+64     :setitem 
+65     :end_loop 47 
+69     :exit_loop 
+70     :line 813 
+73     :load_frame 2(d) 
+75     :iter 
+76     :store_frame 3(1) 
+78     :for_loop 103 
+81     :load_frame 3(1) 
+83     :next 
+84     :store_frame 5(k) 
+86     :line 814 
+89     :load_frame 2(d) 
+91     :load_frame 5(k) 
+93     :getitem 
+94     :load_frame 4(result) 
+96     :load_frame 5(k) 
+98     :setitem 
+99     :end_loop 81 
+103    :exit_loop 
+104    :none 
+105    :return 
+
+Function init_dict kind:8200 3 parameters, 5 locals:
+Code at 0xb738f484:
+0      :line 821 
+3      :load_frame 1(other) 
+5      :iter 
+6      :store_frame 3(1) 
+8      :for_loop 33 
+11     :load_frame 3(1) 
+13     :next 
+14     :store_frame 4(i) 
+16     :line 822 
+19     :load_frame 1(other) 
+21     :load_frame 4(i) 
+23     :getitem 
+24     :load_frame 0(self) 
+26     :load_frame 4(i) 
+28     :setitem 
+29     :end_loop 11 
+33     :exit_loop 
+34     :line 823 
+37     :load_frame 2(d) 
+39     :iter 
+40     :store_frame 3(1) 
+42     :for_loop 67 
+45     :load_frame 3(1) 
+47     :next 
+48     :store_frame 4(i) 
+50     :line 824 
+53     :load_frame 2(d) 
+55     :load_frame 4(i) 
+57     :getitem 
+58     :load_frame 0(self) 
+60     :load_frame 4(i) 
+62     :setitem 
+63     :end_loop 45 
+67     :exit_loop 
+68     :none 
+69     :return 
+
+Function update_dict kind:8192 2 parameters, 4 locals:
+Code at 0xb738f520:
+0      :line 830 
+3      :load_frame 0(self) 
+5      :load_attr clear 
+8      :pack_params 0 
+10     :f_call 
+11     :drop 
+12     :line 831 
+15     :load_frame 1(d) 
+17     :iter 
+18     :store_frame 2(1) 
+20     :for_loop 45 
+23     :load_frame 2(1) 
+25     :next 
+26     :store_frame 3(i) 
+28     :line 832 
+31     :load_frame 1(d) 
+33     :load_frame 3(i) 
+35     :getitem 
+36     :load_frame 0(self) 
+38     :load_frame 3(i) 
+40     :setitem 
+41     :end_loop 23 
+45     :exit_loop 
+46     :none 
+47     :return 
+
+Function _repr_enter kind:8192 1 parameters, 1 locals:
+Code at 0xb738f5a0:
+0      :line 837 
+3      :none 
+4      :return 
+
+Function _repr_leave kind:8192 1 parameters, 1 locals:
+Code at 0xb738f5ec:
+0      :line 841 
+3      :none 
+4      :return 
+
+Function list_repr kind:8192 1 parameters, 6 locals:
+Code at 0xb738f638:
+0      :line 846 
+3      :load_global len 
+6      :load_frame 0(self) 
+8      :pack_params 1 
+10     :f_call 
+11     :store_frame 2(size) 
+13     :line 847 
+16     :load_frame 2(size) 
+18     :byte 0 
+20     :binary eq 
+22     :on_false 32 
+25     :line 848 
+28     :constant 50 
+31     :return 
+32     :line 849 
+35     :load_global _repr_enter 
+38     :load_frame 0(self) 
+40     :pack_params 1 
+42     :f_call 
+43     :on_false 53 
+46     :line 850 
+49     :constant 51 
+52     :return 
+53     :line 851 
+56     :load_global str_buf 
+59     :pack_params 0 
+61     :f_call 
+62     :store_frame 4(buf) 
+64     :line 852 
+67     :load_global iter 
+70     :load_frame 0(self) 
+72     :pack_params 1 
+74     :f_call 
+75     :store_frame 5(it) 
+77     :line 853 
+80     :load_global str_buf 
+83     :load_attr append 
+86     :load_frame 4(buf) 
+88     :constant 52 
+91     :pack_params 2 
+93     :f_call 
+94     :drop 
+95     :line 854 
+98     :load_global str_buf 
+101    :load_attr append 
+104    :load_frame 4(buf) 
+106    :load_global repr 
+109    :load_global next 
+112    :load_frame 5(it) 
+114    :pack_params 1 
+116    :f_call 
+117    :pack_params 1 
+119    :f_call 
+120    :pack_params 2 
+122    :f_call 
+123    :drop 
+124    :line 855 
+127    :load_frame 5(it) 
+129    :iter 
+130    :store_frame 1(1) 
+132    :for_loop 185 
+135    :load_frame 1(1) 
+137    :next 
+138    :store_frame 3(x) 
+140    :line 856 
+143    :load_global str_buf 
+146    :load_attr append 
+149    :load_frame 4(buf) 
+151    :constant 53 
+154    :pack_params 2 
+156    :f_call 
+157    :drop 
+158    :line 857 
+161    :load_global str_buf 
+164    :load_attr append 
+167    :load_frame 4(buf) 
+169    :load_global repr 
+172    :load_frame 3(x) 
+174    :pack_params 1 
+176    :f_call 
+177    :pack_params 2 
+179    :f_call 
+180    :drop 
+181    :end_loop 135 
+185    :exit_loop 
+186    :line 858 
+189    :load_global str_buf 
+192    :load_attr append 
+195    :load_frame 4(buf) 
+197    :constant 54 
+200    :pack_params 2 
+202    :f_call 
+203    :drop 
+204    :line 859 
+207    :load_global _repr_leave 
+210    :load_frame 0(self) 
+212    :pack_params 1 
+214    :f_call 
+215    :drop 
+216    :line 860 
+219    :load_frame 4(buf) 
+221    :load_attr __str__ 
+224    :pack_params 0 
+226    :f_call 
+227    :return 
+
+Function list_str kind:8192 1 parameters, 1 locals:
+Code at 0xb738f774:
+0      :line 866 
+3      :load_frame 0(self) 
+5      :load_special __repr__ 
+7      :pack_params 0 
+9      :f_call 
+10     :return 
+
+Function list_len kind:8192 1 parameters, 1 locals:
+Code at 0xb738f7c4:
+0      :line 874 
+3      :none 
+4      :return 
+
+Function list_pop kind:8192 2 parameters, 2 locals:
+Code at 0xb738f810:
+0      :line 881 
+3      :none 
+4      :return 
+
+Function tuple_contains kind:8192 2 parameters, 2 locals:
+Code at 0xb738f860:
+0      :line 887 
+3      :none 
+4      :return 
+
+Function list_contains kind:8192 2 parameters, 2 locals:
+Code at 0xb738f8b0:
+0      :line 893 
+3      :none 
+4      :return 
+
+Function list_append kind:8192 2 parameters, 2 locals:
+Code at 0xb738f900:
+0      :line 911 
+3      :none 
+4      :return 
+
+Function list_reverse kind:8192 1 parameters, 1 locals:
+Code at 0xb738f950:
+0      :line 919 
+3      :none 
+4      :return 
+
+Function list_insert kind:8192 3 parameters, 3 locals:
+Code at 0xb738f99c:
+0      :line 925 
+3      :none 
+4      :return 
+
+Function list_iter kind:8192 1 parameters, 1 locals:
+Code at 0xb738f9f0:
+0      :line 932 
+3      :none 
+4      :return 
+
+Function listiterator_next kind:8192 1 parameters, 1 locals:
+Code at 0xb738fa3c:
+0      :line 939 
+3      :none 
+4      :return 
+
+Function _ kind:8192 1 parameters, 1 locals:
+Code at 0xb738fa88:
+0      :line 945 
+3      :load_frame 0(self) 
+5      :return 
+
+Function tuple_from_list kind:8192 2 parameters, 2 locals:
+Code at 0xb738fad4:
+0      :line 950 
+3      :none 
+4      :return 
+
+Function new_tuple kind:8192 2 parameters, 6 locals:
+Code at 0xb738fb24:
+0      :line 955 
+3      :load_global type 
+6      :load_frame 1(seq) 
+8      :pack_params 1 
+10     :f_call 
+11     :load_global list 
+14     :is 
+15     :on_false 35 
+18     :line 956 
+21     :load_global tuple_from_list 
+24     :load_frame 0(cls) 
+26     :load_frame 1(seq) 
+28     :pack_params 2 
+30     :f_call 
+31     :return 
+32     :done_if 110 
+35     :line 957 
+38     :load_global type 
+41     :load_frame 1(seq) 
+43     :pack_params 1 
+45     :f_call 
+46     :load_global tuple 
+49     :is 
+50     :on_false 62 
+53     :line 958 
+56     :load_frame 1(seq) 
+58     :return 
+59     :done_if 110 
+62     :line 960 
+65     :list 0 
+67     :store_frame 2(1) 
+69     :load_frame 1(seq) 
+71     :iter 
+72     :store_frame 3(2) 
+74     :list_for 91 
+77     :load_frame 3(2) 
+79     :next 
+80     :store_frame 4(x) 
+82     :load_frame 2(1) 
+84     :load_frame 4(x) 
+86     :list_append 
+87     :end_loop 77 
+91     :exit_loop 
+92     :load_frame 2(1) 
+94     :store_frame 5(l) 
+96     :line 961 
+99     :load_global tuple_from_list 
+102    :load_frame 0(cls) 
+104    :load_frame 5(l) 
+106    :pack_params 2 
+108    :f_call 
+109    :return 
+110    :none 
+111    :return 
+
+Function make_set kind:8192 1 parameters, 1 locals:
+Code at 0xb738fbec:
+0      :line 966 
+3      :none 
+4      :return 
+
+Function set_new kind:8192 2 parameters, 2 locals:
+Code at 0xb738fc38:
+0      :line 972 
+3      :load_global make_set 
+6      :load_frame 0(cls) 
+8      :pack_params 1 
+10     :f_call 
+11     :return 
+
+Function set_init kind:8192 2 parameters, 4 locals:
+Code at 0xb738fc8c:
+0      :line 979 
+3      :load_frame 1(seq) 
+5      :on_false 43 
+8      :line 980 
+11     :load_frame 1(seq) 
+13     :iter 
+14     :store_frame 2(1) 
+16     :for_loop 42 
+19     :load_frame 2(1) 
+21     :next 
+22     :store_frame 3(x) 
+24     :line 981 
+27     :load_frame 0(self) 
+29     :load_attr add 
+32     :load_frame 3(x) 
+34     :pack_params 1 
+36     :f_call 
+37     :drop 
+38     :end_loop 19 
+42     :exit_loop 
+43     :none 
+44     :return 
+
+Function tuple_iter kind:8192 1 parameters, 1 locals:
+Code at 0xb738fd0c:
+0      :line 987 
+3      :none 
+4      :return 
+
+Function tupleiterator_next kind:8192 1 parameters, 1 locals:
+Code at 0xb738fd58:
+0      :line 994 
+3      :none 
+4      :return 
+
+Function _ kind:8192 1 parameters, 1 locals:
+Code at 0xb738fda4:
+0      :line 999 
+3      :load_frame 0(self) 
+5      :return 
+
+Function __len__tuple kind:8192 1 parameters, 1 locals:
+Code at 0xb738fdf0:
+0      :line 1006 
+3      :none 
+4      :return 
+
+Function bytes_length kind:8192 1 parameters, 1 locals:
+Code at 0xb738fe3c:
+0      :line 1014 
+3      :none 
+4      :return 
+
+Function bytes_getitem kind:8192 2 parameters, 2 locals:
+Code at 0xb738fe88:
+0      :line 1022 
+3      :none 
+4      :return 
+
+Function dict_iter_init kind:8192 2 parameters, 2 locals:
+Code at 0xb738fed8:
+0      :line 1029 
+3      :none 
+4      :return 
+
+Function dict_iter_next kind:8192 1 parameters, 1 locals:
+Code at 0xb738ff28:
+0      :line 1036 
+3      :none 
+4      :return 
+
+Function dict_iter kind:8192 1 parameters, 1 locals:
+Code at 0xb738ff74:
+0      :line 1042 
+3      :load_global dict_iterator 
+6      :load_frame 0(self) 
+8      :pack_params 1 
+10     :f_call 
+11     :return 
+
+Function dict_iterator_iter kind:8192 1 parameters, 1 locals:
+Code at 0xb738ffc4:
+0      :line 1048 
+3      :load_frame 0(self) 
+5      :return 
+
+Function dict_proxy_iter kind:8192 1 parameters, 1 locals:
+Code at 0xb7390034:
+0      :line 1055 
+3      :none 
+4      :return 
+
+Function dict_proxy_iter_next kind:8192 1 parameters, 1 locals:
+Code at 0xb7390080:
+0      :line 1064 
+3      :none 
+4      :return 
+
+Function dict_values kind:8192 1 parameters, 1 locals:
+Code at 0xb73900cc:
+0      :line 1072 
+3      :none 
+4      :return 
+
+Function dict_values_iterator_iter kind:8192 1 parameters, 1 locals:
+Code at 0xb7390118:
+0      :line 1081 
+3      :none 
+4      :return 
+
+Function dict_values_iterator_next kind:8192 1 parameters, 1 locals:
+Code at 0xb7390164:
+0      :line 1088 
+3      :none 
+4      :return 
+
+Function dict_repr kind:8192 1 parameters, 6 locals:
+Code at 0xb73901b0:
+0      :line 1096 
+3      :load_global len 
+6      :load_frame 0(self) 
+8      :pack_params 1 
+10     :f_call 
+11     :store_frame 2(size) 
+13     :line 1097 
+16     :load_frame 2(size) 
+18     :byte 0 
+20     :binary eq 
+22     :on_false 32 
+25     :line 1098 
+28     :constant 63 
+31     :return 
+32     :line 1099 
+35     :load_global _repr_enter 
+38     :load_frame 0(self) 
+40     :pack_params 1 
+42     :f_call 
+43     :on_false 53 
+46     :line 1100 
+49     :constant 64 
+52     :return 
+53     :line 1101 
+56     :load_global str_buf 
+59     :pack_params 0 
+61     :f_call 
+62     :store_frame 4(buf) 
+64     :line 1102 
+67     :load_global iter 
+70     :load_frame 0(self) 
+72     :pack_params 1 
+74     :f_call 
+75     :store_frame 5(it) 
+77     :line 1103 
+80     :load_global str_buf 
+83     :load_attr append 
+86     :load_frame 4(buf) 
+88     :constant 65 
+91     :pack_params 2 
+93     :f_call 
+94     :drop 
+95     :line 1104 
+98     :load_global next 
+101    :load_frame 5(it) 
+103    :pack_params 1 
+105    :f_call 
+106    :store_frame 3(k) 
+108    :line 1105 
+111    :load_global str_buf 
+114    :load_attr append 
+117    :load_frame 4(buf) 
+119    :load_global repr 
+122    :load_frame 3(k) 
+124    :pack_params 1 
+126    :f_call 
+127    :pack_params 2 
+129    :f_call 
+130    :drop 
+131    :line 1106 
+134    :load_global str_buf 
+137    :load_attr append 
+140    :load_frame 4(buf) 
+142    :constant 40 
+145    :pack_params 2 
+147    :f_call 
+148    :drop 
+149    :line 1107 
+152    :load_global str_buf 
+155    :load_attr append 
+158    :load_frame 4(buf) 
+160    :load_global repr 
+163    :load_frame 0(self) 
+165    :load_frame 3(k) 
+167    :getitem 
+168    :pack_params 1 
+170    :f_call 
+171    :pack_params 2 
+173    :f_call 
+174    :drop 
+175    :line 1108 
+178    :load_frame 5(it) 
+180    :iter 
+181    :store_frame 1(1) 
+183    :for_loop 280 
+186    :load_frame 1(1) 
+188    :next 
+189    :store_frame 3(k) 
+191    :line 1109 
+194    :load_global str_buf 
+197    :load_attr append 
+200    :load_frame 4(buf) 
+202    :constant 53 
+205    :pack_params 2 
+207    :f_call 
+208    :drop 
+209    :line 1110 
+212    :load_global str_buf 
+215    :load_attr append 
+218    :load_frame 4(buf) 
+220    :load_global repr 
+223    :load_frame 3(k) 
+225    :pack_params 1 
+227    :f_call 
+228    :pack_params 2 
+230    :f_call 
+231    :drop 
+232    :line 1111 
+235    :load_global str_buf 
+238    :load_attr append 
+241    :load_frame 4(buf) 
+243    :constant 40 
+246    :pack_params 2 
+248    :f_call 
+249    :drop 
+250    :line 1112 
+253    :load_global str_buf 
+256    :load_attr append 
+259    :load_frame 4(buf) 
+261    :load_global repr 
+264    :load_frame 0(self) 
+266    :load_frame 3(k) 
+268    :getitem 
+269    :pack_params 1 
+271    :f_call 
+272    :pack_params 2 
+274    :f_call 
+275    :drop 
+276    :end_loop 186 
+280    :exit_loop 
+281    :line 1113 
+284    :load_global str_buf 
+287    :load_attr append 
+290    :load_frame 4(buf) 
+292    :constant 66 
+295    :pack_params 2 
+297    :f_call 
+298    :drop 
+299    :line 1114 
+302    :load_global _repr_leave 
+305    :load_frame 0(self) 
+307    :pack_params 1 
+309    :f_call 
+310    :drop 
+311    :line 1115 
+314    :load_global str_buf 
+317    :load_attr __str__ 
+320    :load_frame 4(buf) 
+322    :pack_params 1 
+324    :f_call 
+325    :return 
+
+Function dict_str kind:8192 1 parameters, 1 locals:
+Code at 0xb7390350:
+0      :line 1122 
+3      :load_frame 0(self) 
+5      :load_special __repr__ 
+7      :pack_params 0 
+9      :f_call 
+10     :return 
+
+Function str_buf_append kind:8192 2 parameters, 2 locals:
+Code at 0xb73903a0:
+0      :line 1128 
+3      :none 
+4      :return 
+
+Function str_buf___str__ kind:8192 1 parameters, 1 locals:
+Code at 0xb73903f0:
+0      :line 1135 
+3      :none 
+4      :return 
+
+Function str_buf___len__ kind:8192 1 parameters, 1 locals:
+Code at 0xb739043c:
+0      :line 1143 
+3      :none 
+4      :return 
+
+Function str_buf_init kind:8192 1 parameters, 1 locals:
+Code at 0xb7390488:
+0      :line 1150 
+3      :none 
+4      :return 
+
+Function str_join_list kind:8192 2 parameters, 2 locals:
+Code at 0xb73904d4:
+0      :line 1156 
+3      :none 
+4      :return 
+
+Function str_join kind:8192 2 parameters, 6 locals:
+Code at 0xb7390524:
+0      :line 1161 
+3      :load_frame 1(l) 
+5      :type 
+6      :load_global list 
+9      :is 
+10     :on_false 27 
+13     :line 1162 
+16     :load_global str_join_list 
+19     :load_frame 0(self) 
+21     :load_frame 1(l) 
+23     :pack_params 2 
+25     :f_call 
+26     :return 
+27     :line 1163 
+30     :load_global str_buf 
+33     :pack_params 0 
+35     :f_call 
+36     :store_frame 4(buf) 
+38     :line 1164 
+41     :load_global iter 
+44     :load_frame 1(l) 
+46     :pack_params 1 
+48     :f_call 
+49     :store_frame 5(it) 
+51     :line 1165 
+54     :protect 83 
+57     :line 1168 
+60     :load_global str_buf 
+63     :load_attr append 
+66     :load_frame 4(buf) 
+68     :load_global next 
+71     :load_frame 5(it) 
+73     :pack_params 1 
+75     :f_call 
+76     :pack_params 2 
+78     :f_call 
+79     :drop 
+80     :end_protect 100 
+83     :copy 
+84     :load_global StopIteration 
+87     :type_check 
+88     :on_true 92 
+91     :reraise 
+92     :drop 
+93     :line 1170 
+96     :constant 3 
+99     :return 
+100    :line 1171 
+103    :load_frame 5(it) 
+105    :iter 
+106    :store_frame 2(1) 
+108    :for_loop 154 
+111    :load_frame 2(1) 
+113    :next 
+114    :store_frame 3(x) 
+116    :line 1172 
+119    :load_global str_buf 
+122    :load_attr append 
+125    :load_frame 4(buf) 
+127    :load_frame 0(self) 
+129    :pack_params 2 
+131    :f_call 
+132    :drop 
+133    :line 1173 
+136    :load_global str_buf 
+139    :load_attr append 
+142    :load_frame 4(buf) 
+144    :load_frame 3(x) 
+146    :pack_params 2 
+148    :f_call 
+149    :drop 
+150    :end_loop 111 
+154    :exit_loop 
+155    :line 1174 
+158    :load_global str_buf 
+161    :load_attr __str__ 
+164    :load_frame 4(buf) 
+166    :pack_params 1 
+168    :f_call 
+169    :return 
+
+Function tuple_str kind:8192 1 parameters, 5 locals:
+Code at 0xb7390628:
+0      :line 1179 
+3      :load_global len 
+6      :load_frame 0(self) 
+8      :pack_params 1 
+10     :f_call 
+11     :store_frame 1(size) 
+13     :line 1180 
+16     :load_frame 1(size) 
+18     :on_false 178 
+21     :line 1181 
+24     :load_frame 1(size) 
+26     :byte 1 
+28     :binary eq 
+30     :on_false 61 
+33     :line 1182 
+36     :constant 68 
+39     :load_global str 
+42     :load_frame 0(self) 
+44     :byte 0 
+46     :getitem 
+47     :pack_params 1 
+49     :f_call 
+50     :binary add 
+52     :constant 69 
+55     :binary add 
+57     :return 
+58     :done_if 175 
+61     :line 1184 
+64     :load_frame 1(size) 
+66     :byte 1 
+68     :binary sub 
+70     :store_frame 2(top) 
+72     :line 1185 
+75     :constant 68 
+78     :store_frame 4(s) 
+80     :line 1186 
+83     :byte 0 
+85     :store_frame 3(i) 
+87     :line 1187 
+90     :load_frame 3(i) 
+92     :load_frame 2(top) 
+94     :binary lt 
+96     :on_false 151 
+99     :line 1188 
+102    :load_frame 4(s) 
+104    :load_global str 
+107    :load_frame 0(self) 
+109    :load_frame 3(i) 
+111    :getitem 
+112    :pack_params 1 
+114    :f_call 
+115    :constant 53 
+118    :binary add 
+120    :inplace iadd 
+122    :store_frame 4(s) 
+124    :line 1189 
+127    :load_frame 3(i) 
+129    :byte 1 
+131    :inplace iadd 
+133    :store_frame 3(i) 
+135    :line 1187 
+138    :load_frame 3(i) 
+140    :load_frame 2(top) 
+142    :binary lt 
+144    :on_false 151 
+147    :end_loop 99 
+151    :line 1190 
+154    :load_frame 4(s) 
+156    :load_global str 
+159    :load_frame 0(self) 
+161    :load_frame 2(top) 
+163    :getitem 
+164    :pack_params 1 
+166    :f_call 
+167    :binary add 
+169    :constant 70 
+172    :binary add 
+174    :return 
+175    :done_if 185 
+178    :line 1192 
+181    :constant 71 
+184    :return 
+185    :none 
+186    :return 
+
+Function type_state_eq kind:8192 2 parameters, 2 locals:
+Code at 0xb7390738:
+0      :line 1198 
+3      :none 
+4      :return 
+
+Function type_info_eq kind:8192 2 parameters, 2 locals:
+Code at 0xb7390788:
+0      :line 1204 
+3      :none 
+4      :return 
+
+Function tuple_eq kind:8192 2 parameters, 2 locals:
+Code at 0xb73907d8:
+0      :line 1210 
+3      :none 
+4      :return 
+
+Function tuple_ne kind:8192 2 parameters, 2 locals:
+Code at 0xb7390828:
+0      :line 1216 
+3      :none 
+4      :return 
+
+Function list_eq kind:8192 2 parameters, 2 locals:
+Code at 0xb7390878:
+0      :line 1222 
+3      :none 
+4      :return 
+
+Function list_ne kind:8192 2 parameters, 2 locals:
+Code at 0xb73908c8:
+0      :line 1228 
+3      :none 
+4      :return 
+
+Function str_iter kind:8192 1 parameters, 1 locals:
+Code at 0xb7390918:
+0      :line 1235 
+3      :none 
+4      :return 
+
+Function str_iter_next kind:8192 1 parameters, 1 locals:
+Code at 0xb7390964:
+0      :line 1243 
+3      :none 
+4      :return 
+
+Function str_iter_iter kind:8192 1 parameters, 1 locals:
+Code at 0xb73909b0:
+0      :line 1247 
+3      :load_frame 0(self) 
+5      :return 
+
+Function str_startswith kind:8192 2 parameters, 4 locals:
+Code at 0xb73909fc:
+0      :line 1256 
+3      :load_global len 
+6      :load_frame 0(self) 
+8      :pack_params 1 
+10     :f_call 
+11     :load_global len 
+14     :load_frame 1(s) 
+16     :pack_params 1 
+18     :f_call 
+19     :binary lt 
+21     :on_false 29 
+24     :line 1257 
+27     :false 
+28     :return 
+29     :line 1258 
+32     :load_global range 
+35     :load_global len 
+38     :load_frame 1(s) 
+40     :pack_params 1 
+42     :f_call 
+43     :pack_params 1 
+45     :f_call 
+46     :iter 
+47     :store_frame 2(1) 
+49     :for_loop 85 
+52     :load_frame 2(1) 
+54     :next 
+55     :store_frame 3(i) 
+57     :line 1259 
+60     :load_frame 0(self) 
+62     :load_frame 3(i) 
+64     :getitem 
+65     :load_frame 1(s) 
+67     :load_frame 3(i) 
+69     :getitem 
+70     :binary ne 
+72     :on_false 81 
+75     :line 1260 
+78     :false 
+79     :pop_handler 
+80     :return 
+81     :end_loop 52 
+85     :exit_loop 
+86     :line 1261 
+89     :true 
+90     :return 
+
+Function set_contains kind:8192 2 parameters, 2 locals:
+Code at 0xb7390aa8:
+0      :line 1267 
+3      :none 
+4      :return 
+
+Function set_add kind:8192 2 parameters, 2 locals:
+Code at 0xb7390af8:
+0      :line 1273 
+3      :none 
+4      :return 
+
+Function map1 kind:8704 2 parameters, 4 locals:
+Code at 0xb7390b48:
+0      :line 1277 
+3      :load_frame 1(seq) 
+5      :iter 
+6      :store_frame 2(1) 
+8      :for_loop 31 
+11     :load_frame 2(1) 
+13     :next 
+14     :store_frame 3(s) 
+16     :line 1278 
+19     :load_frame 0(f) 
+21     :load_frame 3(s) 
+23     :pack_params 1 
+25     :f_call 
+26     :yield 
+27     :end_loop 11 
+31     :exit_loop 
+32     :none 
+33     :return 
+
+Function map kind:8196 2 parameters, 2 locals:
+Code at 0xb7390bbc:
+0      :line 1282 
+3      :load_global len 
+6      :load_frame 1(seq) 
+8      :pack_params 1 
+10     :f_call 
+11     :byte 1 
+13     :binary eq 
+15     :on_false 38 
+18     :line 1283 
+21     :load_global map1 
+24     :load_frame 0(f) 
+26     :load_frame 1(seq) 
+28     :byte 0 
+30     :getitem 
+31     :pack_params 2 
+33     :f_call 
+34     :return 
+35     :done_if 52 
+38     :line 1285 
+41     :load_global mmap 
+44     :load_frame 0(f) 
+46     :load_frame 1(seq) 
+48     :pack_params 2 
+50     :f_call 
+51     :return 
+52     :none 
+53     :return 
+
+Function isinstance kind:8192 2 parameters, 2 locals:
+Code at 0xb7390c3c:
+0      :line 1300 
+3      :none 
+4      :return 
+
+Function abs_int kind:8192 1 parameters, 1 locals:
+Code at 0xb7390c8c:
+0      :line 1307 
+3      :none 
+4      :return 
+
+Function abs_float kind:8192 1 parameters, 1 locals:
+Code at 0xb7390cd8:
+0      :line 1315 
+3      :none 
+4      :return 
+
+Function all kind:8192 1 parameters, 3 locals:
+Code at 0xb7390d24:
+0      :line 1322 
+3      :load_frame 0(iterable) 
+5      :iter 
+6      :store_frame 1(1) 
+8      :for_loop 34 
+11     :load_frame 1(1) 
+13     :next 
+14     :store_frame 2(element) 
+16     :line 1323 
+19     :load_frame 2(element) 
+21     :on_true 30 
+24     :line 1324 
+27     :false 
+28     :pop_handler 
+29     :return 
+30     :end_loop 11 
+34     :exit_loop 
+35     :line 1325 
+38     :true 
+39     :return 
+
+Function any kind:8192 1 parameters, 3 locals:
+Code at 0xb7390d98:
+0      :line 1328 
+3      :load_frame 0(iterable) 
+5      :iter 
+6      :store_frame 1(1) 
+8      :for_loop 34 
+11     :load_frame 1(1) 
+13     :next 
+14     :store_frame 2(element) 
+16     :line 1329 
+19     :load_frame 2(element) 
+21     :on_false 30 
+24     :line 1330 
+27     :true 
+28     :pop_handler 
+29     :return 
+30     :end_loop 11 
+34     :exit_loop 
+35     :line 1331 
+38     :false 
+39     :return 
+
+Function chr kind:8192 1 parameters, 1 locals:
+Code at 0xb7390e0c:
+0      :line 1337 
+3      :none 
+4      :return 
+
+Function ord kind:8192 1 parameters, 1 locals:
+Code at 0xb7390e58:
+0      :line 1342 
+3      :none 
+4      :return 
+
+Function callable kind:8192 1 parameters, 1 locals:
+Code at 0xb7390ea4:
+0      :line 1348 
+3      :none 
+4      :return 
+
+Function enumerate kind:8704 1 parameters, 3 locals:
+Code at 0xb7390ef0:
+0      :line 1352 
+3      :byte 0 
+5      :store_frame 1(i) 
+7      :line 1353 
+10     :load_global iter 
+13     :load_frame 0(collection) 
+15     :pack_params 1 
+17     :f_call 
+18     :store_frame 2(it) 
+20     :line 1354 
+23     :true 
+24     :on_false 65 
+27     :line 1355 
+30     :load_frame 1(i) 
+32     :load_global next 
+35     :load_frame 2(it) 
+37     :pack_params 1 
+39     :f_call 
+40     :pack 2 
+42     :yield 
+43     :line 1356 
+46     :load_frame 1(i) 
+48     :byte 1 
+50     :inplace iadd 
+52     :store_frame 1(i) 
+54     :line 1354 
+57     :true 
+58     :on_false 65 
+61     :end_loop 27 
+65     :none 
+66     :return 
+
+Function zip kind:8708 1 parameters, 2 locals:
+Code at 0xb7390f80:
+0      :line 1373 
+3      :load_global tuple 
+6      :load_global map1 
+9      :load_global iter 
+12     :load_frame 0(iterables) 
+14     :pack_params 2 
+16     :f_call 
+17     :pack_params 1 
+19     :f_call 
+20     :store_frame 0(iterables) 
+22     :line 1374 
+25     :load_global tuple 
+28     :load_global map 
+31     :load_global next 
+34     :load_frame 0(iterables) 
+36     :pack_params 2 
+38     :f_call 
+39     :pack_params 1 
+41     :f_call 
+42     :store_frame 1(t) 
+44     :line 1375 
+47     :load_frame 1(t) 
+49     :on_false 92 
+52     :line 1376 
+55     :load_frame 1(t) 
+57     :yield 
+58     :line 1377 
+61     :load_global tuple 
+64     :load_global map 
+67     :load_global next 
+70     :load_frame 0(iterables) 
+72     :pack_params 2 
+74     :f_call 
+75     :pack_params 1 
+77     :f_call 
+78     :store_frame 1(t) 
+80     :line 1375 
+83     :load_frame 1(t) 
+85     :on_false 92 
+88     :end_loop 52 
+92     :none 
+93     :return 
+
+Function filter kind:8704 2 parameters, 4 locals:
+Code at 0xb7391028:
+0      :line 1393 
+3      :load_frame 1(seq) 
+5      :iter 
+6      :store_frame 2(1) 
+8      :for_loop 39 
+11     :load_frame 2(1) 
+13     :next 
+14     :store_frame 3(x) 
+16     :line 1394 
+19     :load_frame 0(function) 
+21     :load_frame 3(x) 
+23     :pack_params 1 
+25     :f_call 
+26     :on_false 35 
+29     :line 1395 
+32     :load_frame 3(x) 
+34     :yield 
+35     :end_loop 11 
+39     :exit_loop 
+40     :none 
+41     :return 
+
+Function open kind:8192 3 parameters, 3 locals:
+Code at 0xb73910a4:
+0      :line 1399 
+3      :none 
+4      :return 
+
+Function dict_len kind:8192 1 parameters, 1 locals:
+Code at 0xb73910f8:
+0      :line 1408 
+3      :none 
+4      :return 
+
+Function __import__ kind:8192 1 parameters, 1 locals:
+Code at 0xb7391144:
+0      :line 1420 
+3      :load_global _engine 
+6      :load_attr load_module 
+9      :load_frame 0(filename) 
+11     :pack_params 1 
+13     :f_call 
+14     :return 
+
+Function next kind:8192 1 parameters, 1 locals:
+Code at 0xb7391198:
+0      :line 1424 
+3      :load_frame 0(x) 
+5      :return 
+
+Function min2 kind:8192 2 parameters, 2 locals:
+Code at 0xb73911e4:
+0      :line 1428 
+3      :load_frame 1(b) 
+5      :load_frame 0(a) 
+7      :binary lt 
+9      :on_false 21 
+12     :line 1429 
+15     :load_frame 1(b) 
+17     :return 
+18     :done_if 27 
+21     :line 1431 
+24     :load_frame 0(a) 
+26     :return 
+27     :none 
+28     :return 
+
+Function len kind:8192 1 parameters, 1 locals:
+Code at 0xb739124c:
+0      :line 1436 
+3      :load_frame 0(x) 
+5      :has_special __len__ 
+7      :on_false 24 
+10     :line 1437 
+13     :load_frame 0(x) 
+15     :load_special __len__ 
+17     :pack_params 0 
+19     :f_call 
+20     :return 
+21     :done_if 45 
+24     :line 1439 
+27     :load_global TypeError 
+30     :constant 79 
+33     :load_frame 0(x) 
+35     :type 
+36     :load_attr __name__ 
+39     :binary mod 
+41     :pack_params 1 
+43     :f_call 
+44     :raise 
+45     :none 
+46     :return 
+
+Function min kind:8204 2 parameters, 8 locals:
+Code at 0xb73912c0:
+0      :line 1444 
+3      :load_global len 
+6      :load_frame 0(args) 
+8      :pack_params 1 
+10     :f_call 
+11     :byte 1 
+13     :binary eq 
+15     :on_false 28 
+18     :line 1445 
+21     :load_frame 0(args) 
+23     :byte 0 
+25     :getitem 
+26     :store_frame 0(args) 
+28     :line 1446 
+31     :load_frame 0(args) 
+33     :on_true 49 
+36     :line 1447 
+39     :load_global ValueError 
+42     :constant 80 
+45     :pack_params 1 
+47     :f_call 
+48     :raise 
+49     :line 1448 
+52     :load_frame 1(key) 
+54     :on_false 177 
+57     :constant 81 
+60     :load_frame 1(key) 
+62     :contains 
+63     :on_false 177 
+66     :line 1449 
+69     :load_frame 1(key) 
+71     :constant 81 
+74     :getitem 
+75     :store_frame 5(key_func) 
+77     :line 1450 
+80     :load_global iter 
+83     :load_frame 0(args) 
+85     :pack_params 1 
+87     :f_call 
+88     :store_frame 0(args) 
+90     :line 1451 
+93     :load_global next 
+96     :load_frame 0(args) 
+98     :pack_params 1 
+100    :f_call 
+101    :store_frame 4(result) 
+103    :line 1452 
+106    :load_frame 5(key_func) 
+108    :load_frame 4(result) 
+110    :pack_params 1 
+112    :f_call 
+113    :store_frame 6(comp) 
+115    :line 1453 
+118    :load_frame 0(args) 
+120    :iter 
+121    :store_frame 2(1) 
+123    :for_loop 173 
+126    :load_frame 2(1) 
+128    :next 
+129    :store_frame 3(a) 
+131    :line 1454 
+134    :load_frame 5(key_func) 
+136    :load_frame 3(a) 
+138    :pack_params 1 
+140    :f_call 
+141    :store_frame 7(cmp_a) 
+143    :line 1455 
+146    :load_frame 7(cmp_a) 
+148    :load_frame 6(comp) 
+150    :binary lt 
+152    :on_false 169 
+155    :line 1456 
+158    :load_frame 3(a) 
+160    :store_frame 4(result) 
+162    :line 1457 
+165    :load_frame 7(cmp_a) 
+167    :store_frame 6(comp) 
+169    :end_loop 126 
+173    :exit_loop 
+174    :done_if 280 
+177    :line 1461 
+180    :load_global len 
+183    :load_frame 0(args) 
+185    :pack_params 1 
+187    :f_call 
+188    :byte 2 
+190    :binary eq 
+192    :on_false 218 
+195    :line 1462 
+198    :load_global min2 
+201    :load_frame 0(args) 
+203    :byte 0 
+205    :getitem 
+206    :load_frame 0(args) 
+208    :byte 1 
+210    :getitem 
+211    :pack_params 2 
+213    :f_call 
+214    :return 
+215    :done_if 280 
+218    :line 1464 
+221    :load_global iter 
+224    :load_frame 0(args) 
+226    :pack_params 1 
+228    :f_call 
+229    :store_frame 0(args) 
+231    :line 1465 
+234    :load_global next 
+237    :load_frame 0(args) 
+239    :pack_params 1 
+241    :f_call 
+242    :store_frame 4(result) 
+244    :line 1466 
+247    :load_frame 0(args) 
+249    :iter 
+250    :store_frame 2(1) 
+252    :for_loop 279 
+255    :load_frame 2(1) 
+257    :next 
+258    :store_frame 3(a) 
+260    :line 1467 
+263    :load_global min2 
+266    :load_frame 4(result) 
+268    :load_frame 3(a) 
+270    :pack_params 2 
+272    :f_call 
+273    :store_frame 4(result) 
+275    :end_loop 255 
+279    :exit_loop 
+280    :line 1468 
+283    :load_frame 4(result) 
+285    :return 
+
+Function max2 kind:8192 2 parameters, 2 locals:
+Code at 0xb7391440:
+0      :line 1472 
+3      :load_frame 1(b) 
+5      :load_frame 0(a) 
+7      :binary gt 
+9      :on_false 21 
+12     :line 1473 
+15     :load_frame 1(b) 
+17     :return 
+18     :done_if 27 
+21     :line 1475 
+24     :load_frame 0(a) 
+26     :return 
+27     :none 
+28     :return 
+
+Function max kind:8204 2 parameters, 8 locals:
+Code at 0xb73914a8:
+0      :line 1480 
+3      :load_global len 
+6      :load_frame 0(args) 
+8      :pack_params 1 
+10     :f_call 
+11     :byte 1 
+13     :binary eq 
+15     :on_false 28 
+18     :line 1481 
+21     :load_frame 0(args) 
+23     :byte 0 
+25     :getitem 
+26     :store_frame 0(args) 
+28     :line 1482 
+31     :load_frame 0(args) 
+33     :on_true 49 
+36     :line 1483 
+39     :load_global ValueError 
+42     :constant 80 
+45     :pack_params 1 
+47     :f_call 
+48     :raise 
+49     :line 1484 
+52     :load_frame 1(key) 
+54     :on_false 177 
+57     :constant 81 
+60     :load_frame 1(key) 
+62     :contains 
+63     :on_false 177 
+66     :line 1485 
+69     :load_frame 1(key) 
+71     :constant 81 
+74     :getitem 
+75     :store_frame 5(key_func) 
+77     :line 1486 
+80     :load_global iter 
+83     :load_frame 0(args) 
+85     :pack_params 1 
+87     :f_call 
+88     :store_frame 0(args) 
+90     :line 1487 
+93     :load_global next 
+96     :load_frame 0(args) 
+98     :pack_params 1 
+100    :f_call 
+101    :store_frame 4(result) 
+103    :line 1488 
+106    :load_frame 5(key_func) 
+108    :load_frame 4(result) 
+110    :pack_params 1 
+112    :f_call 
+113    :store_frame 6(comp) 
+115    :line 1489 
+118    :load_frame 0(args) 
+120    :iter 
+121    :store_frame 2(1) 
+123    :for_loop 173 
+126    :load_frame 2(1) 
+128    :next 
+129    :store_frame 3(a) 
+131    :line 1490 
+134    :load_frame 5(key_func) 
+136    :load_frame 3(a) 
+138    :pack_params 1 
+140    :f_call 
+141    :store_frame 7(cmp_a) 
+143    :line 1491 
+146    :load_frame 7(cmp_a) 
+148    :load_frame 6(comp) 
+150    :binary gt 
+152    :on_false 169 
+155    :line 1492 
+158    :load_frame 3(a) 
+160    :store_frame 4(result) 
+162    :line 1493 
+165    :load_frame 7(cmp_a) 
+167    :store_frame 6(comp) 
+169    :end_loop 126 
+173    :exit_loop 
+174    :done_if 280 
+177    :line 1496 
+180    :load_global len 
+183    :load_frame 0(args) 
+185    :pack_params 1 
+187    :f_call 
+188    :byte 2 
+190    :binary eq 
+192    :on_false 218 
+195    :line 1498 
+198    :load_global max2 
+201    :load_frame 0(args) 
+203    :byte 0 
+205    :getitem 
+206    :load_frame 0(args) 
+208    :byte 1 
+210    :getitem 
+211    :pack_params 2 
+213    :f_call 
+214    :return 
+215    :done_if 280 
+218    :line 1500 
+221    :load_global iter 
+224    :load_frame 0(args) 
+226    :pack_params 1 
+228    :f_call 
+229    :store_frame 0(args) 
+231    :line 1501 
+234    :load_global next 
+237    :load_frame 0(args) 
+239    :pack_params 1 
+241    :f_call 
+242    :store_frame 4(result) 
+244    :line 1502 
+247    :load_frame 0(args) 
+249    :iter 
+250    :store_frame 2(1) 
+252    :for_loop 279 
+255    :load_frame 2(1) 
+257    :next 
+258    :store_frame 3(a) 
+260    :line 1503 
+263    :load_global max2 
+266    :load_frame 4(result) 
+268    :load_frame 3(a) 
+270    :pack_params 2 
+272    :f_call 
+273    :store_frame 4(result) 
+275    :end_loop 255 
+279    :exit_loop 
+280    :line 1504 
+283    :load_frame 4(result) 
+285    :return 
+
+Function hasattr kind:8192 2 parameters, 2 locals:
+Code at 0xb7391628:
+0      :line 1508 
+3      :none 
+4      :return 
+
+Function next_int_iterator kind:8192 1 parameters, 1 locals:
+Code at 0xb7391678:
+0      :line 1514 
+3      :none 
+4      :return 
+
+Function dict_clear kind:8192 1 parameters, 1 locals:
+Code at 0xb73916c4:
+0      :line 1520 
+3      :none 
+4      :return 
+
+Function abs kind:8192 1 parameters, 1 locals:
+Code at 0xb7391710:
+0      :line 1524 
+3      :load_global hasattr 
+6      :load_global type 
+9      :load_frame 0(x) 
+11     :pack_params 1 
+13     :f_call 
+14     :constant 76 
+17     :pack_params 2 
+19     :f_call 
+20     :on_false 46 
+23     :line 1525 
+26     :load_global type 
+29     :load_frame 0(x) 
+31     :pack_params 1 
+33     :f_call 
+34     :load_attr __abs__ 
+37     :load_frame 0(x) 
+39     :pack_params 1 
+41     :f_call 
+42     :return 
+43     :done_if 72 
+46     :line 1527 
+49     :load_global TypeError 
+52     :constant 83 
+55     :load_global type 
+58     :load_frame 0(x) 
+60     :pack_params 1 
+62     :f_call 
+63     :load_attr __name__ 
+66     :binary mod 
+68     :pack_params 1 
+70     :f_call 
+71     :raise 
+72     :none 
+73     :return 
+
+Function vars kind:8192 1 parameters, 1 locals:
+Code at 0xb73917a0:
+0      :line 1546 
+3      :load_frame 0(obj) 
+5      :load_global _NoValue 
+8      :is 
+9      :on_false 25 
+12     :line 1547 
+15     :load_global locals 
+18     :pack_params 0 
+20     :f_call 
+21     :return 
+22     :done_if 58 
+25     :line 1549 
+28     :protect 44 
+31     :line 1550 
+34     :load_frame 0(obj) 
+36     :load_attr __dict__ 
+39     :pop_handler 
+40     :return 
+41     :end_protect 58 
+44     :drop 
+45     :line 1552 
+48     :load_global TypeError 
+51     :constant 85 
+54     :pack_params 1 
+56     :f_call 
+57     :raise 
+58     :none 
+59     :return 
+
+Function __init__ kind:8192 5 parameters, 5 locals:
+Code at 0xb7391820:
+0      :line 1571 
+3      :load_frame 1(fget) 
+5      :load_frame 0(self) 
+7      :store_attr fget 
+10     :line 1572 
+13     :load_frame 2(fset) 
+15     :load_frame 0(self) 
+17     :store_attr fset 
+20     :line 1573 
+23     :load_frame 3(fdel) 
+25     :load_frame 0(self) 
+27     :store_attr fdel 
+30     :line 1574 
+33     :load_frame 4(doc) 
+35     :load_frame 0(self) 
+37     :store_attr __doc__ 
+40     :none 
+41     :return 
+
+Function __get__ kind:8192 3 parameters, 4 locals:
+Code at 0xb73918a0:
+0      :line 1577 
+3      :load_frame 1(obj) 
+5      :none 
+6      :is 
+7      :on_false 16 
+10     :line 1578 
+13     :load_frame 0(self) 
+15     :return 
+16     :line 1579 
+19     :load_frame 0(self) 
+21     :load_attr fget 
+24     :store_frame 3(f) 
+26     :line 1580 
+29     :load_frame 3(f) 
+31     :none 
+32     :is 
+33     :on_false 49 
+36     :line 1581 
+39     :load_global AttributeError 
+42     :constant 91 
+45     :pack_params 1 
+47     :f_call 
+48     :raise 
+49     :line 1582 
+52     :load_frame 3(f) 
+54     :load_frame 1(obj) 
+56     :pack_params 1 
+58     :f_call 
+59     :return 
+
+Function __set__ kind:8192 3 parameters, 4 locals:
+Code at 0xb739192c:
+0      :line 1585 
+3      :load_frame 0(self) 
+5      :load_attr fset 
+8      :store_frame 3(f) 
+10     :line 1586 
+13     :load_frame 3(f) 
+15     :none 
+16     :is 
+17     :on_false 33 
+20     :line 1587 
+23     :load_global AttributeError 
+26     :constant 92 
+29     :pack_params 1 
+31     :f_call 
+32     :raise 
+33     :line 1588 
+36     :load_frame 3(f) 
+38     :load_frame 1(obj) 
+40     :load_frame 2(value) 
+42     :pack_params 2 
+44     :f_call 
+45     :drop 
+46     :none 
+47     :return 
+
+Function __delete__ kind:8192 2 parameters, 3 locals:
+Code at 0xb73919ac:
+0      :line 1591 
+3      :load_frame 0(self) 
+5      :load_attr fdel 
+8      :store_frame 2(f) 
+10     :line 1592 
+13     :load_frame 2(f) 
+15     :none 
+16     :is 
+17     :on_false 33 
+20     :line 1593 
+23     :load_global AttributeError 
+26     :constant 93 
+29     :pack_params 1 
+31     :f_call 
+32     :raise 
+33     :line 1594 
+36     :load_frame 2(f) 
+38     :load_frame 1(obj) 
+40     :pack_params 1 
+42     :f_call 
+43     :drop 
+44     :none 
+45     :return 
+
+Function reversed kind:8704 1 parameters, 3 locals:
+Code at 0xb7391a28:
+0      :line 1614 
+3      :load_global type 
+6      :load_frame 0(x) 
+8      :pack_params 1 
+10     :f_call 
+11     :store_frame 2(t) 
+13     :line 1615 
+16     :load_global hasattr 
+19     :load_frame 2(t) 
+21     :constant 100 
+24     :pack_params 2 
+26     :f_call 
+27     :on_false 44 
+30     :line 1616 
+33     :load_frame 2(t) 
+35     :load_attr __reversed__ 
+38     :load_frame 0(x) 
+40     :pack_params 1 
+42     :f_call 
+43     :return 
+44     :line 1617 
+47     :protect 68 
+50     :line 1618 
+53     :load_frame 2(t) 
+55     :load_attr __len__ 
+58     :load_frame 0(x) 
+60     :pack_params 1 
+62     :f_call 
+63     :store_frame 1(i) 
+65     :end_protect 91 
+68     :copy 
+69     :load_global AttributeError 
+72     :type_check 
+73     :on_true 77 
+76     :reraise 
+77     :drop 
+78     :line 1620 
+81     :load_global TypeError 
+84     :constant 101 
+87     :pack_params 1 
+89     :f_call 
+90     :raise 
+91     :line 1621 
+94     :load_frame 1(i) 
+96     :byte 0 
+98     :binary gt 
+100    :on_false 139 
+103    :line 1622 
+106    :load_frame 1(i) 
+108    :byte 1 
+110    :inplace isub 
+112    :store_frame 1(i) 
+114    :line 1623 
+117    :load_frame 0(x) 
+119    :load_frame 1(i) 
+121    :getitem 
+122    :yield 
+123    :line 1621 
+126    :load_frame 1(i) 
+128    :byte 0 
+130    :binary gt 
+132    :on_false 139 
+135    :end_loop 103 
+139    :none 
+140    :return 
+
+Function ljust kind:8192 3 parameters, 4 locals:
+Code at 0xb7391b04:
+0      :line 1627 
+3      :load_frame 1(width) 
+5      :load_global len 
+8      :load_frame 0(self) 
+10     :pack_params 1 
+12     :f_call 
+13     :binary sub 
+15     :store_frame 3(diff) 
+17     :line 1628 
+20     :load_frame 3(diff) 
+22     :byte 0 
+24     :binary le 
+26     :on_false 38 
+29     :line 1629 
+32     :load_frame 0(self) 
+34     :return 
+35     :done_if 52 
+38     :line 1631 
+41     :load_frame 0(self) 
+43     :load_frame 2(fillchar) 
+45     :load_frame 3(diff) 
+47     :binary mul 
+49     :binary add 
+51     :return 
+52     :none 
+53     :return 
+
+Function rjust kind:8192 3 parameters, 4 locals:
+Code at 0xb7391b8c:
+0      :line 1636 
+3      :load_frame 1(width) 
+5      :load_global len 
+8      :load_frame 0(self) 
+10     :pack_params 1 
+12     :f_call 
+13     :binary sub 
+15     :store_frame 3(diff) 
+17     :line 1637 
+20     :load_frame 3(diff) 
+22     :byte 0 
+24     :binary le 
+26     :on_false 38 
+29     :line 1638 
+32     :load_frame 0(self) 
+34     :return 
+35     :done_if 52 
+38     :line 1640 
+41     :load_frame 2(fillchar) 
+43     :load_frame 3(diff) 
+45     :binary mul 
+47     :load_frame 0(self) 
+49     :binary add 
+51     :return 
+52     :none 
+53     :return 
+
+Function round kind:8192 2 parameters, 2 locals:
+Code at 0xb7391c14:
+0      :line 1645 
+3      :load_global type 
+6      :load_frame 0(number) 
+8      :pack_params 1 
+10     :f_call 
+11     :load_attr __round__ 
+14     :load_frame 0(number) 
+16     :load_frame 1(ndigits) 
+18     :pack_params 2 
+20     :f_call 
+21     :return 
+
+Function sum kind:8192 2 parameters, 6 locals:
+Code at 0xb7391c74:
+0      :line 1650 
+3      :load_frame 1(start) 
+5      :type 
+6      :store_frame 4(t) 
+8      :line 1651 
+11     :load_frame 4(t) 
+13     :load_global str 
+16     :subtype 
+17     :on_false 33 
+20     :line 1652 
+23     :load_global TypeError 
+26     :constant 104 
+29     :pack_params 1 
+31     :f_call 
+32     :raise 
+33     :line 1653 
+36     :load_frame 4(t) 
+38     :load_global bytes 
+41     :subtype 
+42     :on_false 58 
+45     :line 1654 
+48     :load_global TypeError 
+51     :constant 105 
+54     :pack_params 1 
+56     :f_call 
+57     :raise 
+58     :line 1655 
+61     :load_frame 1(start) 
+63     :store_frame 5(total) 
+65     :line 1656 
+68     :load_frame 0(seq) 
+70     :iter 
+71     :store_frame 2(1) 
+73     :for_loop 96 
+76     :load_frame 2(1) 
+78     :next 
+79     :store_frame 3(x) 
+81     :line 1657 
+84     :load_frame 5(total) 
+86     :load_frame 3(x) 
+88     :binary add 
+90     :store_frame 5(total) 
+92     :end_loop 76 
+96     :exit_loop 
+97     :line 1658 
+100    :load_frame 5(total) 
+102    :return 
+
+Function _dir_type kind:8192 1 parameters, 6 locals:
+Code at 0xb7391d34:
+0      :line 1661 
+3      :load_global set 
+6      :pack_params 0 
+8      :f_call 
+9      :store_frame 4(s) 
+11     :line 1662 
+14     :load_frame 0(obj) 
+16     :load_attr __mro__ 
+19     :iter 
+20     :store_frame 1(1) 
+22     :for_loop 72 
+25     :load_frame 1(1) 
+27     :next 
+28     :store_frame 3(cls) 
+30     :line 1663 
+33     :load_frame 3(cls) 
+35     :load_attr __dict__ 
+38     :iter 
+39     :store_frame 2(2) 
+41     :for_loop 67 
+44     :load_frame 2(2) 
+46     :next 
+47     :store_frame 5(n) 
+49     :line 1664 
+52     :load_frame 4(s) 
+54     :load_attr add 
+57     :load_frame 5(n) 
+59     :pack_params 1 
+61     :f_call 
+62     :drop 
+63     :end_loop 44 
+67     :exit_loop 
+68     :end_loop 25 
+72     :exit_loop 
+73     :line 1665 
+76     :load_frame 4(s) 
+78     :return 
+
+Function _dir_module kind:8192 1 parameters, 3 locals:
+Code at 0xb7391ddc:
+0      :line 1668 
+3      :load_frame 0(obj) 
+5      :load_attr __dict__ 
+8      :store_frame 2(d) 
+10     :line 1669 
+13     :load_frame 2(d) 
+15     :type 
+16     :load_global dict 
+19     :subtype 
+20     :on_false 41 
+23     :line 1670 
+26     :load_global list 
+29     :load_frame 0(obj) 
+31     :load_attr __dict__ 
+34     :pack_params 1 
+36     :f_call 
+37     :return 
+38     :done_if 68 
+41     :line 1672 
+44     :load_frame 0(obj) 
+46     :load_attr __name__ 
+49     :store_frame 1(name) 
+51     :line 1673 
+54     :load_global TypeError 
+57     :load_frame 1(name) 
+59     :constant 106 
+62     :binary add 
+64     :pack_params 1 
+66     :f_call 
+67     :raise 
+68     :line 1674 
+71     :load_global list 
+74     :load_frame 2(d) 
+76     :pack_params 1 
+78     :f_call 
+79     :return 
+
+Function _generic_dir kind:8192 1 parameters, 6 locals:
+Code at 0xb7391e78:
+0      :line 1677 
+3      :load_frame 0(obj) 
+5      :load_attr __dict__ 
+8      :store_frame 2(d) 
+10     :line 1678 
+13     :load_frame 2(d) 
+15     :type 
+16     :load_global dict 
+19     :subtype 
+20     :on_false 39 
+23     :line 1679 
+26     :load_frame 2(d) 
+28     :load_attr keys 
+31     :pack_params 0 
+33     :f_call 
+34     :store_frame 5(k) 
+36     :done_if 46 
+39     :line 1681 
+42     :list 0 
+44     :store_frame 5(k) 
+46     :line 1682 
+49     :load_global _dir_type 
+52     :load_global type 
+55     :load_frame 0(obj) 
+57     :pack_params 1 
+59     :f_call 
+60     :pack_params 1 
+62     :f_call 
+63     :store_frame 4(s) 
+65     :line 1683 
+68     :load_frame 5(k) 
+70     :iter 
+71     :store_frame 1(1) 
+73     :for_loop 99 
+76     :load_frame 1(1) 
+78     :next 
+79     :store_frame 3(i) 
+81     :line 1684 
+84     :load_frame 4(s) 
+86     :load_attr add 
+89     :load_frame 3(i) 
+91     :pack_params 1 
+93     :f_call 
+94     :drop 
+95     :end_loop 76 
+99     :exit_loop 
+100    :line 1685 
+103    :load_global list 
+106    :load_frame 4(s) 
+108    :pack_params 1 
+110    :f_call 
+111    :return 
+
+Function dir kind:8192 1 parameters, 3 locals:
+Code at 0xb7391f40:
+0      :line 1688 
+3      :load_frame 0(obj) 
+5      :load_global _NoValue 
+8      :is 
+9      :on_false 38 
+12     :line 1689 
+15     :load_global list 
+18     :load_global locals 
+21     :pack_params 0 
+23     :f_call 
+24     :load_attr keys 
+27     :pack_params 0 
+29     :f_call 
+30     :pack_params 1 
+32     :f_call 
+33     :store_frame 1(result) 
+35     :done_if 187 
+38     :line 1691 
+41     :load_frame 0(obj) 
+43     :type 
+44     :store_frame 2(t) 
+46     :line 1692 
+49     :load_frame 2(t) 
+51     :has_special __dir__ 
+53     :on_false 109 
+56     :line 1693 
+59     :load_frame 2(t) 
+61     :load_special __dir__ 
+63     :load_frame 0(obj) 
+65     :pack_params 1 
+67     :f_call 
+68     :store_frame 1(result) 
+70     :line 1694 
+73     :load_frame 1(result) 
+75     :type 
+76     :load_global list 
+79     :subtype 
+80     :on_true 109 
+83     :line 1696 
+86     :load_global TypeError 
+89     :constant 107 
+92     :load_global type 
+95     :load_frame 1(result) 
+97     :pack_params 1 
+99     :f_call 
+100    :load_attr __name__ 
+103    :binary add 
+105    :pack_params 1 
+107    :f_call 
+108    :raise 
+109    :line 1697 
+112    :load_frame 0(obj) 
+114    :type 
+115    :load_global builtins 
+118    :type 
+119    :subtype 
+120    :on_false 139 
+123    :line 1698 
+126    :load_global _dir_module 
+129    :load_frame 0(obj) 
+131    :pack_params 1 
+133    :f_call 
+134    :store_frame 1(result) 
+136    :done_if 187 
+139    :line 1699 
+142    :load_frame 0(obj) 
+144    :type 
+145    :load_global type 
+148    :subtype 
+149    :on_false 174 
+152    :line 1700 
+155    :load_global list 
+158    :load_global _dir_type 
+161    :load_frame 0(obj) 
+163    :pack_params 1 
+165    :f_call 
+166    :pack_params 1 
+168    :f_call 
+169    :store_frame 1(result) 
+171    :done_if 187 
+174    :line 1702 
+177    :load_global _generic_dir 
+180    :load_frame 0(obj) 
+182    :pack_params 1 
+184    :f_call 
+185    :store_frame 1(result) 
+187    :line 1703 
+190    :load_frame 1(result) 
+192    :load_attr sort 
+195    :pack_params 0 
+197    :f_call 
+198    :drop 
+199    :line 1704 
+202    :load_frame 1(result) 
+204    :return 
+
+Function locals kind:8192 0 parameters, 0 locals:
+Code at 0xb739205c:
+0      :line 1708 
+3      :none 
+4      :return 
+
+Function staticmethod kind:8192 1 parameters, 1 locals:
+Code at 0xb73920a4:
+0      :line 1712 
+3      :none 
+4      :return 
+
+Function classmethod kind:8192 1 parameters, 1 locals:
+Code at 0xb73920f0:
+0      :line 1716 
+3      :none 
+4      :return 
+
+Function sorted kind:8192 3 parameters, 3 locals:
+Code at 0xb739213c:
+0      :line 1720 
+3      :load_global list 
+6      :load_frame 0(iterable) 
+8      :pack_params 1 
+10     :f_call 
+11     :load_attr sort 
+14     :load_frame 1(key) 
+16     :load_frame 2(reverse) 
+18     :pack_params 2 
+20     :f_call 
+21     :return 
+
+Function load_special kind:8192 2 parameters, 6 locals:
+Code at 0xb73921a0:
+0      :line 1727 
+3      :load_frame 0(obj) 
+5      :type 
+6      :store_frame 2(cls) 
+8      :line 1728 
+11     :load_frame 2(cls) 
+13     :load_frame 1(name) 
+15     :has_class_attr 
+16     :on_false 104 
+19     :line 1729 
+22     :load_frame 2(cls) 
+24     :load_frame 1(name) 
+26     :get_class_attr 
+27     :store_frame 3(descriptor) 
+29     :line 1730 
+32     :load_frame 3(descriptor) 
+34     :type 
+35     :store_frame 4(desc_type) 
+37     :line 1731 
+40     :load_frame 4(desc_type) 
+42     :load_global FunctionType 
+45     :is 
+46     :on_false 61 
+49     :line 1732 
+52     :load_frame 0(obj) 
+54     :load_frame 3(descriptor) 
+56     :bind 
+57     :return 
+58     :done_if 101 
+61     :line 1733 
+64     :load_frame 4(desc_type) 
+66     :constant 109 
+69     :has_class_attr 
+70     :on_false 95 
+73     :line 1734 
+76     :load_frame 4(desc_type) 
+78     :constant 109 
+81     :get_class_attr 
+82     :load_frame 3(descriptor) 
+84     :load_frame 0(obj) 
+86     :load_frame 2(cls) 
+88     :pack_params 3 
+90     :f_call 
+91     :return 
+92     :done_if 101 
+95     :line 1736 
+98     :load_frame 3(descriptor) 
+100    :return 
+101    :done_if 135 
+104    :line 1738 
+107    :constant 110 
+110    :load_frame 2(cls) 
+112    :load_attr __name__ 
+115    :load_frame 1(name) 
+117    :pack 2 
+119    :binary mod 
+121    :store_frame 5(msg) 
+123    :line 1739 
+126    :load_global AttributeError 
+129    :load_frame 5(msg) 
+131    :pack_params 1 
+133    :f_call 
+134    :raise 
+135    :none 
+136    :return 
+
+Function load_special_known kind:8192 2 parameters, 5 locals:
+Code at 0xb7392284:
+0      :line 1746 
+3      :load_frame 0(obj) 
+5      :type 
+6      :store_frame 2(cls) 
+8      :line 1747 
+11     :load_frame 2(cls) 
+13     :load_frame 1(name) 
+15     :get_class_attr 
+16     :store_frame 3(descriptor) 
+18     :line 1748 
+21     :load_frame 3(descriptor) 
+23     :type 
+24     :store_frame 4(desc_type) 
+26     :line 1749 
+29     :load_frame 4(desc_type) 
+31     :load_global FunctionType 
+34     :is 
+35     :on_false 50 
+38     :line 1750 
+41     :load_frame 0(obj) 
+43     :load_frame 3(descriptor) 
+45     :bind 
+46     :return 
+47     :done_if 90 
+50     :line 1751 
+53     :load_frame 4(desc_type) 
+55     :constant 109 
+58     :has_class_attr 
+59     :on_false 84 
+62     :line 1752 
+65     :load_frame 4(desc_type) 
+67     :constant 109 
+70     :get_class_attr 
+71     :load_frame 3(descriptor) 
+73     :load_frame 0(obj) 
+75     :load_frame 2(cls) 
+77     :pack_params 3 
+79     :f_call 
+80     :return 
+81     :done_if 90 
+84     :line 1754 
+87     :load_frame 3(descriptor) 
+89     :return 
+90     :none 
+91     :return 
+
+Function generic_getattr kind:8192 2 parameters, 5 locals:
+Code at 0xb7392334:
+0      :line 1759 
+3      :load_frame 0(obj) 
+5      :type 
+6      :store_frame 2(cls) 
+8      :line 1760 
+11     :load_frame 2(cls) 
+13     :load_frame 1(name) 
+15     :has_class_attr 
+16     :on_false 175 
+19     :line 1761 
+22     :load_frame 2(cls) 
+24     :load_frame 1(name) 
+26     :get_class_attr 
+27     :store_frame 3(descriptor) 
+29     :line 1762 
+32     :load_frame 3(descriptor) 
+34     :type 
+35     :store_frame 4(desc_type) 
+37     :line 1763 
+40     :load_frame 4(desc_type) 
+42     :constant 111 
+45     :has_class_attr 
+46     :on_false 98 
+49     :line 1764 
+52     :load_frame 4(desc_type) 
+54     :constant 109 
+57     :has_class_attr 
+58     :on_false 80 
+61     :line 1765 
+64     :load_frame 4(desc_type) 
+66     :constant 109 
+69     :get_class_attr 
+70     :load_frame 3(descriptor) 
+72     :load_frame 0(obj) 
+74     :load_frame 2(cls) 
+76     :pack_params 3 
+78     :f_call 
+79     :return 
+80     :line 1766 
+83     :load_frame 0(obj) 
+85     :load_frame 1(name) 
+87     :value_in_object_dict_or_jump2 
+88     :return 
+89     :line 1767 
+92     :load_frame 3(descriptor) 
+94     :return 
+95     :done_if 172 
+98     :line 1769 
+101    :load_frame 0(obj) 
+103    :load_frame 1(name) 
+105    :value_in_object_dict_or_jump2 
+106    :return 
+107    :line 1770 
+110    :load_frame 3(descriptor) 
+112    :type 
+113    :load_global FunctionType 
+116    :is 
+117    :on_false 132 
+120    :line 1771 
+123    :load_frame 0(obj) 
+125    :load_frame 3(descriptor) 
+127    :bind 
+128    :return 
+129    :done_if 172 
+132    :line 1772 
+135    :load_frame 4(desc_type) 
+137    :constant 109 
+140    :has_class_attr 
+141    :on_false 166 
+144    :line 1773 
+147    :load_frame 4(desc_type) 
+149    :constant 109 
+152    :get_class_attr 
+153    :load_frame 3(descriptor) 
+155    :load_frame 0(obj) 
+157    :load_frame 2(cls) 
+159    :pack_params 3 
+161    :f_call 
+162    :return 
+163    :done_if 172 
+166    :line 1775 
+169    :load_frame 3(descriptor) 
+171    :return 
+172    :done_if 234 
+175    :line 1777 
+178    :load_frame 0(obj) 
+180    :load_frame 1(name) 
+182    :value_in_object_dict_or_jump2 
+183    :return 
+184    :line 1778 
+187    :load_frame 0(obj) 
+189    :has_special __getattr__ 
+191    :on_false 210 
+194    :line 1779 
+197    :load_frame 0(obj) 
+199    :load_special __getattr__ 
+201    :load_frame 1(name) 
+203    :pack_params 1 
+205    :f_call 
+206    :return 
+207    :done_if 234 
+210    :line 1782 
+213    :load_global AttributeError 
+216    :constant 112 
+219    :load_frame 2(cls) 
+221    :load_attr __name__ 
+224    :load_frame 1(name) 
+226    :pack 2 
+228    :binary mod 
+230    :pack_params 1 
+232    :f_call 
+233    :raise 
+234    :none 
+235    :return 
+
+Function type_getattr kind:8192 2 parameters, 6 locals:
+Code at 0xb7392474:
+0      :line 1790 
+3      :load_frame 0(cls) 
+5      :type 
+6      :store_frame 2(meta_cls) 
+8      :line 1792 
+11     :load_frame 2(meta_cls) 
+13     :load_frame 1(name) 
+15     :has_class_attr 
+16     :on_false 80 
+19     :line 1793 
+22     :load_frame 2(meta_cls) 
+24     :load_frame 1(name) 
+26     :get_class_attr 
+27     :store_frame 3(meta_descriptor) 
+29     :line 1794 
+32     :load_frame 3(meta_descriptor) 
+34     :type 
+35     :store_frame 4(meta_desc_type) 
+37     :line 1795 
+40     :load_frame 4(meta_desc_type) 
+42     :constant 111 
+45     :has_class_attr 
+46     :on_false 80 
+49     :line 1796 
+52     :load_frame 4(meta_desc_type) 
+54     :constant 109 
+57     :has_class_attr 
+58     :on_false 80 
+61     :line 1797 
+64     :load_frame 4(meta_desc_type) 
+66     :constant 109 
+69     :get_class_attr 
+70     :load_frame 3(meta_descriptor) 
+72     :load_frame 0(cls) 
+74     :load_frame 2(meta_cls) 
+76     :pack_params 3 
+78     :f_call 
+79     :return 
+80     :line 1799 
+83     :load_frame 0(cls) 
+85     :load_frame 1(name) 
+87     :has_class_attr 
+88     :on_false 137 
+91     :line 1800 
+94     :load_frame 0(cls) 
+96     :load_frame 1(name) 
+98     :get_class_attr 
+99     :store_frame 5(cls_attr) 
+101    :line 1801 
+104    :load_frame 5(cls_attr) 
+106    :constant 109 
+109    :has_class_attr 
+110    :on_false 131 
+113    :line 1802 
+116    :load_frame 5(cls_attr) 
+118    :constant 109 
+121    :get_class_attr 
+122    :load_frame 5(cls_attr) 
+124    :none 
+125    :load_frame 0(cls) 
+127    :pack_params 3 
+129    :f_call 
+130    :return 
+131    :line 1803 
+134    :load_frame 5(cls_attr) 
+136    :return 
+137    :line 1805 
+140    :load_frame 2(meta_cls) 
+142    :load_frame 1(name) 
+144    :has_class_attr 
+145    :on_false 197 
+148    :line 1806 
+151    :load_frame 2(meta_cls) 
+153    :load_frame 1(name) 
+155    :get_class_attr 
+156    :store_frame 3(meta_descriptor) 
+158    :line 1807 
+161    :load_frame 3(meta_descriptor) 
+163    :type 
+164    :store_frame 4(meta_desc_type) 
+166    :line 1808 
+169    :load_frame 4(meta_desc_type) 
+171    :constant 109 
+174    :has_class_attr 
+175    :on_false 197 
+178    :line 1809 
+181    :load_frame 4(meta_desc_type) 
+183    :constant 109 
+186    :get_class_attr 
+187    :load_frame 3(meta_descriptor) 
+189    :load_frame 0(cls) 
+191    :load_frame 2(meta_cls) 
+193    :pack_params 3 
+195    :f_call 
+196    :return 
+197    :line 1811 
+200    :load_global AttributeError 
+203    :constant 113 
+206    :load_frame 0(cls) 
+208    :load_attr __name__ 
+211    :load_frame 1(name) 
+213    :pack 2 
+215    :binary mod 
+217    :pack_params 1 
+219    :f_call 
+220    :raise 
+221    :none 
+222    :return 
+
+Function _ kind:8192 3 parameters, 3 locals:
+Code at 0xb73925ac:
+0      :line 1816 
+3      :load_frame 1(obj) 
+5      :load_frame 0(func) 
+7      :bind 
+8      :return 
+
+Function load_attr_surrogate kind:8192 2 parameters, 3 locals:
+Code at 0xb7392604:
+0      :line 1822 
+3      :load_frame 0(obj) 
+5      :type 
+6      :constant 114 
+9      :get_class_attr 
+10     :store_frame 2(getter) 
+12     :line 1823 
+15     :load_frame 2(getter) 
+17     :load_global _object_getattr 
+20     :is 
+21     :on_false 41 
+24     :line 1824 
+27     :load_global generic_getattr 
+30     :load_frame 0(obj) 
+32     :load_frame 1(name) 
+34     :pack_params 2 
+36     :f_call 
+37     :return 
+38     :done_if 84 
+41     :line 1825 
+44     :load_frame 2(getter) 
+46     :load_global _type_getattr 
+49     :is 
+50     :on_false 71 
+53     :line 1826 
+56     :load_global type_getattr 
+59     :load_frame 0(obj) 
+61     :type 
+62     :load_frame 1(name) 
+64     :pack_params 2 
+66     :f_call 
+67     :return 
+68     :done_if 84 
+71     :line 1828 
+74     :load_frame 0(obj) 
+76     :load_special __getattribute__ 
+78     :load_frame 1(name) 
+80     :pack_params 1 
+82     :f_call 
+83     :return 
+84     :none 
+85     :return 
+
+Function generic_setattr kind:8192 3 parameters, 6 locals:
+Code at 0xb73926a8:
+0      :line 1836 
+3      :load_frame 0(obj) 
+5      :type 
+6      :store_frame 3(cls) 
+8      :line 1837 
+11     :load_frame 3(cls) 
+13     :load_frame 1(name) 
+15     :has_class_attr 
+16     :on_false 118 
+19     :line 1838 
+22     :load_frame 3(cls) 
+24     :load_frame 1(name) 
+26     :get_class_attr 
+27     :store_frame 4(descriptor) 
+29     :line 1839 
+32     :load_frame 4(descriptor) 
+34     :type 
+35     :store_frame 5(desc_type) 
+37     :line 1840 
+40     :load_frame 5(desc_type) 
+42     :constant 111 
+45     :has_class_attr 
+46     :on_false 68 
+49     :line 1841 
+52     :load_frame 5(desc_type) 
+54     :constant 111 
+57     :get_class_attr 
+58     :load_frame 4(descriptor) 
+60     :load_frame 0(obj) 
+62     :load_frame 3(cls) 
+64     :pack_params 3 
+66     :f_call 
+67     :drop 
+68     :line 1842 
+71     :load_frame 0(obj) 
+73     :has_special __dict__ 
+75     :on_false 91 
+78     :line 1843 
+81     :load_frame 2(value) 
+83     :load_frame 0(obj) 
+85     :load_frame 1(name) 
+87     :set_in_object_dict 
+88     :done_if 115 
+91     :line 1847 
+94     :load_global AttributeError 
+97     :constant 115 
+100    :load_frame 3(cls) 
+102    :load_attr __name__ 
+105    :load_frame 1(name) 
+107    :pack 2 
+109    :binary mod 
+111    :pack_params 1 
+113    :f_call 
+114    :raise 
+115    :done_if 165 
+118    :line 1849 
+121    :load_frame 0(obj) 
+123    :has_special __dict__ 
+125    :on_false 141 
+128    :line 1850 
+131    :load_frame 2(value) 
+133    :load_frame 0(obj) 
+135    :load_frame 1(name) 
+137    :set_in_object_dict 
+138    :done_if 165 
+141    :line 1853 
+144    :load_global AttributeError 
+147    :constant 112 
+150    :load_frame 3(cls) 
+152    :load_attr __name__ 
+155    :load_frame 1(name) 
+157    :pack 2 
+159    :binary mod 
+161    :pack_params 1 
+163    :f_call 
+164    :raise 
+165    :none 
+166    :return 
+
+Function store_attr_surrogate kind:8192 3 parameters, 4 locals:
+Code at 0xb73927a8:
+0      :line 1861 
+3      :load_frame 1(obj) 
+5      :type 
+6      :constant 116 
+9      :get_class_attr 
+10     :store_frame 3(setter) 
+12     :line 1862 
+15     :load_frame 3(setter) 
+17     :load_global _object_setattr 
+20     :is 
+21     :on_false 43 
+24     :line 1863 
+27     :load_global generic_setattr 
+30     :load_frame 1(obj) 
+32     :load_frame 2(name) 
+34     :load_frame 0(value) 
+36     :pack_params 3 
+38     :f_call 
+39     :drop 
+40     :done_if 58 
+43     :line 1865 
+46     :load_frame 1(obj) 
+48     :load_special __setattr__ 
+50     :load_frame 2(name) 
+52     :load_frame 0(value) 
+54     :pack_params 2 
+56     :f_call 
+57     :drop 
+58     :line 1866 
+61     :return 
+
+Function slot_descriptor_get kind:8192 3 parameters, 3 locals:
+Code at 0xb7392838:
+0      :line 1873 
+3      :load_frame 0(desc) 
+5      :load_frame 1(obj) 
+7      :load_slot 
+8      :return 
+
+Function slot_descriptor_set kind:8192 3 parameters, 3 locals:
+Code at 0xb7392890:
+0      :line 1879 
+3      :load_frame 2(value) 
+5      :load_frame 0(desc) 
+7      :load_frame 1(obj) 
+9      :store_slot 
+10     :none 
+11     :return 
+
+Function print_bytecodes kind:8192 1 parameters, 4 locals:
+Code at 0xb73928e8:
+0      :line 1884 
+3      :load_global print 
+6      :load_frame 0(f) 
+8      :load_attr __name__ 
+11     :pack_params 1 
+13     :f_call 
+14     :drop 
+15     :line 1885 
+18     :load_frame 0(f) 
+20     :load_attr __code__ 
+23     :load_attr code 
+26     :store_frame 3(code) 
+28     :line 1886 
+31     :load_global range 
+34     :load_global len 
+37     :load_frame 3(code) 
+39     :pack_params 1 
+41     :f_call 
+42     :pack_params 1 
+44     :f_call 
+45     :iter 
+46     :store_frame 1(1) 
+48     :for_loop 80 
+51     :load_frame 1(1) 
+53     :next 
+54     :store_frame 2(i) 
+56     :line 1887 
+59     :load_global print 
+62     :constant 117 
+65     :load_frame 3(code) 
+67     :load_frame 2(i) 
+69     :getitem 
+70     :binary mod 
+72     :pack_params 1 
+74     :f_call 
+75     :drop 
+76     :end_loop 51 
+80     :exit_loop 
+81     :none 
+82     :return 
+
+Module __main__Code at 0x8568010:
+0      :line 3 
+3      :constant 0 
+6      :store_global __doc__ 
+9      :line 5 
+12     :constant 1 
+15     :store_global __name__ 
+18     :line 6 
+21     :none 
+22     :store_global __package__ 
+25     :line 8 
+28     :constant 2 
+31     :store_global copyright 
+34     :line 9 
+37     :constant 3 
+40     :store_global credits 
+43     :line 12 
+46     :new_scope 
+47     :line 13 
+50     :pop_scope 
+51     :load_global Exception 
+54     :pack 1 
+56     :make_class ArithmeticError 
+59     :store_global ArithmeticError 
+62     :line 15 
+65     :new_scope 
+66     :line 16 
+69     :pop_scope 
+70     :load_global Exception 
+73     :pack 1 
+75     :make_class AssertionError 
+78     :store_global AssertionError 
+81     :line 18 
+84     :new_scope 
+85     :line 19 
+88     :pop_scope 
+89     :load_global Exception 
+92     :pack 1 
+94     :make_class AttributeError 
+97     :store_global AttributeError 
+100    :line 21 
+103    :new_scope 
+104    :line 22 
+107    :pop_scope 
+108    :load_global Exception 
+111    :pack 1 
+113    :make_class BufferError 
+116    :store_global BufferError 
+119    :line 24 
+122    :new_scope 
+123    :line 25 
+126    :pop_scope 
+127    :load_global Exception 
+130    :pack 1 
+132    :make_class Warning 
+135    :store_global Warning 
+138    :line 27 
+141    :new_scope 
+142    :line 28 
+145    :pop_scope 
+146    :load_global Warning 
+149    :pack 1 
+151    :make_class BytesWarning 
+154    :store_global BytesWarning 
+157    :line 30 
+160    :new_scope 
+161    :line 31 
+164    :pop_scope 
+165    :load_global Warning 
+168    :pack 1 
+170    :make_class DeprecationWarning 
+173    :store_global DeprecationWarning 
+176    :line 33 
+179    :new_scope 
+180    :line 34 
+183    :pop_scope 
+184    :load_global Exception 
+187    :pack 1 
+189    :make_class EOFError 
+192    :store_global EOFError 
+195    :line 36 
+198    :new_scope 
+199    :line 37 
+202    :pop_scope 
+203    :load_global Exception 
+206    :pack 1 
+208    :make_class EnvironmentError 
+211    :store_global EnvironmentError 
+214    :line 39 
+217    :new_scope 
+218    :line 40 
+221    :pop_scope 
+222    :load_global Exception 
+225    :pack 1 
+227    :make_class TypeError 
+230    :store_global TypeError 
+233    :line 42 
+236    :new_scope 
+237    :line 43 
+240    :pop_scope 
+241    :load_global Exception 
+244    :pack 1 
+246    :make_class NameError 
+249    :store_global NameError 
+252    :line 45 
+255    :new_scope 
+256    :line 46 
+259    :pop_scope 
+260    :load_global Exception 
+263    :pack 1 
+265    :make_class ValueError 
+268    :store_global ValueError 
+271    :line 48 
+274    :new_scope 
+275    :line 49 
+278    :pop_scope 
+279    :load_global Exception 
+282    :pack 1 
+284    :make_class IndexError 
+287    :store_global IndexError 
+290    :line 51 
+293    :new_scope 
+294    :line 52 
+297    :pop_scope 
+298    :load_global Exception 
+301    :pack 1 
+303    :make_class ImportError 
+306    :store_global ImportError 
+309    :line 54 
+312    :new_scope 
+313    :line 55 
+316    :pop_scope 
+317    :load_global Exception 
+320    :pack 1 
+322    :make_class FloatingPointError 
+325    :store_global FloatingPointError 
+328    :line 57 
+331    :new_scope 
+332    :line 58 
+335    :pop_scope 
+336    :load_global Warning 
+339    :pack 1 
+341    :make_class FutureWarning 
+344    :store_global FutureWarning 
+347    :line 60 
+350    :new_scope 
+351    :line 61 
+354    :pop_scope 
+355    :load_global Exception 
+358    :pack 1 
+360    :make_class GeneratorExit 
+363    :store_global GeneratorExit 
+366    :line 63 
+369    :new_scope 
+370    :line 64 
+373    :pop_scope 
+374    :load_global Exception 
+377    :pack 1 
+379    :make_class InternalError 
+382    :store_global InternalError 
+385    :line 66 
+388    :new_scope 
+389    :line 67 
+392    :pop_scope 
+393    :load_global Exception 
+396    :pack 1 
+398    :make_class ImportError 
+401    :store_global ImportError 
+404    :line 69 
+407    :new_scope 
+408    :line 70 
+411    :pop_scope 
+412    :load_global Warning 
+415    :pack 1 
+417    :make_class ImportWarning 
+420    :store_global ImportWarning 
+423    :line 72 
+426    :new_scope 
+427    :line 73 
+430    :pop_scope 
+431    :load_global Exception 
+434    :pack 1 
+436    :make_class IndentationError 
+439    :store_global IndentationError 
+442    :line 75 
+445    :new_scope 
+446    :line 76 
+449    :pop_scope 
+450    :load_global Exception 
+453    :pack 1 
+455    :make_class IndexError 
+458    :store_global IndexError 
+461    :line 78 
+464    :new_scope 
+465    :line 79 
+468    :pop_scope 
+469    :load_global Exception 
+472    :pack 1 
+474    :make_class IOError 
+477    :store_global IOError 
+480    :line 81 
+483    :new_scope 
+484    :line 82 
+487    :pop_scope 
+488    :load_global Exception 
+491    :pack 1 
+493    :make_class KeyError 
+496    :store_global KeyError 
+499    :line 84 
+502    :new_scope 
+503    :line 87 
+506    :empty_tuple 
+507    :dictionary 
+508    :make_func 0 
+510    :store_local __str__ 
+513    :pop_scope 
+514    :load_global BaseException 
+517    :pack 1 
+519    :make_class KeyboardInterrupt 
+522    :store_global KeyboardInterrupt 
+525    :line 90 
+528    :new_scope 
+529    :line 91 
+532    :pop_scope 
+533    :load_global Exception 
+536    :pack 1 
+538    :make_class LookupError 
+541    :store_global LookupError 
+544    :line 93 
+547    :new_scope 
+548    :line 94 
+551    :pop_scope 
+552    :load_global Exception 
+555    :pack 1 
+557    :make_class MemoryError 
+560    :store_global MemoryError 
+563    :line 96 
+566    :new_scope 
+567    :line 97 
+570    :pop_scope 
+571    :load_global Exception 
+574    :pack 1 
+576    :make_class NameError 
+579    :store_global NameError 
+582    :line 99 
+585    :new_scope 
+586    :line 100 
+589    :pop_scope 
+590    :load_global Exception 
+593    :pack 1 
+595    :make_class NotImplementedError 
+598    :store_global NotImplementedError 
+601    :line 102 
+604    :new_scope 
+605    :line 103 
+608    :pop_scope 
+609    :load_global Exception 
+612    :pack 1 
+614    :make_class OSError 
+617    :store_global OSError 
+620    :line 105 
+623    :new_scope 
+624    :line 106 
+627    :pop_scope 
+628    :load_global Exception 
+631    :pack 1 
+633    :make_class OverflowError 
+636    :store_global OverflowError 
+639    :line 108 
+642    :new_scope 
+643    :line 109 
+646    :pop_scope 
+647    :load_global Warning 
+650    :pack 1 
+652    :make_class PendingDeprecationWarning 
+655    :store_global PendingDeprecationWarning 
+658    :line 111 
+661    :new_scope 
+662    :line 112 
+665    :pop_scope 
+666    :load_global Exception 
+669    :pack 1 
+671    :make_class ReferenceError 
+674    :store_global ReferenceError 
+677    :line 114 
+680    :new_scope 
+681    :line 115 
+684    :pop_scope 
+685    :load_global Exception 
+688    :pack 1 
+690    :make_class RuntimeError 
+693    :store_global RuntimeError 
+696    :line 117 
+699    :new_scope 
+700    :line 118 
+703    :pop_scope 
+704    :load_global Warning 
+707    :pack 1 
+709    :make_class RuntimeWarning 
+712    :store_global RuntimeWarning 
+715    :line 120 
+718    :new_scope 
+719    :line 121 
+722    :pop_scope 
+723    :load_global Warning 
+726    :pack 1 
+728    :make_class SyntaxWarning 
+731    :store_global SyntaxWarning 
+734    :line 123 
+737    :new_scope 
+738    :line 124 
+741    :pop_scope 
+742    :load_global Exception 
+745    :pack 1 
+747    :make_class SystemError 
+750    :store_global SystemError 
+753    :line 126 
+756    :new_scope 
+757    :line 127 
+760    :pop_scope 
+761    :load_global BaseException 
+764    :pack 1 
+766    :make_class SystemExit 
+769    :store_global SystemExit 
+772    :line 129 
+775    :new_scope 
+776    :line 130 
+779    :pop_scope 
+780    :load_global Exception 
+783    :pack 1 
+785    :make_class TabError 
+788    :store_global TabError 
+791    :line 132 
+794    :new_scope 
+795    :line 133 
+798    :pop_scope 
+799    :load_global Exception 
+802    :pack 1 
+804    :make_class UnboundLocalError 
+807    :store_global UnboundLocalError 
+810    :line 135 
+813    :new_scope 
+814    :line 136 
+817    :pop_scope 
+818    :load_global Exception 
+821    :pack 1 
+823    :make_class ValueError 
+826    :store_global ValueError 
+829    :line 138 
+832    :new_scope 
+833    :line 139 
+836    :pop_scope 
+837    :load_global ValueError 
+840    :pack 1 
+842    :make_class UnicodeError 
+845    :store_global UnicodeError 
+848    :line 141 
+851    :new_scope 
+852    :line 142 
+855    :pop_scope 
+856    :load_global UnicodeError 
+859    :pack 1 
+861    :make_class UnicodeDecodeError 
+864    :store_global UnicodeDecodeError 
+867    :line 144 
+870    :new_scope 
+871    :line 145 
+874    :pop_scope 
+875    :load_global UnicodeError 
+878    :pack 1 
+880    :make_class UnicodeEncodeError 
+883    :store_global UnicodeEncodeError 
+886    :line 147 
+889    :new_scope 
+890    :line 148 
+893    :pop_scope 
+894    :load_global Warning 
+897    :pack 1 
+899    :make_class UnicodeWarning 
+902    :store_global UnicodeWarning 
+905    :line 150 
+908    :new_scope 
+909    :line 151 
+912    :pop_scope 
+913    :load_global Warning 
+916    :pack 1 
+918    :make_class UserWarning 
+921    :store_global UserWarning 
+924    :line 153 
+927    :new_scope 
+928    :line 154 
+931    :pop_scope 
+932    :load_global ArithmeticError 
+935    :pack 1 
+937    :make_class ZeroDivisionError 
+940    :store_global ZeroDivisionError 
+943    :line 156 
+946    :empty_tuple 
+947    :dictionary 
+948    :make_func 1 
+950    :store_global divmod 
+953    :line 159 
+956    :empty_tuple 
+957    :dictionary 
+958    :make_func 2 
+960    :store_global filter 
+963    :line 204 
+966    :load_global c_function 
+969    :empty_tuple 
+970    :dictionary 
+971    :make_func 3 
+973    :pack_params 1 
+975    :f_call 
+976    :store_global globals 
+979    :line 208 
+982    :load_global c_function 
+985    :empty_tuple 
+986    :dictionary 
+987    :load_global str 
+990    :over 
+991    :name name 
+994    :setitem 
+995    :make_func 4 
+997    :pack_params 1 
+999    :f_call 
+1000   :store_global lib_import 
+1003   :line 212 
+1006   :empty_tuple 
+1007   :dictionary 
+1008   :make_func 5 
+1010   :store_global static 
+1013   :line 216 
+1016   :load_global c_function 
+1019   :empty_tuple 
+1020   :dictionary 
+1021   :load_global static 
+1024   :type 
+1025   :over 
+1026   :name func 
+1029   :setitem 
+1030   :make_func 6 
+1032   :pack_params 1 
+1034   :f_call 
+1035   :store_global c_name 
+1038   :line 220 
+1041   :load_global c_function 
+1044   :empty_tuple 
+1045   :dictionary 
+1046   :load_global c_name 
+1049   :type 
+1050   :over 
+1051   :name f 
+1054   :setitem 
+1055   :make_func 7 
+1057   :pack_params 1 
+1059   :f_call 
+1060   :store_global _pure 
+1063   :line 229 
+1066   :load_global c_function 
+1069   :empty_tuple 
+1070   :dictionary 
+1071   :load_global str 
+1074   :over 
+1075   :name name 
+1078   :setitem 
+1079   :make_func 8 
+1081   :pack_params 1 
+1083   :f_call 
+1084   :store_global setattr 
+1087   :line 232 
+1090   :empty_tuple 
+1091   :dictionary 
+1092   :make_func 10 
+1094   :store_global method 
+1097   :line 240 
+1100   :load_global c_function 
+1103   :empty_tuple 
+1104   :dictionary 
+1105   :load_global method 
+1108   :type 
+1109   :over 
+1110   :name f 
+1113   :setitem 
+1114   :make_func 11 
+1116   :pack_params 1 
+1118   :f_call 
+1119   :store_global _no_trace 
+1122   :line 244 
+1125   :load_global c_function 
+1128   :empty_tuple 
+1129   :dictionary 
+1130   :load_global method 
+1133   :type 
+1134   :over 
+1135   :name f 
+1138   :setitem 
+1139   :make_func 12 
+1141   :pack_params 1 
+1143   :f_call 
+1144   :store_global _globals_to_consts 
+1147   :line 249 
+1150   :load_global _pure 
+1153   :load_global c_function 
+1156   :empty_tuple 
+1157   :dictionary 
+1158   :load_global type 
+1161   :over 
+1162   :name cls 
+1165   :setitem 
+1166   :make_func 13 
+1168   :pack_params 1 
+1170   :f_call 
+1171   :pack_params 1 
+1173   :f_call 
+1174   :store_global object_allocate 
+1177   :line 255 
+1180   :load_global method 
+1183   :load_global object 
+1186   :constant 6 
+1189   :pack_params 2 
+1191   :f_call 
+1192   :load_global c_name 
+1195   :load_global _no_trace 
+1198   :empty_tuple 
+1199   :dictionary 
+1200   :make_func 14 
+1202   :pack_params 1 
+1204   :f_call 
+1205   :pack_params 1 
+1207   :f_call 
+1208   :pack_params 1 
+1210   :f_call 
+1211   :store_global object_new 
+1214   :line 260 
+1217   :load_global method 
+1220   :load_global object 
+1223   :constant 7 
+1226   :pack_params 2 
+1228   :f_call 
+1229   :load_global c_name 
+1232   :empty_tuple 
+1233   :dictionary 
+1234   :make_func 15 
+1236   :pack_params 1 
+1238   :f_call 
+1239   :pack_params 1 
+1241   :f_call 
+1242   :store_global object_init 
+1245   :line 263 
+1248   :load_global lib_import 
+1251   :constant 8 
+1254   :pack_params 1 
+1256   :f_call 
+1257   :store_global _engine 
+1260   :line 264 
+1263   :load_global _engine 
+1266   :load_attr _no_raise 
+1269   :store_global _no_raise 
+1272   :line 265 
+1275   :load_global _engine 
+1278   :load_attr range 
+1281   :store_global range 
+1284   :line 266 
+1287   :load_global _engine 
+1290   :load_attr iter 
+1293   :store_global iter 
+1296   :line 267 
+1299   :load_global _engine 
+1302   :load_attr print_string 
+1305   :store_global _print_string 
+1308   :line 268 
+1311   :load_global _engine 
+1314   :load_attr _no_overflow 
+1317   :store_global _no_overflow 
+1320   :line 270 
+1323   :new_scope 
+1324   :line 273 
+1327   :constant 10 
+1330   :constant 11 
+1333   :constant 12 
+1336   :list 3 
+1338   :store_local __slots__ 
+1341   :line 298 
+1344   :none 
+1345   :byte 1 
+1347   :pack 2 
+1349   :dictionary 
+1350   :make_func 16 
+1352   :store_local __init__ 
+1355   :line 310 
+1358   :empty_tuple 
+1359   :dictionary 
+1360   :make_func 17 
+1362   :store_local __len__ 
+1365   :line 316 
+1368   :empty_tuple 
+1369   :dictionary 
+1370   :make_func 18 
+1372   :store_local __iter__ 
+1375   :line 324 
+1378   :empty_tuple 
+1379   :dictionary 
+1380   :make_func 19 
+1382   :store_local __getitem__ 
+1385   :line 336 
+1388   :empty_tuple 
+1389   :dictionary 
+1390   :make_func 20 
+1392   :store_local __repr__ 
+1395   :line 343 
+1398   :empty_tuple 
+1399   :dictionary 
+1400   :make_func 21 
+1402   :store_local __reduce__ 
+1405   :line 346 
+1408   :empty_tuple 
+1409   :dictionary 
+1410   :make_func 22 
+1412   :store_local __reversed__ 
+1415   :pop_scope 
+1416   :pack 0 
+1418   :make_class irange 
+1421   :store_global irange 
+1424   :line 357 
+1427   :empty_tuple 
+1428   :dictionary 
+1429   :make_func 23 
+1431   :store_global __irange_1 
+1434   :line 362 
+1437   :empty_tuple 
+1438   :dictionary 
+1439   :make_func 24 
+1441   :store_global __irange_inc 
+1444   :line 367 
+1447   :empty_tuple 
+1448   :dictionary 
+1449   :make_func 25 
+1451   :store_global __irange_dec 
+1454   :line 372 
+1457   :new_scope 
+1458   :line 373 
+1461   :constant 18 
+1464   :list 1 
+1466   :store_local __slots__ 
+1469   :line 375 
+1472   :empty_tuple 
+1473   :dictionary 
+1474   :make_func 26 
+1476   :store_local __init__ 
+1479   :line 378 
+1482   :empty_tuple 
+1483   :dictionary 
+1484   :make_func 27 
+1486   :store_local __iter__ 
+1489   :line 381 
+1492   :empty_tuple 
+1493   :dictionary 
+1494   :make_func 28 
+1496   :store_local __next__ 
+1499   :pop_scope 
+1500   :pack 0 
+1502   :make_class irange_iterator 
+1505   :store_global irange_iterator 
+1508   :line 386 
+1511   :load_global c_name 
+1514   :load_global _no_trace 
+1517   :empty_tuple 
+1518   :dictionary 
+1519   :load_global str 
+1522   :over 
+1523   :name name 
+1526   :setitem 
+1527   :make_func 29 
+1529   :pack_params 1 
+1531   :f_call 
+1532   :pack_params 1 
+1534   :f_call 
+1535   :store_global getattr 
+1538   :line 390 
+1541   :load_global c_function 
+1544   :empty_tuple 
+1545   :dictionary 
+1546   :load_global str 
+1549   :over 
+1550   :name name 
+1553   :setitem 
+1554   :make_func 30 
+1556   :pack_params 1 
+1558   :f_call 
+1559   :store_global delattr 
+1562   :line 394 
+1565   :load_global c_function 
+1568   :empty_tuple 
+1569   :dictionary 
+1570   :load_global type 
+1573   :over 
+1574   :name cls 
+1577   :setitem 
+1578   :make_func 31 
+1580   :pack_params 1 
+1582   :f_call 
+1583   :store_global make_immutable 
+1586   :line 398 
+1589   :load_global c_function 
+1592   :empty_tuple 
+1593   :dictionary 
+1594   :load_global type 
+1597   :over 
+1598   :name cls 
+1601   :setitem 
+1602   :load_global method 
+1605   :type 
+1606   :over 
+1607   :name f 
+1610   :setitem 
+1611   :make_func 32 
+1613   :pack_params 1 
+1615   :f_call 
+1616   :store_global surrogate_new_function 
+1619   :line 401 
+1622   :empty_tuple 
+1623   :dictionary 
+1624   :make_func 34 
+1626   :store_global surrogate_new 
+1629   :line 408 
+1632   :load_global c_name 
+1635   :empty_tuple 
+1636   :dictionary 
+1637   :make_func 35 
+1639   :pack_params 1 
+1641   :f_call 
+1642   :store_global new_object_no_init 
+1645   :line 414 
+1648   :load_global c_name 
+1651   :load_global _globals_to_consts 
+1654   :load_global _no_trace 
+1657   :empty_tuple 
+1658   :dictionary 
+1659   :make_func 36 
+1661   :pack_params 1 
+1663   :f_call 
+1664   :pack_params 1 
+1666   :f_call 
+1667   :pack_params 1 
+1669   :f_call 
+1670   :store_global type_call 
+1673   :line 423 
+1676   :load_global c_name 
+1679   :load_global _no_trace 
+1682   :load_global _no_trace 
+1685   :empty_tuple 
+1686   :dictionary 
+1687   :make_func 37 
+1689   :pack_params 1 
+1691   :f_call 
+1692   :pack_params 1 
+1694   :f_call 
+1695   :pack_params 1 
+1697   :f_call 
+1698   :store_global alloc_and_init 
+1701   :line 436 
+1704   :load_global _pure 
+1707   :load_global c_function 
+1710   :empty_tuple 
+1711   :dictionary 
+1712   :make_func 38 
+1714   :pack_params 1 
+1716   :f_call 
+1717   :pack_params 1 
+1719   :f_call 
+1720   :store_global object_repr 
+1723   :line 439 
+1726   :load_global object_repr 
+1729   :load_global object 
+1732   :store_attr __repr__ 
+1735   :line 440 
+1738   :constant 19 
+1741   :load_global object_repr 
+1744   :store_attr __name__ 
+1747   :line 441 
+1750   :delete_global object_repr 
+1753   :line 444 
+1756   :load_global c_function 
+1759   :empty_tuple 
+1760   :dictionary 
+1761   :make_func 39 
+1763   :pack_params 1 
+1765   :f_call 
+1766   :store_global repr 
+1769   :line 448 
+1772   :load_global c_function 
+1775   :empty_tuple 
+1776   :dictionary 
+1777   :make_func 40 
+1779   :pack_params 1 
+1781   :f_call 
+1782   :store_global _bool 
+1785   :line 451 
+1788   :load_global _bool 
+1791   :load_global bool 
+1794   :store_attr __new__ 
+1797   :line 452 
+1800   :constant 20 
+1803   :load_global _bool 
+1806   :store_attr __name__ 
+1809   :line 453 
+1812   :delete_global _bool 
+1815   :line 456 
+1818   :load_global c_name 
+1821   :empty_tuple 
+1822   :dictionary 
+1823   :make_func 41 
+1825   :pack_params 1 
+1827   :f_call 
+1828   :store_global print 
+1831   :line 477 
+1834   :load_global _no_trace 
+1837   :empty_tuple 
+1838   :dictionary 
+1839   :make_func 42 
+1841   :pack_params 1 
+1843   :f_call 
+1844   :store_global hash 
+1847   :line 482 
+1850   :load_global _pure 
+1853   :load_global c_function 
+1856   :empty_tuple 
+1857   :dictionary 
+1858   :make_func 43 
+1860   :pack_params 1 
+1862   :f_call 
+1863   :pack_params 1 
+1865   :f_call 
+1866   :store_global object_hash 
+1869   :line 484 
+1872   :load_global object_hash 
+1875   :load_global object 
+1878   :store_attr __hash__ 
+1881   :line 485 
+1884   :constant 27 
+1887   :load_global object_hash 
+1890   :store_attr __name__ 
+1893   :line 486 
+1896   :delete_global object_hash 
+1899   :line 491 
+1902   :load_global method 
+1905   :load_global int 
+1908   :constant 27 
+1911   :pack_params 2 
+1913   :f_call 
+1914   :load_global _pure 
+1917   :load_global c_function 
+1920   :empty_tuple 
+1921   :dictionary 
+1922   :make_func 44 
+1924   :pack_params 1 
+1926   :f_call 
+1927   :pack_params 1 
+1929   :f_call 
+1930   :pack_params 1 
+1932   :f_call 
+1933   :store_global int_hash 
+1936   :line 497 
+1939   :load_global _no_raise 
+1942   :load_global _pure 
+1945   :load_global c_function 
+1948   :empty_tuple 
+1949   :dictionary 
+1950   :make_func 45 
+1952   :pack_params 1 
+1954   :f_call 
+1955   :pack_params 1 
+1957   :f_call 
+1958   :pack_params 1 
+1960   :f_call 
+1961   :store_global object_type 
+1964   :line 499 
+1967   :load_global object_type 
+1970   :load_global type 
+1973   :store_attr __new__ 
+1976   :line 500 
+1979   :constant 28 
+1982   :load_global object_type 
+1985   :store_attr __name__ 
+1988   :line 501 
+1991   :delete_global object_type 
+1994   :line 504 
+1997   :load_global c_function 
+2000   :constant 3 
+2003   :pack 1 
+2005   :dictionary 
+2006   :load_global str 
+2009   :over 
+2010   :name return 
+2013   :setitem 
+2014   :make_func 46 
+2016   :pack_params 1 
+2018   :f_call 
+2019   :store_global _new_str 
+2022   :line 507 
+2025   :load_global _new_str 
+2028   :load_global str 
+2031   :store_attr __new__ 
+2034   :line 508 
+2037   :constant 29 
+2040   :load_global _new_str 
+2043   :store_attr __name__ 
+2046   :line 509 
+2049   :delete_global _new_str 
+2052   :line 512 
+2055   :load_global c_function 
+2058   :empty_tuple 
+2059   :dictionary 
+2060   :load_global str 
+2063   :over 
+2064   :name return 
+2067   :setitem 
+2068   :make_func 47 
+2070   :pack_params 1 
+2072   :f_call 
+2073   :store_global object_str 
+2076   :line 514 
+2079   :load_global object_str 
+2082   :load_global object 
+2085   :store_attr __str__ 
+2088   :line 515 
+2091   :constant 30 
+2094   :load_global object_str 
+2097   :store_attr __name__ 
+2100   :line 516 
+2103   :delete_global object_str 
+2106   :line 520 
+2109   :load_global _pure 
+2112   :load_global c_function 
+2115   :empty_tuple 
+2116   :dictionary 
+2117   :load_global type 
+2120   :over 
+2121   :name cls 
+2124   :setitem 
+2125   :load_global str 
+2128   :over 
+2129   :name return 
+2132   :setitem 
+2133   :make_func 48 
+2135   :pack_params 1 
+2137   :f_call 
+2138   :pack_params 1 
+2140   :f_call 
+2141   :store_global type_str 
+2144   :line 523 
+2147   :load_global type_str 
+2150   :load_global type 
+2153   :store_attr __str__ 
+2156   :line 524 
+2159   :constant 30 
+2162   :load_global type_str 
+2165   :store_attr __name__ 
+2168   :line 525 
+2171   :delete_global type_str 
+2174   :line 528 
+2177   :load_global _no_trace 
+2180   :empty_tuple 
+2181   :dictionary 
+2182   :make_func 49 
+2184   :pack_params 1 
+2186   :f_call 
+2187   :store_global type_check 
+2190   :line 534 
+2193   :load_global _no_trace 
+2196   :empty_tuple 
+2197   :dictionary 
+2198   :make_func 50 
+2200   :pack_params 1 
+2202   :f_call 
+2203   :store_global function_str 
+2206   :line 537 
+2209   :load_global function_str 
+2212   :load_global type_check 
+2215   :type 
+2216   :store_attr __str__ 
+2219   :line 538 
+2222   :constant 30 
+2225   :load_global function_str 
+2228   :store_attr __name__ 
+2231   :line 539 
+2234   :delete_global function_str 
+2237   :line 545 
+2240   :load_global surrogate_new 
+2243   :load_global str 
+2246   :pack_params 1 
+2248   :f_call 
+2249   :load_global _no_trace 
+2252   :load_global c_name 
+2255   :load_global static 
+2258   :none 
+2259   :none 
+2260   :pack 2 
+2262   :dictionary 
+2263   :make_func 51 
+2265   :pack_params 1 
+2267   :f_call 
+2268   :pack_params 1 
+2270   :f_call 
+2271   :pack_params 1 
+2273   :f_call 
+2274   :pack_params 1 
+2276   :f_call 
+2277   :store_global to_str 
+2280   :line 553 
+2283   :load_global _pure 
+2286   :load_global c_function 
+2289   :empty_tuple 
+2290   :dictionary 
+2291   :load_global int 
+2294   :over 
+2295   :name return 
+2298   :setitem 
+2299   :make_func 52 
+2301   :pack_params 1 
+2303   :f_call 
+2304   :pack_params 1 
+2306   :f_call 
+2307   :store_global id 
+2310   :line 559 
+2313   :load_global _no_trace 
+2316   :load_global static 
+2319   :load_global surrogate_new 
+2322   :load_global int 
+2325   :pack_params 1 
+2327   :f_call 
+2328   :empty_tuple 
+2329   :dictionary 
+2330   :make_func 53 
+2332   :pack_params 1 
+2334   :f_call 
+2335   :pack_params 1 
+2337   :f_call 
+2338   :pack_params 1 
+2340   :f_call 
+2341   :store_global to_int 
+2344   :line 561 
+2347   :load_global to_int 
+2350   :load_global int 
+2353   :store_attr __new__ 
+2356   :line 562 
+2359   :constant 33 
+2362   :load_global to_int 
+2365   :store_attr __name__ 
+2368   :line 563 
+2371   :delete_global to_int 
+2374   :line 566 
+2377   :load_global _no_trace 
+2380   :empty_tuple 
+2381   :dictionary 
+2382   :load_global str 
+2385   :over 
+2386   :name self 
+2389   :setitem 
+2390   :load_global str 
+2393   :over 
+2394   :name s 
+2397   :setitem 
+2398   :make_func 54 
+2400   :pack_params 1 
+2402   :f_call 
+2403   :store_global find_in_str 
+2406   :line 574 
+2409   :load_global find_in_str 
+2412   :load_global str 
+2415   :store_attr find 
+2418   :line 575 
+2421   :constant 34 
+2424   :load_global find_in_str 
+2427   :store_attr __name__ 
+2430   :line 576 
+2433   :delete_global find_in_str 
+2436   :line 580 
+2439   :load_global _pure 
+2442   :load_global c_function 
+2445   :empty_tuple 
+2446   :dictionary 
+2447   :load_global str 
+2450   :over 
+2451   :name s 
+2454   :setitem 
+2455   :load_global int 
+2458   :over 
+2459   :name low 
+2462   :setitem 
+2463   :load_global int 
+2466   :over 
+2467   :name high 
+2470   :setitem 
+2471   :make_func 55 
+2473   :pack_params 1 
+2475   :f_call 
+2476   :pack_params 1 
+2478   :f_call 
+2479   :store_global substring 
+2482   :line 586 
+2485   :load_global method 
+2488   :load_global str 
+2491   :constant 35 
+2494   :pack_params 2 
+2496   :f_call 
+2497   :load_global _pure 
+2500   :load_global c_function 
+2503   :empty_tuple 
+2504   :dictionary 
+2505   :load_global str 
+2508   :over 
+2509   :name self 
+2512   :setitem 
+2513   :load_global int 
+2516   :over 
+2517   :name return 
+2520   :setitem 
+2521   :make_func 56 
+2523   :pack_params 1 
+2525   :f_call 
+2526   :pack_params 1 
+2528   :f_call 
+2529   :pack_params 1 
+2531   :f_call 
+2532   :store_global str_to_int 
+2535   :line 588 
+2538   :delete_global str_to_int 
+2541   :line 594 
+2544   :load_global method 
+2547   :load_global float 
+2550   :constant 6 
+2553   :pack_params 2 
+2555   :f_call 
+2556   :load_global surrogate_new 
+2559   :load_global float 
+2562   :pack_params 1 
+2564   :f_call 
+2565   :load_global static 
+2568   :load_global c_name 
+2571   :empty_tuple 
+2572   :dictionary 
+2573   :load_global float 
+2576   :over 
+2577   :name return 
+2580   :setitem 
+2581   :make_func 57 
+2583   :pack_params 1 
+2585   :f_call 
+2586   :pack_params 1 
+2588   :f_call 
+2589   :pack_params 1 
+2591   :f_call 
+2592   :pack_params 1 
+2594   :f_call 
+2595   :store_global to_float 
+2598   :line 596 
+2601   :delete_global to_float 
+2604   :line 599 
+2607   :load_global method 
+2610   :load_global int 
+2613   :constant 35 
+2616   :pack_params 2 
+2618   :f_call 
+2619   :empty_tuple 
+2620   :dictionary 
+2621   :make_func 58 
+2623   :pack_params 1 
+2625   :f_call 
+2626   :store_global _ 
+2629   :line 603 
+2632   :load_global method 
+2635   :load_global int 
+2638   :constant 27 
+2641   :pack_params 2 
+2643   :f_call 
+2644   :empty_tuple 
+2645   :dictionary 
+2646   :make_func 59 
+2648   :pack_params 1 
+2650   :f_call 
+2651   :store_global _ 
+2654   :line 607 
+2657   :load_global method 
+2660   :load_global float 
+2663   :constant 36 
+2666   :pack_params 2 
+2668   :f_call 
+2669   :empty_tuple 
+2670   :dictionary 
+2671   :make_func 60 
+2673   :pack_params 1 
+2675   :f_call 
+2676   :store_global _ 
+2679   :line 611 
+2682   :load_global method 
+2685   :load_global bool 
+2688   :constant 37 
+2691   :pack_params 2 
+2693   :f_call 
+2694   :empty_tuple 
+2695   :dictionary 
+2696   :make_func 61 
+2698   :pack_params 1 
+2700   :f_call 
+2701   :store_global _ 
+2704   :line 615 
+2707   :load_global method 
+2710   :load_global str 
+2713   :constant 30 
+2716   :pack_params 2 
+2718   :f_call 
+2719   :empty_tuple 
+2720   :dictionary 
+2721   :make_func 62 
+2723   :pack_params 1 
+2725   :f_call 
+2726   :store_global _ 
+2729   :line 619 
+2732   :load_global method 
+2735   :load_global generator 
+2738   :constant 38 
+2741   :pack_params 2 
+2743   :f_call 
+2744   :empty_tuple 
+2745   :dictionary 
+2746   :make_func 63 
+2748   :pack_params 1 
+2750   :f_call 
+2751   :store_global _ 
+2754   :line 623 
+2757   :load_global method 
+2760   :load_global int_iterator 
+2763   :constant 38 
+2766   :pack_params 2 
+2768   :f_call 
+2769   :empty_tuple 
+2770   :dictionary 
+2771   :make_func 64 
+2773   :pack_params 1 
+2775   :f_call 
+2776   :store_global _ 
+2779   :line 629 
+2782   :load_global method 
+2785   :load_global int 
+2788   :constant 36 
+2791   :pack_params 2 
+2793   :f_call 
+2794   :load_global _pure 
+2797   :load_global c_function 
+2800   :empty_tuple 
+2801   :dictionary 
+2802   :load_global int 
+2805   :over 
+2806   :name i 
+2809   :setitem 
+2810   :make_func 65 
+2812   :pack_params 1 
+2814   :f_call 
+2815   :pack_params 1 
+2817   :f_call 
+2818   :pack_params 1 
+2820   :f_call 
+2821   :store_global int_to_float 
+2824   :line 631 
+2827   :delete_global int_to_float 
+2830   :line 636 
+2833   :load_global method 
+2836   :load_global float 
+2839   :constant 35 
+2842   :pack_params 2 
+2844   :f_call 
+2845   :load_global _pure 
+2848   :load_global c_function 
+2851   :empty_tuple 
+2852   :dictionary 
+2853   :load_global float 
+2856   :over 
+2857   :name f 
+2860   :setitem 
+2861   :make_func 66 
+2863   :pack_params 1 
+2865   :f_call 
+2866   :pack_params 1 
+2868   :f_call 
+2869   :pack_params 1 
+2871   :f_call 
+2872   :store_global float_to_int 
+2875   :line 638 
+2878   :delete_global float_to_int 
+2881   :line 642 
+2884   :load_global method 
+2887   :load_global BaseException 
+2890   :constant 7 
+2893   :pack_params 2 
+2895   :f_call 
+2896   :load_global _no_trace 
+2899   :empty_tuple 
+2900   :dictionary 
+2901   :make_func 67 
+2903   :pack_params 1 
+2905   :f_call 
+2906   :pack_params 1 
+2908   :f_call 
+2909   :store_global init_Exception 
+2912   :line 644 
+2915   :delete_global init_Exception 
+2918   :line 648 
+2921   :load_global method 
+2924   :load_global BaseException 
+2927   :constant 30 
+2930   :pack_params 2 
+2932   :f_call 
+2933   :load_global _no_trace 
+2936   :empty_tuple 
+2937   :dictionary 
+2938   :load_global BaseException 
+2941   :over 
+2942   :name self 
+2945   :setitem 
+2946   :make_func 68 
+2948   :pack_params 1 
+2950   :f_call 
+2951   :pack_params 1 
+2953   :f_call 
+2954   :store_global str_Exception 
+2957   :line 667 
+2960   :delete_global str_Exception 
+2963   :line 685 
+2966   :load_global method 
+2969   :load_global bool 
+2972   :constant 30 
+2975   :pack_params 2 
+2977   :f_call 
+2978   :load_global _no_trace 
+2981   :empty_tuple 
+2982   :dictionary 
+2983   :load_global bool 
+2986   :over 
+2987   :name self 
+2990   :setitem 
+2991   :make_func 69 
+2993   :pack_params 1 
+2995   :f_call 
+2996   :pack_params 1 
+2998   :f_call 
+2999   :store_global bool_str 
+3002   :line 693 
+3005   :delete_global bool_str 
+3008   :line 699 
+3011   :load_global method 
+3014   :load_global int 
+3017   :constant 37 
+3020   :pack_params 2 
+3022   :f_call 
+3023   :load_global _no_raise 
+3026   :load_global _pure 
+3029   :load_global c_function 
+3032   :empty_tuple 
+3033   :dictionary 
+3034   :load_global int 
+3037   :over 
+3038   :name self 
+3041   :setitem 
+3042   :load_global bool 
+3045   :over 
+3046   :name return 
+3049   :setitem 
+3050   :make_func 70 
+3052   :pack_params 1 
+3054   :f_call 
+3055   :pack_params 1 
+3057   :f_call 
+3058   :pack_params 1 
+3060   :f_call 
+3061   :pack_params 1 
+3063   :f_call 
+3064   :store_global __bool___int 
+3067   :line 701 
+3070   :delete_global __bool___int 
+3073   :line 707 
+3076   :load_global method 
+3079   :load_global float 
+3082   :constant 37 
+3085   :pack_params 2 
+3087   :f_call 
+3088   :load_global _no_raise 
+3091   :load_global _pure 
+3094   :load_global c_function 
+3097   :empty_tuple 
+3098   :dictionary 
+3099   :load_global float 
+3102   :over 
+3103   :name self 
+3106   :setitem 
+3107   :load_global bool 
+3110   :over 
+3111   :name return 
+3114   :setitem 
+3115   :make_func 71 
+3117   :pack_params 1 
+3119   :f_call 
+3120   :pack_params 1 
+3122   :f_call 
+3123   :pack_params 1 
+3125   :f_call 
+3126   :pack_params 1 
+3128   :f_call 
+3129   :store_global __bool___float 
+3132   :line 709 
+3135   :delete_global __bool___float 
+3138   :line 716 
+3141   :load_global method 
+3144   :load_global int 
+3147   :constant 30 
+3150   :pack_params 2 
+3152   :f_call 
+3153   :load_global method 
+3156   :load_global int 
+3159   :constant 19 
+3162   :pack_params 2 
+3164   :f_call 
+3165   :load_global _no_raise 
+3168   :load_global _pure 
+3171   :load_global c_function 
+3174   :empty_tuple 
+3175   :dictionary 
+3176   :load_global int 
+3179   :over 
+3180   :name self 
+3183   :setitem 
+3184   :load_global str 
+3187   :over 
+3188   :name return 
+3191   :setitem 
+3192   :make_func 72 
+3194   :pack_params 1 
+3196   :f_call 
+3197   :pack_params 1 
+3199   :f_call 
+3200   :pack_params 1 
+3202   :f_call 
+3203   :pack_params 1 
+3205   :f_call 
+3206   :pack_params 1 
+3208   :f_call 
+3209   :store_global int_to_str 
+3212   :line 718 
+3215   :delete_global int_to_str 
+3218   :line 725 
+3221   :load_global method 
+3224   :load_global float 
+3227   :constant 30 
+3230   :pack_params 2 
+3232   :f_call 
+3233   :load_global method 
+3236   :load_global float 
+3239   :constant 19 
+3242   :pack_params 2 
+3244   :f_call 
+3245   :load_global _no_raise 
+3248   :load_global _pure 
+3251   :load_global c_function 
+3254   :empty_tuple 
+3255   :dictionary 
+3256   :load_global float 
+3259   :over 
+3260   :name self 
+3263   :setitem 
+3264   :load_global str 
+3267   :over 
+3268   :name return 
+3271   :setitem 
+3272   :make_func 73 
+3274   :pack_params 1 
+3276   :f_call 
+3277   :pack_params 1 
+3279   :f_call 
+3280   :pack_params 1 
+3282   :f_call 
+3283   :pack_params 1 
+3285   :f_call 
+3286   :pack_params 1 
+3288   :f_call 
+3289   :store_global __str___float 
+3292   :line 727 
+3295   :delete_global __str___float 
+3298   :line 730 
+3301   :load_global _no_trace 
+3304   :empty_tuple 
+3305   :dictionary 
+3306   :load_global NoneType 
+3309   :over 
+3310   :name self 
+3313   :setitem 
+3314   :load_global str 
+3317   :over 
+3318   :name return 
+3321   :setitem 
+3322   :make_func 74 
+3324   :pack_params 1 
+3326   :f_call 
+3327   :store_global none_str 
+3330   :line 732 
+3333   :load_global none_str 
+3336   :load_global NoneType 
+3339   :store_attr __str__ 
+3342   :line 733 
+3345   :constant 30 
+3348   :load_global none_str 
+3351   :store_attr __name__ 
+3354   :line 734 
+3357   :delete_global none_str 
+3360   :line 740 
+3363   :load_global method 
+3366   :load_global str 
+3369   :constant 27 
+3372   :pack_params 2 
+3374   :f_call 
+3375   :load_global _no_raise 
+3378   :load_global _pure 
+3381   :load_global c_function 
+3384   :empty_tuple 
+3385   :dictionary 
+3386   :load_global str 
+3389   :over 
+3390   :name self 
+3393   :setitem 
+3394   :make_func 75 
+3396   :pack_params 1 
+3398   :f_call 
+3399   :pack_params 1 
+3401   :f_call 
+3402   :pack_params 1 
+3404   :f_call 
+3405   :pack_params 1 
+3407   :f_call 
+3408   :store_global __hash___str 
+3411   :line 742 
+3414   :delete_global __hash___str 
+3417   :line 746 
+3420   :load_global _pure 
+3423   :load_global c_function 
+3426   :empty_tuple 
+3427   :dictionary 
+3428   :make_func 76 
+3430   :pack_params 1 
+3432   :f_call 
+3433   :pack_params 1 
+3435   :f_call 
+3436   :store_global make_slice 
+3439   :line 751 
+3442   :load_global method 
+3445   :load_global slice 
+3448   :constant 6 
+3451   :pack_params 2 
+3453   :f_call 
+3454   :load_global _no_trace 
+3457   :empty_tuple 
+3458   :dictionary 
+3459   :load_global type 
+3462   :over 
+3463   :name cls 
+3466   :setitem 
+3467   :make_func 77 
+3469   :pack_params 1 
+3471   :f_call 
+3472   :pack_params 1 
+3474   :f_call 
+3475   :store_global slice_new 
+3478   :line 755 
+3481   :delete_global slice_new 
+3484   :line 759 
+3487   :load_global method 
+3490   :load_global slice 
+3493   :constant 30 
+3496   :pack_params 2 
+3498   :f_call 
+3499   :load_global _no_trace 
+3502   :empty_tuple 
+3503   :dictionary 
+3504   :load_global slice 
+3507   :over 
+3508   :name self 
+3511   :setitem 
+3512   :make_func 78 
+3514   :pack_params 1 
+3516   :f_call 
+3517   :pack_params 1 
+3519   :f_call 
+3520   :store_global __str___slice 
+3523   :line 761 
+3526   :delete_global __str___slice 
+3529   :line 767 
+3532   :load_global method 
+3535   :load_global str 
+3538   :constant 47 
+3541   :pack_params 2 
+3543   :f_call 
+3544   :load_global _no_raise 
+3547   :load_global _pure 
+3550   :load_global c_function 
+3553   :empty_tuple 
+3554   :dictionary 
+3555   :load_global str 
+3558   :over 
+3559   :name self 
+3562   :setitem 
+3563   :make_func 79 
+3565   :pack_params 1 
+3567   :f_call 
+3568   :pack_params 1 
+3570   :f_call 
+3571   :pack_params 1 
+3573   :f_call 
+3574   :pack_params 1 
+3576   :f_call 
+3577   :store_global __len__str 
+3580   :line 769 
+3583   :delete_global __len__str 
+3586   :line 773 
+3589   :load_global _pure 
+3592   :load_global c_function 
+3595   :empty_tuple 
+3596   :dictionary 
+3597   :load_global type 
+3600   :over 
+3601   :name cls 
+3604   :setitem 
+3605   :make_func 80 
+3607   :pack_params 1 
+3609   :f_call 
+3610   :pack_params 1 
+3612   :f_call 
+3613   :store_global new_list 
+3616   :line 777 
+3619   :load_global method 
+3622   :load_global list 
+3625   :constant 6 
+3628   :pack_params 2 
+3630   :f_call 
+3631   :empty_tuple 
+3632   :dictionary 
+3633   :make_func 81 
+3635   :pack_params 1 
+3637   :f_call 
+3638   :store_global _ 
+3641   :line 783 
+3644   :load_global method 
+3647   :load_global list 
+3650   :constant 7 
+3653   :pack_params 2 
+3655   :f_call 
+3656   :load_global c_name 
+3659   :load_global _no_trace 
+3662   :none 
+3663   :pack 1 
+3665   :dictionary 
+3666   :make_func 82 
+3668   :pack_params 1 
+3670   :f_call 
+3671   :pack_params 1 
+3673   :f_call 
+3674   :pack_params 1 
+3676   :f_call 
+3677   :store_global list_init 
+3680   :line 787 
+3683   :delete_global list_init 
+3686   :line 791 
+3689   :load_global surrogate_new 
+3692   :load_global list 
+3695   :pack_params 1 
+3697   :f_call 
+3698   :load_global _no_trace 
+3701   :empty_tuple 
+3702   :dictionary 
+3703   :make_func 83 
+3705   :pack_params 1 
+3707   :f_call 
+3708   :pack_params 1 
+3710   :f_call 
+3711   :store_global make_new_list 
+3714   :line 797 
+3717   :load_global method 
+3720   :load_global dict 
+3723   :constant 6 
+3726   :pack_params 2 
+3728   :f_call 
+3729   :load_global _pure 
+3732   :load_global c_function 
+3735   :empty_tuple 
+3736   :dictionary 
+3737   :make_func 84 
+3739   :pack_params 1 
+3741   :f_call 
+3742   :pack_params 1 
+3744   :f_call 
+3745   :pack_params 1 
+3747   :f_call 
+3748   :store_global make_dict 
+3751   :line 802 
+3754   :load_global method 
+3757   :load_global dict 
+3760   :constant 48 
+3763   :pack_params 2 
+3765   :f_call 
+3766   :load_global c_function 
+3769   :empty_tuple 
+3770   :dictionary 
+3771   :load_global dict 
+3774   :over 
+3775   :name d 
+3778   :setitem 
+3779   :make_func 85 
+3781   :pack_params 1 
+3783   :f_call 
+3784   :pack_params 1 
+3786   :f_call 
+3787   :store_global dict_copy 
+3790   :line 806 
+3793   :load_global surrogate_new 
+3796   :load_global dict 
+3799   :pack_params 1 
+3801   :f_call 
+3802   :none 
+3803   :pack 1 
+3805   :dictionary 
+3806   :make_func 86 
+3808   :pack_params 1 
+3810   :f_call 
+3811   :store_global make_new_dict 
+3814   :line 820 
+3817   :load_global method 
+3820   :load_global dict 
+3823   :constant 7 
+3826   :pack_params 2 
+3828   :f_call 
+3829   :load_global _no_trace 
+3832   :dictionary 
+3833   :pack 1 
+3835   :dictionary 
+3836   :make_func 87 
+3838   :pack_params 1 
+3840   :f_call 
+3841   :pack_params 1 
+3843   :f_call 
+3844   :store_global init_dict 
+3847   :line 825 
+3850   :delete_global init_dict 
+3853   :line 829 
+3856   :load_global method 
+3859   :load_global dict 
+3862   :constant 49 
+3865   :pack_params 2 
+3867   :f_call 
+3868   :load_global _no_trace 
+3871   :empty_tuple 
+3872   :dictionary 
+3873   :make_func 88 
+3875   :pack_params 1 
+3877   :f_call 
+3878   :pack_params 1 
+3880   :f_call 
+3881   :store_global update_dict 
+3884   :line 833 
+3887   :delete_global update_dict 
+3890   :line 836 
+3893   :load_global c_function 
+3896   :empty_tuple 
+3897   :dictionary 
+3898   :make_func 89 
+3900   :pack_params 1 
+3902   :f_call 
+3903   :store_global _repr_enter 
+3906   :line 840 
+3909   :load_global c_function 
+3912   :empty_tuple 
+3913   :dictionary 
+3914   :make_func 90 
+3916   :pack_params 1 
+3918   :f_call 
+3919   :store_global _repr_leave 
+3922   :line 845 
+3925   :load_global method 
+3928   :load_global list 
+3931   :constant 19 
+3934   :pack_params 2 
+3936   :f_call 
+3937   :load_global _no_trace 
+3940   :empty_tuple 
+3941   :dictionary 
+3942   :load_global list 
+3945   :over 
+3946   :name self 
+3949   :setitem 
+3950   :make_func 91 
+3952   :pack_params 1 
+3954   :f_call 
+3955   :pack_params 1 
+3957   :f_call 
+3958   :store_global list_repr 
+3961   :line 861 
+3964   :delete_global list_repr 
+3967   :line 865 
+3970   :load_global method 
+3973   :load_global list 
+3976   :constant 30 
+3979   :pack_params 2 
+3981   :f_call 
+3982   :load_global _no_trace 
+3985   :empty_tuple 
+3986   :dictionary 
+3987   :load_global list 
+3990   :over 
+3991   :name self 
+3994   :setitem 
+3995   :make_func 92 
+3997   :pack_params 1 
+3999   :f_call 
+4000   :pack_params 1 
+4002   :f_call 
+4003   :store_global list_str 
+4006   :line 867 
+4009   :delete_global list_str 
+4012   :line 873 
+4015   :load_global method 
+4018   :load_global list 
+4021   :constant 47 
+4024   :pack_params 2 
+4026   :f_call 
+4027   :load_global _no_raise 
+4030   :load_global _pure 
+4033   :load_global c_function 
+4036   :empty_tuple 
+4037   :dictionary 
+4038   :load_global list 
+4041   :over 
+4042   :name self 
+4045   :setitem 
+4046   :make_func 93 
+4048   :pack_params 1 
+4050   :f_call 
+4051   :pack_params 1 
+4053   :f_call 
+4054   :pack_params 1 
+4056   :f_call 
+4057   :pack_params 1 
+4059   :f_call 
+4060   :store_global list_len 
+4063   :line 875 
+4066   :delete_global list_len 
+4069   :line 880 
+4072   :load_global method 
+4075   :load_global list 
+4078   :constant 55 
+4081   :pack_params 2 
+4083   :f_call 
+4084   :load_global _pure 
+4087   :load_global c_function 
+4090   :byte -1 
+4092   :pack 1 
+4094   :dictionary 
+4095   :load_global int 
+4098   :over 
+4099   :name i 
+4102   :setitem 
+4103   :make_func 94 
+4105   :pack_params 1 
+4107   :f_call 
+4108   :pack_params 1 
+4110   :f_call 
+4111   :pack_params 1 
+4113   :f_call 
+4114   :store_global list_pop 
+4117   :line 882 
+4120   :delete_global list_pop 
+4123   :line 886 
+4126   :load_global method 
+4129   :load_global tuple 
+4132   :constant 56 
+4135   :pack_params 2 
+4137   :f_call 
+4138   :load_global c_function 
+4141   :empty_tuple 
+4142   :dictionary 
+4143   :load_global tuple 
+4146   :over 
+4147   :name self 
+4150   :setitem 
+4151   :make_func 95 
+4153   :pack_params 1 
+4155   :f_call 
+4156   :pack_params 1 
+4158   :f_call 
+4159   :store_global tuple_contains 
+4162   :line 888 
+4165   :delete_global tuple_contains 
+4168   :line 892 
+4171   :load_global method 
+4174   :load_global list 
+4177   :constant 56 
+4180   :pack_params 2 
+4182   :f_call 
+4183   :load_global c_function 
+4186   :empty_tuple 
+4187   :dictionary 
+4188   :load_global list 
+4191   :over 
+4192   :name self 
+4195   :setitem 
+4196   :make_func 96 
+4198   :pack_params 1 
+4200   :f_call 
+4201   :pack_params 1 
+4203   :f_call 
+4204   :store_global list_contains 
+4207   :line 905 
+4210   :delete_global list_contains 
+4213   :line 910 
+4216   :load_global method 
+4219   :load_global list 
+4222   :constant 57 
+4225   :pack_params 2 
+4227   :f_call 
+4228   :load_global _pure 
+4231   :load_global c_function 
+4234   :empty_tuple 
+4235   :dictionary 
+4236   :load_global list 
+4239   :over 
+4240   :name self 
+4243   :setitem 
+4244   :make_func 97 
+4246   :pack_params 1 
+4248   :f_call 
+4249   :pack_params 1 
+4251   :f_call 
+4252   :pack_params 1 
+4254   :f_call 
+4255   :store_global list_append 
+4258   :line 912 
+4261   :delete_global list_append 
+4264   :line 918 
+4267   :load_global method 
+4270   :load_global list 
+4273   :constant 58 
+4276   :pack_params 2 
+4278   :f_call 
+4279   :load_global _no_raise 
+4282   :load_global _pure 
+4285   :load_global c_function 
+4288   :empty_tuple 
+4289   :dictionary 
+4290   :load_global list 
+4293   :over 
+4294   :name self 
+4297   :setitem 
+4298   :make_func 98 
+4300   :pack_params 1 
+4302   :f_call 
+4303   :pack_params 1 
+4305   :f_call 
+4306   :pack_params 1 
+4308   :f_call 
+4309   :pack_params 1 
+4311   :f_call 
+4312   :store_global list_reverse 
+4315   :line 924 
+4318   :load_global method 
+4321   :load_global list 
+4324   :constant 59 
+4327   :pack_params 2 
+4329   :f_call 
+4330   :load_global _pure 
+4333   :load_global c_function 
+4336   :empty_tuple 
+4337   :dictionary 
+4338   :load_global int 
+4341   :over 
+4342   :name index 
+4345   :setitem 
+4346   :make_func 99 
+4348   :pack_params 1 
+4350   :f_call 
+4351   :pack_params 1 
+4353   :f_call 
+4354   :pack_params 1 
+4356   :f_call 
+4357   :store_global list_insert 
+4360   :line 926 
+4363   :delete_global list_insert 
+4366   :line 931 
+4369   :load_global method 
+4372   :load_global list 
+4375   :constant 38 
+4378   :pack_params 2 
+4380   :f_call 
+4381   :load_global _pure 
+4384   :load_global c_function 
+4387   :empty_tuple 
+4388   :dictionary 
+4389   :load_global list 
+4392   :over 
+4393   :name self 
+4396   :setitem 
+4397   :make_func 100 
+4399   :pack_params 1 
+4401   :f_call 
+4402   :pack_params 1 
+4404   :f_call 
+4405   :pack_params 1 
+4407   :f_call 
+4408   :store_global list_iter 
+4411   :line 933 
+4414   :delete_global list_iter 
+4417   :line 938 
+4420   :load_global method 
+4423   :load_global listiterator 
+4426   :constant 60 
+4429   :pack_params 2 
+4431   :f_call 
+4432   :load_global _pure 
+4435   :load_global c_function 
+4438   :empty_tuple 
+4439   :dictionary 
+4440   :load_global listiterator 
+4443   :over 
+4444   :name self 
+4447   :setitem 
+4448   :make_func 101 
+4450   :pack_params 1 
+4452   :f_call 
+4453   :pack_params 1 
+4455   :f_call 
+4456   :pack_params 1 
+4458   :f_call 
+4459   :store_global listiterator_next 
+4462   :line 940 
+4465   :delete_global listiterator_next 
+4468   :line 944 
+4471   :load_global method 
+4474   :load_global listiterator 
+4477   :constant 38 
+4480   :pack_params 2 
+4482   :f_call 
+4483   :empty_tuple 
+4484   :dictionary 
+4485   :make_func 102 
+4487   :pack_params 1 
+4489   :f_call 
+4490   :store_global _ 
+4493   :line 949 
+4496   :load_global _pure 
+4499   :load_global c_function 
+4502   :empty_tuple 
+4503   :dictionary 
+4504   :load_global type 
+4507   :over 
+4508   :name cls 
+4511   :setitem 
+4512   :load_global list 
+4515   :over 
+4516   :name l 
+4519   :setitem 
+4520   :load_global tuple 
+4523   :over 
+4524   :name return 
+4527   :setitem 
+4528   :make_func 103 
+4530   :pack_params 1 
+4532   :f_call 
+4533   :pack_params 1 
+4535   :f_call 
+4536   :store_global tuple_from_list 
+4539   :line 954 
+4542   :load_global method 
+4545   :load_global tuple 
+4548   :constant 6 
+4551   :pack_params 2 
+4553   :f_call 
+4554   :load_global static 
+4557   :empty_tuple 
+4558   :dictionary 
+4559   :make_func 104 
+4561   :pack_params 1 
+4563   :f_call 
+4564   :pack_params 1 
+4566   :f_call 
+4567   :store_global new_tuple 
+4570   :line 962 
+4573   :delete_global new_tuple 
+4576   :line 965 
+4579   :load_global c_function 
+4582   :empty_tuple 
+4583   :dictionary 
+4584   :load_global type 
+4587   :over 
+4588   :name cls 
+4591   :setitem 
+4592   :make_func 105 
+4594   :pack_params 1 
+4596   :f_call 
+4597   :store_global make_set 
+4600   :line 971 
+4603   :load_global method 
+4606   :load_global set 
+4609   :constant 6 
+4612   :pack_params 2 
+4614   :f_call 
+4615   :load_global _no_trace 
+4618   :load_global static 
+4621   :none 
+4622   :pack 1 
+4624   :dictionary 
+4625   :make_func 106 
+4627   :pack_params 1 
+4629   :f_call 
+4630   :pack_params 1 
+4632   :f_call 
+4633   :pack_params 1 
+4635   :f_call 
+4636   :store_global set_new 
+4639   :line 973 
+4642   :delete_global set_new 
+4645   :line 978 
+4648   :load_global method 
+4651   :load_global set 
+4654   :constant 7 
+4657   :pack_params 2 
+4659   :f_call 
+4660   :load_global _no_trace 
+4663   :load_global static 
+4666   :none 
+4667   :pack 1 
+4669   :dictionary 
+4670   :make_func 107 
+4672   :pack_params 1 
+4674   :f_call 
+4675   :pack_params 1 
+4677   :f_call 
+4678   :pack_params 1 
+4680   :f_call 
+4681   :store_global set_init 
+4684   :line 986 
+4687   :load_global method 
+4690   :load_global tuple 
+4693   :constant 38 
+4696   :pack_params 2 
+4698   :f_call 
+4699   :load_global _pure 
+4702   :load_global c_function 
+4705   :empty_tuple 
+4706   :dictionary 
+4707   :load_global tuple 
+4710   :over 
+4711   :name self 
+4714   :setitem 
+4715   :make_func 108 
+4717   :pack_params 1 
+4719   :f_call 
+4720   :pack_params 1 
+4722   :f_call 
+4723   :pack_params 1 
+4725   :f_call 
+4726   :store_global tuple_iter 
+4729   :line 988 
+4732   :delete_global tuple_iter 
+4735   :line 993 
+4738   :load_global method 
+4741   :load_global tupleiterator 
+4744   :constant 60 
+4747   :pack_params 2 
+4749   :f_call 
+4750   :load_global _pure 
+4753   :load_global c_function 
+4756   :empty_tuple 
+4757   :dictionary 
+4758   :load_global tupleiterator 
+4761   :over 
+4762   :name self 
+4765   :setitem 
+4766   :make_func 109 
+4768   :pack_params 1 
+4770   :f_call 
+4771   :pack_params 1 
+4773   :f_call 
+4774   :pack_params 1 
+4776   :f_call 
+4777   :store_global tupleiterator_next 
+4780   :line 995 
+4783   :delete_global tupleiterator_next 
+4786   :line 998 
+4789   :load_global method 
+4792   :load_global tupleiterator 
+4795   :constant 38 
+4798   :pack_params 2 
+4800   :f_call 
+4801   :empty_tuple 
+4802   :dictionary 
+4803   :make_func 110 
+4805   :pack_params 1 
+4807   :f_call 
+4808   :store_global _ 
+4811   :line 1005 
+4814   :load_global method 
+4817   :load_global tuple 
+4820   :constant 47 
+4823   :pack_params 2 
+4825   :f_call 
+4826   :load_global _no_raise 
+4829   :load_global _pure 
+4832   :load_global c_function 
+4835   :empty_tuple 
+4836   :dictionary 
+4837   :load_global tuple 
+4840   :over 
+4841   :name self 
+4844   :setitem 
+4845   :make_func 111 
+4847   :pack_params 1 
+4849   :f_call 
+4850   :pack_params 1 
+4852   :f_call 
+4853   :pack_params 1 
+4855   :f_call 
+4856   :pack_params 1 
+4858   :f_call 
+4859   :store_global __len__tuple 
+4862   :line 1007 
+4865   :delete_global __len__tuple 
+4868   :line 1013 
+4871   :load_global method 
+4874   :load_global bytes 
+4877   :constant 47 
+4880   :pack_params 2 
+4882   :f_call 
+4883   :load_global _no_raise 
+4886   :load_global _pure 
+4889   :load_global c_function 
+4892   :empty_tuple 
+4893   :dictionary 
+4894   :load_global bytes 
+4897   :over 
+4898   :name b 
+4901   :setitem 
+4902   :make_func 112 
+4904   :pack_params 1 
+4906   :f_call 
+4907   :pack_params 1 
+4909   :f_call 
+4910   :pack_params 1 
+4912   :f_call 
+4913   :pack_params 1 
+4915   :f_call 
+4916   :store_global bytes_length 
+4919   :line 1015 
+4922   :delete_global bytes_length 
+4925   :line 1021 
+4928   :load_global method 
+4931   :load_global bytes 
+4934   :constant 61 
+4937   :pack_params 2 
+4939   :f_call 
+4940   :load_global _no_raise 
+4943   :load_global _pure 
+4946   :load_global c_function 
+4949   :empty_tuple 
+4950   :dictionary 
+4951   :load_global bytes 
+4954   :over 
+4955   :name b 
+4958   :setitem 
+4959   :make_func 113 
+4961   :pack_params 1 
+4963   :f_call 
+4964   :pack_params 1 
+4966   :f_call 
+4967   :pack_params 1 
+4969   :f_call 
+4970   :pack_params 1 
+4972   :f_call 
+4973   :store_global bytes_getitem 
+4976   :line 1023 
+4979   :delete_global bytes_getitem 
+4982   :line 1028 
+4985   :load_global method 
+4988   :load_global dict_iterator 
+4991   :constant 7 
+4994   :pack_params 2 
+4996   :f_call 
+4997   :load_global _pure 
+5000   :load_global c_function 
+5003   :empty_tuple 
+5004   :dictionary 
+5005   :load_global dict_iterator 
+5008   :over 
+5009   :name self 
+5012   :setitem 
+5013   :load_global dict 
+5016   :over 
+5017   :name t 
+5020   :setitem 
+5021   :make_func 114 
+5023   :pack_params 1 
+5025   :f_call 
+5026   :pack_params 1 
+5028   :f_call 
+5029   :pack_params 1 
+5031   :f_call 
+5032   :store_global dict_iter_init 
+5035   :line 1030 
+5038   :delete_global dict_iter_init 
+5041   :line 1035 
+5044   :load_global method 
+5047   :load_global dict_iterator 
+5050   :constant 60 
+5053   :pack_params 2 
+5055   :f_call 
+5056   :load_global _pure 
+5059   :load_global c_function 
+5062   :empty_tuple 
+5063   :dictionary 
+5064   :load_global dict_iterator 
+5067   :over 
+5068   :name self 
+5071   :setitem 
+5072   :make_func 115 
+5074   :pack_params 1 
+5076   :f_call 
+5077   :pack_params 1 
+5079   :f_call 
+5080   :pack_params 1 
+5082   :f_call 
+5083   :store_global dict_iter_next 
+5086   :line 1037 
+5089   :delete_global dict_iter_next 
+5092   :line 1041 
+5095   :load_global method 
+5098   :load_global dict 
+5101   :constant 38 
+5104   :pack_params 2 
+5106   :f_call 
+5107   :load_global _no_trace 
+5110   :empty_tuple 
+5111   :dictionary 
+5112   :load_global dict 
+5115   :over 
+5116   :name self 
+5119   :setitem 
+5120   :make_func 116 
+5122   :pack_params 1 
+5124   :f_call 
+5125   :pack_params 1 
+5127   :f_call 
+5128   :store_global dict_iter 
+5131   :line 1043 
+5134   :delete_global dict_iter 
+5137   :line 1047 
+5140   :load_global method 
+5143   :load_global dict_iterator 
+5146   :constant 38 
+5149   :pack_params 2 
+5151   :f_call 
+5152   :load_global _no_trace 
+5155   :empty_tuple 
+5156   :dictionary 
+5157   :make_func 117 
+5159   :pack_params 1 
+5161   :f_call 
+5162   :pack_params 1 
+5164   :f_call 
+5165   :store_global dict_iterator_iter 
+5168   :line 1049 
+5171   :delete_global dict_iterator_iter 
+5174   :line 1054 
+5177   :load_global method 
+5180   :load_global type 
+5183   :load_attr __dict__ 
+5186   :type 
+5187   :constant 38 
+5190   :pack_params 2 
+5192   :f_call 
+5193   :load_global _pure 
+5196   :load_global c_function 
+5199   :empty_tuple 
+5200   :dictionary 
+5201   :load_global type 
+5204   :load_attr __dict__ 
+5207   :type 
+5208   :over 
+5209   :name self 
+5212   :setitem 
+5213   :make_func 118 
+5215   :pack_params 1 
+5217   :f_call 
+5218   :pack_params 1 
+5220   :f_call 
+5221   :pack_params 1 
+5223   :f_call 
+5224   :store_global dict_proxy_iter 
+5227   :line 1056 
+5230   :delete_global dict_proxy_iter 
+5233   :line 1058 
+5236   :load_global type 
+5239   :load_attr __dict__ 
+5242   :load_attr __iter__ 
+5245   :pack_params 0 
+5247   :f_call 
+5248   :type 
+5249   :store_global dict_proxy_iter_type 
+5252   :line 1063 
+5255   :load_global method 
+5258   :load_global dict_proxy_iter_type 
+5261   :constant 60 
+5264   :pack_params 2 
+5266   :f_call 
+5267   :load_global _pure 
+5270   :load_global c_function 
+5273   :empty_tuple 
+5274   :dictionary 
+5275   :load_global dict_proxy_iter_type 
+5278   :over 
+5279   :name self 
+5282   :setitem 
+5283   :make_func 119 
+5285   :pack_params 1 
+5287   :f_call 
+5288   :pack_params 1 
+5290   :f_call 
+5291   :pack_params 1 
+5293   :f_call 
+5294   :store_global dict_proxy_iter_next 
+5297   :line 1065 
+5300   :delete_global dict_proxy_iter_next 
+5303   :line 1066 
+5306   :delete_global dict_proxy_iter_type 
+5309   :line 1071 
+5312   :load_global method 
+5315   :load_global dict 
+5318   :constant 62 
+5321   :pack_params 2 
+5323   :f_call 
+5324   :load_global _pure 
+5327   :load_global c_function 
+5330   :empty_tuple 
+5331   :dictionary 
+5332   :load_global dict 
+5335   :over 
+5336   :name self 
+5339   :setitem 
+5340   :make_func 120 
+5342   :pack_params 1 
+5344   :f_call 
+5345   :pack_params 1 
+5347   :f_call 
+5348   :pack_params 1 
+5350   :f_call 
+5351   :store_global dict_values 
+5354   :line 1073 
+5357   :delete_global dict_values 
+5360   :line 1075 
+5363   :dictionary 
+5364   :load_attr values 
+5367   :pack_params 0 
+5369   :f_call 
+5370   :type 
+5371   :store_global dict_values_iterator_class 
+5374   :line 1080 
+5377   :load_global method 
+5380   :load_global dict_values_iterator_class 
+5383   :constant 38 
+5386   :pack_params 2 
+5388   :f_call 
+5389   :load_global _pure 
+5392   :load_global c_function 
+5395   :empty_tuple 
+5396   :dictionary 
+5397   :load_global dict_values_iterator_class 
+5400   :over 
+5401   :name self 
+5404   :setitem 
+5405   :make_func 121 
+5407   :pack_params 1 
+5409   :f_call 
+5410   :pack_params 1 
+5412   :f_call 
+5413   :pack_params 1 
+5415   :f_call 
+5416   :store_global dict_values_iterator_iter 
+5419   :line 1082 
+5422   :delete_global dict_values_iterator_iter 
+5425   :line 1087 
+5428   :load_global method 
+5431   :load_global dict_values_iterator_class 
+5434   :constant 60 
+5437   :pack_params 2 
+5439   :f_call 
+5440   :load_global _pure 
+5443   :load_global c_function 
+5446   :empty_tuple 
+5447   :dictionary 
+5448   :load_global dict_values_iterator_class 
+5451   :over 
+5452   :name self 
+5455   :setitem 
+5456   :make_func 122 
+5458   :pack_params 1 
+5460   :f_call 
+5461   :pack_params 1 
+5463   :f_call 
+5464   :pack_params 1 
+5466   :f_call 
+5467   :store_global dict_values_iterator_next 
+5470   :line 1089 
+5473   :delete_global dict_values_iterator_next 
+5476   :line 1091 
+5479   :delete_global dict_values_iterator_class 
+5482   :line 1095 
+5485   :load_global method 
+5488   :load_global type 
+5491   :load_attr __dict__ 
+5494   :type 
+5495   :constant 19 
+5498   :pack_params 2 
+5500   :f_call 
+5501   :load_global method 
+5504   :load_global dict 
+5507   :constant 19 
+5510   :pack_params 2 
+5512   :f_call 
+5513   :empty_tuple 
+5514   :dictionary 
+5515   :make_func 123 
+5517   :pack_params 1 
+5519   :f_call 
+5520   :pack_params 1 
+5522   :f_call 
+5523   :store_global dict_repr 
+5526   :line 1116 
+5529   :delete_global dict_repr 
+5532   :line 1121 
+5535   :load_global method 
+5538   :load_global type 
+5541   :load_attr __dict__ 
+5544   :type 
+5545   :constant 30 
+5548   :pack_params 2 
+5550   :f_call 
+5551   :load_global method 
+5554   :load_global dict 
+5557   :constant 30 
+5560   :pack_params 2 
+5562   :f_call 
+5563   :load_global static 
+5566   :empty_tuple 
+5567   :dictionary 
+5568   :make_func 124 
+5570   :pack_params 1 
+5572   :f_call 
+5573   :pack_params 1 
+5575   :f_call 
+5576   :pack_params 1 
+5578   :f_call 
+5579   :store_global dict_str 
+5582   :line 1127 
+5585   :load_global method 
+5588   :load_global str_buf 
+5591   :constant 57 
+5594   :pack_params 2 
+5596   :f_call 
+5597   :load_global _pure 
+5600   :load_global c_function 
+5603   :empty_tuple 
+5604   :dictionary 
+5605   :load_global str_buf 
+5608   :over 
+5609   :name b 
+5612   :setitem 
+5613   :load_global str 
+5616   :over 
+5617   :name s 
+5620   :setitem 
+5621   :make_func 125 
+5623   :pack_params 1 
+5625   :f_call 
+5626   :pack_params 1 
+5628   :f_call 
+5629   :pack_params 1 
+5631   :f_call 
+5632   :store_global str_buf_append 
+5635   :line 1129 
+5638   :delete_global str_buf_append 
+5641   :line 1134 
+5644   :load_global method 
+5647   :load_global str_buf 
+5650   :constant 30 
+5653   :pack_params 2 
+5655   :f_call 
+5656   :load_global _pure 
+5659   :load_global c_function 
+5662   :empty_tuple 
+5663   :dictionary 
+5664   :load_global str_buf 
+5667   :over 
+5668   :name b 
+5671   :setitem 
+5672   :make_func 126 
+5674   :pack_params 1 
+5676   :f_call 
+5677   :pack_params 1 
+5679   :f_call 
+5680   :pack_params 1 
+5682   :f_call 
+5683   :store_global str_buf___str__ 
+5686   :line 1136 
+5689   :delete_global str_buf___str__ 
+5692   :line 1142 
+5695   :load_global method 
+5698   :load_global str_buf 
+5701   :constant 47 
+5704   :pack_params 2 
+5706   :f_call 
+5707   :load_global _pure 
+5710   :load_global _no_raise 
+5713   :load_global c_function 
+5716   :empty_tuple 
+5717   :dictionary 
+5718   :load_global str_buf 
+5721   :over 
+5722   :name b 
+5725   :setitem 
+5726   :make_func 127 
+5728   :pack_params 1 
+5730   :f_call 
+5731   :pack_params 1 
+5733   :f_call 
+5734   :pack_params 1 
+5736   :f_call 
+5737   :pack_params 1 
+5739   :f_call 
+5740   :store_global str_buf___len__ 
+5743   :line 1144 
+5746   :delete_global str_buf___len__ 
+5749   :line 1149 
+5752   :load_global method 
+5755   :load_global str_buf 
+5758   :constant 7 
+5761   :pack_params 2 
+5763   :f_call 
+5764   :load_global _pure 
+5767   :load_global c_function 
+5770   :empty_tuple 
+5771   :dictionary 
+5772   :load_global str_buf 
+5775   :over 
+5776   :name b 
+5779   :setitem 
+5780   :make_func 128 
+5782   :pack_params 1 
+5784   :f_call 
+5785   :pack_params 1 
+5787   :f_call 
+5788   :pack_params 1 
+5790   :f_call 
+5791   :store_global str_buf_init 
+5794   :line 1151 
+5797   :delete_global str_buf_init 
+5800   :line 1155 
+5803   :load_global _pure 
+5806   :load_global c_function 
+5809   :empty_tuple 
+5810   :dictionary 
+5811   :load_global str 
+5814   :over 
+5815   :name s 
+5818   :setitem 
+5819   :load_global list 
+5822   :over 
+5823   :name l 
+5826   :setitem 
+5827   :make_func 129 
+5829   :pack_params 1 
+5831   :f_call 
+5832   :pack_params 1 
+5834   :f_call 
+5835   :store_global str_join_list 
+5838   :line 1160 
+5841   :load_global method 
+5844   :load_global str 
+5847   :constant 67 
+5850   :pack_params 2 
+5852   :f_call 
+5853   :load_global _no_trace 
+5856   :empty_tuple 
+5857   :dictionary 
+5858   :load_global str 
+5861   :over 
+5862   :name self 
+5865   :setitem 
+5866   :make_func 130 
+5868   :pack_params 1 
+5870   :f_call 
+5871   :pack_params 1 
+5873   :f_call 
+5874   :store_global str_join 
+5877   :line 1175 
+5880   :delete_global str_join 
+5883   :line 1178 
+5886   :load_global method 
+5889   :load_global tuple 
+5892   :constant 30 
+5895   :pack_params 2 
+5897   :f_call 
+5898   :empty_tuple 
+5899   :dictionary 
+5900   :load_global tuple 
+5903   :over 
+5904   :name self 
+5907   :setitem 
+5908   :make_func 131 
+5910   :pack_params 1 
+5912   :f_call 
+5913   :store_global tuple_str 
+5916   :line 1193 
+5919   :delete_global tuple_str 
+5922   :line 1197 
+5925   :load_global method 
+5928   :load_global type_state 
+5931   :constant 72 
+5934   :pack_params 2 
+5936   :f_call 
+5937   :load_global c_function 
+5940   :empty_tuple 
+5941   :dictionary 
+5942   :load_global type_state 
+5945   :over 
+5946   :name l 
+5949   :setitem 
+5950   :make_func 132 
+5952   :pack_params 1 
+5954   :f_call 
+5955   :pack_params 1 
+5957   :f_call 
+5958   :store_global type_state_eq 
+5961   :line 1199 
+5964   :delete_global type_state_eq 
+5967   :line 1203 
+5970   :load_global method 
+5973   :load_global type_info 
+5976   :constant 72 
+5979   :pack_params 2 
+5981   :f_call 
+5982   :load_global c_function 
+5985   :empty_tuple 
+5986   :dictionary 
+5987   :load_global type_info 
+5990   :over 
+5991   :name l 
+5994   :setitem 
+5995   :make_func 133 
+5997   :pack_params 1 
+5999   :f_call 
+6000   :pack_params 1 
+6002   :f_call 
+6003   :store_global type_info_eq 
+6006   :line 1205 
+6009   :delete_global type_info_eq 
+6012   :line 1209 
+6015   :load_global method 
+6018   :load_global tuple 
+6021   :constant 72 
+6024   :pack_params 2 
+6026   :f_call 
+6027   :load_global c_function 
+6030   :empty_tuple 
+6031   :dictionary 
+6032   :load_global tuple 
+6035   :over 
+6036   :name l 
+6039   :setitem 
+6040   :make_func 134 
+6042   :pack_params 1 
+6044   :f_call 
+6045   :pack_params 1 
+6047   :f_call 
+6048   :store_global tuple_eq 
+6051   :line 1211 
+6054   :delete_global tuple_eq 
+6057   :line 1215 
+6060   :load_global method 
+6063   :load_global tuple 
+6066   :constant 73 
+6069   :pack_params 2 
+6071   :f_call 
+6072   :load_global c_function 
+6075   :empty_tuple 
+6076   :dictionary 
+6077   :load_global tuple 
+6080   :over 
+6081   :name l 
+6084   :setitem 
+6085   :make_func 135 
+6087   :pack_params 1 
+6089   :f_call 
+6090   :pack_params 1 
+6092   :f_call 
+6093   :store_global tuple_ne 
+6096   :line 1217 
+6099   :delete_global tuple_ne 
+6102   :line 1221 
+6105   :load_global method 
+6108   :load_global list 
+6111   :constant 72 
+6114   :pack_params 2 
+6116   :f_call 
+6117   :load_global c_function 
+6120   :empty_tuple 
+6121   :dictionary 
+6122   :load_global list 
+6125   :over 
+6126   :name l 
+6129   :setitem 
+6130   :make_func 136 
+6132   :pack_params 1 
+6134   :f_call 
+6135   :pack_params 1 
+6137   :f_call 
+6138   :store_global list_eq 
+6141   :line 1223 
+6144   :delete_global list_eq 
+6147   :line 1227 
+6150   :load_global method 
+6153   :load_global list 
+6156   :constant 73 
+6159   :pack_params 2 
+6161   :f_call 
+6162   :load_global c_function 
+6165   :empty_tuple 
+6166   :dictionary 
+6167   :load_global list 
+6170   :over 
+6171   :name l 
+6174   :setitem 
+6175   :make_func 137 
+6177   :pack_params 1 
+6179   :f_call 
+6180   :pack_params 1 
+6182   :f_call 
+6183   :store_global list_ne 
+6186   :line 1229 
+6189   :delete_global list_ne 
+6192   :line 1234 
+6195   :load_global method 
+6198   :load_global str 
+6201   :constant 38 
+6204   :pack_params 2 
+6206   :f_call 
+6207   :load_global _pure 
+6210   :load_global c_function 
+6213   :empty_tuple 
+6214   :dictionary 
+6215   :load_global str 
+6218   :over 
+6219   :name self 
+6222   :setitem 
+6223   :make_func 138 
+6225   :pack_params 1 
+6227   :f_call 
+6228   :pack_params 1 
+6230   :f_call 
+6231   :pack_params 1 
+6233   :f_call 
+6234   :store_global str_iter 
+6237   :line 1237 
+6240   :load_global str_iter 
+6243   :constant 3 
+6246   :pack_params 1 
+6248   :f_call 
+6249   :type 
+6250   :store_global str_iterator 
+6253   :line 1242 
+6256   :load_global method 
+6259   :load_global str_iterator 
+6262   :constant 60 
+6265   :pack_params 2 
+6267   :f_call 
+6268   :load_global _pure 
+6271   :load_global c_function 
+6274   :empty_tuple 
+6275   :dictionary 
+6276   :load_global str_iterator 
+6279   :over 
+6280   :name self 
+6283   :setitem 
+6284   :make_func 139 
+6286   :pack_params 1 
+6288   :f_call 
+6289   :pack_params 1 
+6291   :f_call 
+6292   :pack_params 1 
+6294   :f_call 
+6295   :store_global str_iter_next 
+6298   :line 1246 
+6301   :load_global method 
+6304   :load_global str_iterator 
+6307   :constant 38 
+6310   :pack_params 2 
+6312   :f_call 
+6313   :empty_tuple 
+6314   :dictionary 
+6315   :load_global str_iterator 
+6318   :over 
+6319   :name self 
+6322   :setitem 
+6323   :make_func 140 
+6325   :pack_params 1 
+6327   :f_call 
+6328   :store_global str_iter_iter 
+6331   :line 1249 
+6334   :delete_global str_iter 
+6337   :line 1250 
+6340   :delete_global str_iterator 
+6343   :line 1251 
+6346   :delete_global str_iter_iter 
+6349   :line 1252 
+6352   :delete_global str_iter_next 
+6355   :line 1255 
+6358   :load_global method 
+6361   :load_global str 
+6364   :constant 74 
+6367   :pack_params 2 
+6369   :f_call 
+6370   :empty_tuple 
+6371   :dictionary 
+6372   :load_global str 
+6375   :over 
+6376   :name self 
+6379   :setitem 
+6380   :load_global str 
+6383   :over 
+6384   :name s 
+6387   :setitem 
+6388   :make_func 141 
+6390   :pack_params 1 
+6392   :f_call 
+6393   :store_global str_startswith 
+6396   :line 1262 
+6399   :delete_global str_startswith 
+6402   :line 1266 
+6405   :load_global method 
+6408   :load_global set 
+6411   :constant 56 
+6414   :pack_params 2 
+6416   :f_call 
+6417   :load_global c_function 
+6420   :empty_tuple 
+6421   :dictionary 
+6422   :load_global set 
+6425   :over 
+6426   :name self 
+6429   :setitem 
+6430   :make_func 142 
+6432   :pack_params 1 
+6434   :f_call 
+6435   :pack_params 1 
+6437   :f_call 
+6438   :store_global set_contains 
+6441   :line 1268 
+6444   :delete_global set_contains 
+6447   :line 1272 
+6450   :load_global method 
+6453   :load_global set 
+6456   :constant 75 
+6459   :pack_params 2 
+6461   :f_call 
+6462   :load_global c_function 
+6465   :empty_tuple 
+6466   :dictionary 
+6467   :load_global set 
+6470   :over 
+6471   :name self 
+6474   :setitem 
+6475   :make_func 143 
+6477   :pack_params 1 
+6479   :f_call 
+6480   :pack_params 1 
+6482   :f_call 
+6483   :store_global set_add 
+6486   :line 1274 
+6489   :delete_global set_add 
+6492   :line 1276 
+6495   :empty_tuple 
+6496   :dictionary 
+6497   :make_func 144 
+6499   :store_global map1 
+6502   :line 1281 
+6505   :load_global _no_trace 
+6508   :empty_tuple 
+6509   :dictionary 
+6510   :make_func 145 
+6512   :pack_params 1 
+6514   :f_call 
+6515   :store_global map 
+6518   :line 1299 
+6521   :load_global c_function 
+6524   :empty_tuple 
+6525   :dictionary 
+6526   :load_global type 
+6529   :over 
+6530   :name cls 
+6533   :setitem 
+6534   :make_func 146 
+6536   :pack_params 1 
+6538   :f_call 
+6539   :store_global isinstance 
+6542   :line 1306 
+6545   :load_global method 
+6548   :load_global int 
+6551   :constant 76 
+6554   :pack_params 2 
+6556   :f_call 
+6557   :load_global _no_raise 
+6560   :load_global _pure 
+6563   :load_global c_function 
+6566   :empty_tuple 
+6567   :dictionary 
+6568   :load_global int 
+6571   :over 
+6572   :name i 
+6575   :setitem 
+6576   :make_func 147 
+6578   :pack_params 1 
+6580   :f_call 
+6581   :pack_params 1 
+6583   :f_call 
+6584   :pack_params 1 
+6586   :f_call 
+6587   :pack_params 1 
+6589   :f_call 
+6590   :store_global abs_int 
+6593   :line 1308 
+6596   :delete_global abs_int 
+6599   :line 1314 
+6602   :load_global method 
+6605   :load_global float 
+6608   :constant 76 
+6611   :pack_params 2 
+6613   :f_call 
+6614   :load_global _no_raise 
+6617   :load_global _pure 
+6620   :load_global c_function 
+6623   :empty_tuple 
+6624   :dictionary 
+6625   :load_global float 
+6628   :over 
+6629   :name f 
+6632   :setitem 
+6633   :make_func 148 
+6635   :pack_params 1 
+6637   :f_call 
+6638   :pack_params 1 
+6640   :f_call 
+6641   :pack_params 1 
+6643   :f_call 
+6644   :pack_params 1 
+6646   :f_call 
+6647   :store_global abs_float 
+6650   :line 1316 
+6653   :delete_global abs_float 
+6656   :line 1321 
+6659   :empty_tuple 
+6660   :dictionary 
+6661   :make_func 149 
+6663   :store_global all 
+6666   :line 1327 
+6669   :empty_tuple 
+6670   :dictionary 
+6671   :make_func 150 
+6673   :store_global any 
+6676   :line 1336 
+6679   :load_global _pure 
+6682   :load_global c_function 
+6685   :empty_tuple 
+6686   :dictionary 
+6687   :load_global int 
+6690   :over 
+6691   :name i 
+6694   :setitem 
+6695   :load_global str 
+6698   :over 
+6699   :name return 
+6702   :setitem 
+6703   :make_func 151 
+6705   :pack_params 1 
+6707   :f_call 
+6708   :pack_params 1 
+6710   :f_call 
+6711   :store_global chr 
+6714   :line 1341 
+6717   :load_global _pure 
+6720   :load_global c_function 
+6723   :empty_tuple 
+6724   :dictionary 
+6725   :load_global str 
+6728   :over 
+6729   :name c 
+6732   :setitem 
+6733   :load_global int 
+6736   :over 
+6737   :name return 
+6740   :setitem 
+6741   :make_func 152 
+6743   :pack_params 1 
+6745   :f_call 
+6746   :pack_params 1 
+6748   :f_call 
+6749   :store_global ord 
+6752   :line 1347 
+6755   :load_global _no_raise 
+6758   :load_global _pure 
+6761   :load_global c_function 
+6764   :empty_tuple 
+6765   :dictionary 
+6766   :make_func 153 
+6768   :pack_params 1 
+6770   :f_call 
+6771   :pack_params 1 
+6773   :f_call 
+6774   :pack_params 1 
+6776   :f_call 
+6777   :store_global callable 
+6780   :line 1350 
+6783   :empty_tuple 
+6784   :dictionary 
+6785   :make_func 154 
+6787   :store_global enumerate 
+6790   :line 1371 
+6793   :empty_tuple 
+6794   :dictionary 
+6795   :make_func 155 
+6797   :store_global zip 
+6800   :line 1392 
+6803   :empty_tuple 
+6804   :dictionary 
+6805   :make_func 156 
+6807   :store_global filter 
+6810   :line 1398 
+6813   :load_global c_function 
+6816   :constant 78 
+6819   :byte -1 
+6821   :pack 2 
+6823   :dictionary 
+6824   :load_global str 
+6827   :over 
+6828   :name name 
+6831   :setitem 
+6832   :load_global str 
+6835   :over 
+6836   :name mode 
+6839   :setitem 
+6840   :load_global int 
+6843   :over 
+6844   :name bufsize 
+6847   :setitem 
+6848   :make_func 157 
+6850   :pack_params 1 
+6852   :f_call 
+6853   :store_global open 
+6856   :line 1401 
+6859   :load_global open 
+6862   :load_global file 
+6865   :store_attr __new__ 
+6868   :line 1407 
+6871   :load_global method 
+6874   :load_global dict 
+6877   :constant 47 
+6880   :pack_params 2 
+6882   :f_call 
+6883   :load_global _pure 
+6886   :load_global _no_raise 
+6889   :load_global c_function 
+6892   :empty_tuple 
+6893   :dictionary 
+6894   :load_global dict 
+6897   :over 
+6898   :name d 
+6901   :setitem 
+6902   :make_func 158 
+6904   :pack_params 1 
+6906   :f_call 
+6907   :pack_params 1 
+6909   :f_call 
+6910   :pack_params 1 
+6912   :f_call 
+6913   :pack_params 1 
+6915   :f_call 
+6916   :store_global dict_len 
+6919   :line 1409 
+6922   :delete_global dict_len 
+6925   :line 1419 
+6928   :load_global c_name 
+6931   :empty_tuple 
+6932   :dictionary 
+6933   :make_func 159 
+6935   :pack_params 1 
+6937   :f_call 
+6938   :store_global __import__ 
+6941   :line 1423 
+6944   :empty_tuple 
+6945   :dictionary 
+6946   :make_func 160 
+6948   :store_global next 
+6951   :line 1427 
+6954   :load_global _no_trace 
+6957   :empty_tuple 
+6958   :dictionary 
+6959   :make_func 161 
+6961   :pack_params 1 
+6963   :f_call 
+6964   :store_global min2 
+6967   :line 1435 
+6970   :load_global _globals_to_consts 
+6973   :load_global _no_trace 
+6976   :empty_tuple 
+6977   :dictionary 
+6978   :make_func 162 
+6980   :pack_params 1 
+6982   :f_call 
+6983   :pack_params 1 
+6985   :f_call 
+6986   :store_global len 
+6989   :line 1443 
+6992   :load_global _globals_to_consts 
+6995   :load_global _no_trace 
+6998   :empty_tuple 
+6999   :dictionary 
+7000   :make_func 163 
+7002   :pack_params 1 
+7004   :f_call 
+7005   :pack_params 1 
+7007   :f_call 
+7008   :store_global min 
+7011   :line 1471 
+7014   :load_global _no_trace 
+7017   :empty_tuple 
+7018   :dictionary 
+7019   :make_func 164 
+7021   :pack_params 1 
+7023   :f_call 
+7024   :store_global max2 
+7027   :line 1479 
+7030   :load_global _globals_to_consts 
+7033   :load_global _no_trace 
+7036   :empty_tuple 
+7037   :dictionary 
+7038   :make_func 165 
+7040   :pack_params 1 
+7042   :f_call 
+7043   :pack_params 1 
+7045   :f_call 
+7046   :store_global max 
+7049   :line 1507 
+7052   :load_global c_function 
+7055   :empty_tuple 
+7056   :dictionary 
+7057   :load_global str 
+7060   :over 
+7061   :name name 
+7064   :setitem 
+7065   :load_global bool 
+7068   :over 
+7069   :name return 
+7072   :setitem 
+7073   :make_func 166 
+7075   :pack_params 1 
+7077   :f_call 
+7078   :store_global hasattr 
+7081   :line 1513 
+7084   :load_global method 
+7087   :load_global int_iterator 
+7090   :constant 60 
+7093   :pack_params 2 
+7095   :f_call 
+7096   :load_global _pure 
+7099   :load_global c_function 
+7102   :empty_tuple 
+7103   :dictionary 
+7104   :make_func 167 
+7106   :pack_params 1 
+7108   :f_call 
+7109   :pack_params 1 
+7111   :f_call 
+7112   :pack_params 1 
+7114   :f_call 
+7115   :store_global next_int_iterator 
+7118   :line 1515 
+7121   :delete_global next_int_iterator 
+7124   :line 1519 
+7127   :load_global method 
+7130   :load_global dict 
+7133   :constant 82 
+7136   :pack_params 2 
+7138   :f_call 
+7139   :load_global c_function 
+7142   :empty_tuple 
+7143   :dictionary 
+7144   :load_global dict 
+7147   :over 
+7148   :name d 
+7151   :setitem 
+7152   :make_func 168 
+7154   :pack_params 1 
+7156   :f_call 
+7157   :pack_params 1 
+7159   :f_call 
+7160   :store_global dict_clear 
+7163   :line 1521 
+7166   :delete_global dict_clear 
+7169   :line 1523 
+7172   :empty_tuple 
+7173   :dictionary 
+7174   :make_func 169 
+7176   :store_global abs 
+7179   :line 1529 
+7182   :load_global lib_import 
+7185   :constant 84 
+7188   :pack_params 1 
+7190   :f_call 
+7191   :store_global operator 
+7194   :line 1531 
+7197   :load_global operator 
+7200   :load_attr hex 
+7203   :store_global hex 
+7206   :line 1532 
+7209   :load_global operator 
+7212   :delete_attr hex 
+7215   :line 1534 
+7218   :load_global operator 
+7221   :load_attr oct 
+7224   :store_global oct 
+7227   :line 1535 
+7230   :load_global operator 
+7233   :delete_attr oct 
+7236   :line 1537 
+7239   :load_global operator 
+7242   :load_attr bin 
+7245   :store_global bin 
+7248   :line 1538 
+7251   :load_global operator 
+7254   :delete_attr bin 
+7257   :line 1541 
+7260   :load_global next 
+7263   :load_global generator 
+7266   :store_attr __next__ 
+7269   :line 1543 
+7272   :load_global _engine 
+7275   :load_attr _NoValue 
+7278   :store_global _NoValue 
+7281   :line 1545 
+7284   :load_global _NoValue 
+7287   :pack 1 
+7289   :dictionary 
+7290   :make_func 170 
+7292   :store_global vars 
+7295   :line 1554 
+7298   :load_global _engine 
+7301   :load_attr iter 
+7304   :store_global iter 
+7307   :line 1556 
+7310   :new_scope 
+7311   :line 1568 
+7314   :constant 87 
+7317   :constant 88 
+7320   :constant 89 
+7323   :constant 90 
+7326   :list 4 
+7328   :store_local __slots__ 
+7331   :line 1570 
+7334   :none 
+7335   :none 
+7336   :none 
+7337   :none 
+7338   :pack 4 
+7340   :dictionary 
+7341   :make_func 171 
+7343   :store_local __init__ 
+7346   :line 1576 
+7349   :none 
+7350   :pack 1 
+7352   :dictionary 
+7353   :make_func 172 
+7355   :store_local __get__ 
+7358   :line 1584 
+7361   :empty_tuple 
+7362   :dictionary 
+7363   :make_func 173 
+7365   :store_local __set__ 
+7368   :line 1590 
+7371   :empty_tuple 
+7372   :dictionary 
+7373   :make_func 174 
+7375   :store_local __delete__ 
+7378   :pop_scope 
+7379   :load_global object 
+7382   :pack 1 
+7384   :make_class property 
+7387   :store_global property 
+7390   :line 1601 
+7393   :load_global lib_import 
+7396   :constant 94 
+7399   :pack_params 1 
+7401   :f_call 
+7402   :store_global sys 
+7405   :line 1602 
+7408   :load_global operator 
+7411   :load_global sys 
+7414   :load_attr modules 
+7417   :constant 84 
+7420   :setitem 
+7421   :line 1603 
+7424   :load_global sys 
+7427   :load_global sys 
+7430   :load_attr modules 
+7433   :constant 94 
+7436   :setitem 
+7437   :line 1604 
+7440   :load_global lib_import 
+7443   :constant 95 
+7446   :pack_params 1 
+7448   :f_call 
+7449   :load_global sys 
+7452   :load_attr modules 
+7455   :constant 95 
+7458   :setitem 
+7459   :line 1605 
+7462   :load_global lib_import 
+7465   :constant 96 
+7468   :pack_params 1 
+7470   :f_call 
+7471   :load_global sys 
+7474   :load_attr modules 
+7477   :constant 96 
+7480   :setitem 
+7481   :line 1606 
+7484   :load_global lib_import 
+7487   :constant 97 
+7490   :pack_params 1 
+7492   :f_call 
+7493   :load_global sys 
+7496   :load_attr modules 
+7499   :constant 97 
+7502   :setitem 
+7503   :line 1607 
+7506   :load_global lib_import 
+7509   :constant 98 
+7512   :pack_params 1 
+7514   :f_call 
+7515   :load_global sys 
+7518   :load_attr modules 
+7521   :constant 98 
+7524   :setitem 
+7525   :line 1608 
+7528   :load_global lib_import 
+7531   :constant 99 
+7534   :pack_params 1 
+7536   :f_call 
+7537   :load_global sys 
+7540   :load_attr modules 
+7543   :constant 99 
+7546   :setitem 
+7547   :line 1610 
+7550   :load_global sys 
+7553   :load_global _engine 
+7556   :store_attr sys 
+7559   :line 1611 
+7562   :load_global operator 
+7565   :load_global _engine 
+7568   :store_attr operator 
+7571   :line 1613 
+7574   :empty_tuple 
+7575   :dictionary 
+7576   :make_func 175 
+7578   :store_global reversed 
+7581   :line 1626 
+7584   :load_global method 
+7587   :load_global str 
+7590   :constant 102 
+7593   :pack_params 2 
+7595   :f_call 
+7596   :constant 21 
+7599   :pack 1 
+7601   :dictionary 
+7602   :make_func 176 
+7604   :pack_params 1 
+7606   :f_call 
+7607   :store_global ljust 
+7610   :line 1632 
+7613   :delete_global ljust 
+7616   :line 1635 
+7619   :load_global method 
+7622   :load_global str 
+7625   :constant 103 
+7628   :pack_params 2 
+7630   :f_call 
+7631   :constant 21 
+7634   :pack 1 
+7636   :dictionary 
+7637   :make_func 177 
+7639   :pack_params 1 
+7641   :f_call 
+7642   :store_global rjust 
+7645   :line 1641 
+7648   :delete_global rjust 
+7651   :line 1644 
+7654   :load_global _no_trace 
+7657   :byte 0 
+7659   :pack 1 
+7661   :dictionary 
+7662   :make_func 178 
+7664   :pack_params 1 
+7666   :f_call 
+7667   :store_global round 
+7670   :line 1648 
+7673   :load_global _no_trace 
+7676   :byte 0 
+7678   :pack 1 
+7680   :dictionary 
+7681   :make_func 179 
+7683   :pack_params 1 
+7685   :f_call 
+7686   :store_global sum 
+7689   :line 1660 
+7692   :empty_tuple 
+7693   :dictionary 
+7694   :make_func 180 
+7696   :store_global _dir_type 
+7699   :line 1667 
+7702   :empty_tuple 
+7703   :dictionary 
+7704   :make_func 181 
+7706   :store_global _dir_module 
+7709   :line 1676 
+7712   :empty_tuple 
+7713   :dictionary 
+7714   :make_func 182 
+7716   :store_global _generic_dir 
+7719   :line 1687 
+7722   :load_global _NoValue 
+7725   :pack 1 
+7727   :dictionary 
+7728   :make_func 183 
+7730   :store_global dir 
+7733   :line 1707 
+7736   :load_global c_function 
+7739   :empty_tuple 
+7740   :dictionary 
+7741   :make_func 184 
+7743   :pack_params 1 
+7745   :f_call 
+7746   :store_global locals 
+7749   :line 1711 
+7752   :load_global c_function 
+7755   :empty_tuple 
+7756   :dictionary 
+7757   :make_func 185 
+7759   :pack_params 1 
+7761   :f_call 
+7762   :store_global staticmethod 
+7765   :line 1715 
+7768   :load_global c_function 
+7771   :empty_tuple 
+7772   :dictionary 
+7773   :make_func 186 
+7775   :pack_params 1 
+7777   :f_call 
+7778   :store_global classmethod 
+7781   :line 1718 
+7784   :none 
+7785   :false 
+7786   :pack 2 
+7788   :dictionary 
+7789   :make_func 187 
+7791   :store_global sorted 
+7794   :line 1722 
+7797   :load_global print 
+7800   :type 
+7801   :store_global FunctionType 
+7804   :line 1726 
+7807   :load_global _globals_to_consts 
+7810   :load_global _no_trace 
+7813   :empty_tuple 
+7814   :dictionary 
+7815   :make_func 188 
+7817   :pack_params 1 
+7819   :f_call 
+7820   :pack_params 1 
+7822   :f_call 
+7823   :store_global load_special 
+7826   :line 1745 
+7829   :load_global _globals_to_consts 
+7832   :load_global _no_trace 
+7835   :empty_tuple 
+7836   :dictionary 
+7837   :make_func 189 
+7839   :pack_params 1 
+7841   :f_call 
+7842   :pack_params 1 
+7844   :f_call 
+7845   :store_global load_special_known 
+7848   :line 1758 
+7851   :load_global _globals_to_consts 
+7854   :load_global _no_trace 
+7857   :empty_tuple 
+7858   :dictionary 
+7859   :make_func 190 
+7861   :pack_params 1 
+7863   :f_call 
+7864   :pack_params 1 
+7866   :f_call 
+7867   :store_global generic_getattr 
+7870   :line 1784 
+7873   :load_global object 
+7876   :load_attr __getattribute__ 
+7879   :store_global _object_getattr 
+7882   :line 1785 
+7885   :load_global type 
+7888   :load_attr __getattribute__ 
+7891   :store_global _type_getattr 
+7894   :line 1789 
+7897   :load_global _globals_to_consts 
+7900   :load_global _no_trace 
+7903   :empty_tuple 
+7904   :dictionary 
+7905   :make_func 191 
+7907   :pack_params 1 
+7909   :f_call 
+7910   :pack_params 1 
+7912   :f_call 
+7913   :store_global type_getattr 
+7916   :line 1815 
+7919   :load_global method 
+7922   :load_global type 
+7925   :load_global list 
+7928   :load_attr append 
+7931   :pack_params 1 
+7933   :f_call 
+7934   :constant 109 
+7937   :pack_params 2 
+7939   :f_call 
+7940   :empty_tuple 
+7941   :dictionary 
+7942   :make_func 192 
+7944   :pack_params 1 
+7946   :f_call 
+7947   :store_global _ 
+7950   :line 1821 
+7953   :load_global c_name 
+7956   :load_global _globals_to_consts 
+7959   :load_global _no_trace 
+7962   :empty_tuple 
+7963   :dictionary 
+7964   :make_func 193 
+7966   :pack_params 1 
+7968   :f_call 
+7969   :pack_params 1 
+7971   :f_call 
+7972   :pack_params 1 
+7974   :f_call 
+7975   :store_global load_attr_surrogate 
+7978   :line 1830 
+7981   :delete_global FunctionType 
+7984   :line 1831 
+7987   :delete_global _object_getattr 
+7990   :line 1835 
+7993   :load_global _globals_to_consts 
+7996   :load_global _no_trace 
+7999   :empty_tuple 
+8000   :dictionary 
+8001   :make_func 194 
+8003   :pack_params 1 
+8005   :f_call 
+8006   :pack_params 1 
+8008   :f_call 
+8009   :store_global generic_setattr 
+8012   :line 1855 
+8015   :load_global object 
+8018   :load_attr __setattr__ 
+8021   :store_global _object_setattr 
+8024   :line 1860 
+8027   :load_global c_name 
+8030   :load_global _globals_to_consts 
+8033   :load_global _no_trace 
+8036   :empty_tuple 
+8037   :dictionary 
+8038   :make_func 195 
+8040   :pack_params 1 
+8042   :f_call 
+8043   :pack_params 1 
+8045   :f_call 
+8046   :pack_params 1 
+8048   :f_call 
+8049   :store_global store_attr_surrogate 
+8052   :line 1872 
+8055   :load_global method 
+8058   :load_global slice 
+8061   :load_attr step 
+8064   :type 
+8065   :constant 109 
+8068   :pack_params 2 
+8070   :f_call 
+8071   :load_global c_name 
+8074   :load_global _no_trace 
+8077   :empty_tuple 
+8078   :dictionary 
+8079   :make_func 196 
+8081   :pack_params 1 
+8083   :f_call 
+8084   :pack_params 1 
+8086   :f_call 
+8087   :pack_params 1 
+8089   :f_call 
+8090   :store_global slot_descriptor_get 
+8093   :line 1878 
+8096   :load_global method 
+8099   :load_global slice 
+8102   :load_attr step 
+8105   :type 
+8106   :constant 111 
+8109   :pack_params 2 
+8111   :f_call 
+8112   :load_global c_name 
+8115   :load_global _no_trace 
+8118   :empty_tuple 
+8119   :dictionary 
+8120   :make_func 197 
+8122   :pack_params 1 
+8124   :f_call 
+8125   :pack_params 1 
+8127   :f_call 
+8128   :pack_params 1 
+8130   :f_call 
+8131   :store_global slot_descriptor_set 
+8134   :line 1881 
+8137   :delete_global _object_setattr 
+8140   :line 1883 
+8143   :empty_tuple 
+8144   :dictionary 
+8145   :make_func 198 
+8147   :store_global print_bytecodes 
+8150   :line 1893 
+8153   :delete_global generic_getattr 
+8156   :line 1894 
+8159   :delete_global generic_setattr 
+8162   :line 1897 
+8165   :load_global make_immutable 
+8168   :load_global int 
+8171   :pack_params 1 
+8173   :f_call 
+8174   :drop 
+8175   :line 1898 
+8178   :load_global make_immutable 
+8181   :load_global float 
+8184   :pack_params 1 
+8186   :f_call 
+8187   :drop 
+8188   :line 1899 
+8191   :load_global make_immutable 
+8194   :load_global sys 
+8197   :type 
+8198   :pack_params 1 
+8200   :f_call 
+8201   :drop 
+8202   :line 1900 
+8205   :load_global make_immutable 
+8208   :load_global BaseException 
+8211   :pack_params 1 
+8213   :f_call 
+8214   :drop 
+8215   :line 1901 
+8218   :load_global make_immutable 
+8221   :load_global Exception 
+8224   :pack_params 1 
+8226   :f_call 
+8227   :drop 
+8228   :line 1902 
+8231   :load_global make_immutable 
+8234   :load_global type 
+8237   :pack_params 1 
+8239   :f_call 
+8240   :drop 
+8241   :line 1903 
+8244   :load_global make_immutable 
+8247   :load_global str 
+8250   :pack_params 1 
+8252   :f_call 
+8253   :drop 
+8254   :line 1904 
+8257   :load_global make_immutable 
+8260   :load_global dict 
+8263   :pack_params 1 
+8265   :f_call 
+8266   :drop 
+8267   :line 1905 
+8270   :load_global make_immutable 
+8273   :load_global make_immutable 
+8276   :type 
+8277   :pack_params 1 
+8279   :f_call 
+8280   :drop 
+8281   :line 1906 
+8284   :load_global make_immutable 
+8287   :load_global reversed 
+8290   :pack 0 
+8292   :pack_params 1 
+8294   :f_call 
+8295   :type 
+8296   :pack_params 1 
+8298   :f_call 
+8299   :drop 
+8300   :line 1907 
+8303   :load_global make_immutable 
+8306   :load_global print 
+8309   :type 
+8310   :pack_params 1 
+8312   :f_call 
+8313   :drop 
+8314   :line 1908 
+8317   :load_global make_immutable 
+8320   :load_global slice 
+8323   :pack_params 1 
+8325   :f_call 
+8326   :drop 
+8327   :line 1909 
+8330   :load_global make_immutable 
+8333   :load_global str_buf 
+8336   :pack_params 1 
+8338   :f_call 
+8339   :drop 
+8340   :line 1912 
+8343   :delete_global operator 
+8346   :line 1913 
+8349   :delete_global sys 
+8352   :line 1914 
+8355   :delete_global dict_proxy 
+8358   :line 1915 
+8361   :delete_global int_iterator 
+8364   :line 1916 
+8367   :delete_global listiterator 
+8370   :line 1917 
+8373   :delete_global _pure 
+8376   :line 1918 
+8379   :delete_global _no_raise 
+8382   :line 1919 
+8385   :delete_global type_state 
+8388   :line 1920 
+8391   :delete_global type_info 
+8394   :none 
+8395   :return 
+
+builtin/builtins.so: cannot open shared object file: No such file or directory
+Traceback (most recent call last):
+  File "builtin/builtins.py", line 204, in __main__
+ImportError: Cannot load dynamic library for builtin/builtins.py.
+builtin/builtins.so: cannot open shared object file: No such file or directory

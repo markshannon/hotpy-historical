@@ -1,0 +1,189 @@
+# Categories: base, trace, spec, doc, super
+#     Standard bytecodes, Needed by tracer, needed by specialiser, 
+#     needed by D.O.C., Super-instructions.
+# Tracing (only applies to base) simple, replace, compound, no
+#     Simple: record as is. Replace: replace with a single trace version.
+#     Compound: record call to function. No: Don't trace (too complex)
+
+copy : base, simple
+swap : base, simple
+rotate : base, simple
+rotate4 : base, simple
+drop : base, simple
+rrot : base, simple
+flip3 : base, simple
+drop_under : super
+binary : base, compound
+inplace : base, compound
+unary : base, compound
+iter : base, compound
+next : base, compound
+getitem : base, compound
+setitem : base, compound
+
+delitem : base, compound
+contains : base, compound
+truth : base, compound
+is : base, simple
+not : base, compound
+fast_not : spec
+type_check : base, simple
+type : trace
+subtype : base, simple
+none : base, simple
+true : base, simple
+false : base, simple
+byte : base, simple
+constant : base, simple
+fast_constant : trace
+line : base, simple
+import : base, no
+list : base, simple
+list_append : base, simple
+sequence_to_list_or_tuple : base, compound
+as_tuple : base, simple
+unpack : base, simple
+empty_tuple : base, simple
+tuple_concat : base, simple
+copy_dict : base, simple
+dict_insert : base, simple
+new_scope : base, no
+pop_scope : base, no
+dictionary : base, simple
+yield : base, compound
+slice : base, simple
+f_call : base, replace
+load_special : trace
+store_frame : base, simple
+load_frame : base, simple
+load_from_cache : doc
+store_to_cache : doc
+clear_cache : doc
+debug : base, replace
+protect : base, replace
+for_loop : base, replace
+protect_with_exit : trace
+trace_protect : trace
+pop_handler : base, simple
+return : base, replace
+gen_exit : trace
+exit_loop : base, simple
+raise : base, no
+check_valid : trace
+gen_enter : trace
+init_frame : trace
+fast_frame : trace
+prepare_bm_call : trace
+pop_frame : trace
+bind : spec
+gen_yield : trace
+fast_line : trace
+trace_exit : trace
+
+interpret : trace
+i_mul : spec
+i_div : spec
+i_rshift : spec
+i_prod : spec
+native_call : spec
+native_call_protect : spec
+unpack_native_params : spec
+fast_load_frame : spec
+store_slot : spec
+fast_store_attr : spec
+fast_load_attr : spec
+fast_load_global : spec
+fast_store_global : spec
+check_initialised : doc
+f_add : spec
+f_sub : spec
+f_mul : spec
+f_neg : spec
+f_div : spec
+i2f   : spec
+i2d   : spec
+d_add : doc
+d_sub : doc
+d_mul : doc
+d_div : doc
+d_idiv : doc
+d_neg : doc
+d2f : doc
+f2d : doc
+d_byte : doc
+name : base, simple
+nop : base, simple
+over : base, simple
+pick : base, simple
+two_copy : base, simple
+line_none : super
+line_fast_constant : super
+pack : base, simple
+make_class : base, no
+make_func : base, no
+make_closure : base, no
+new_enter: trace
+pack_params : base, simple
+delete_attr : base, compound
+load_attr : base, compound
+store_attr : base, compound
+load_local : base, simple
+delete_local : base, simple
+store_local : base, simple
+delete_global : base, simple
+load_global : base, simple
+store_global : base, simple
+line_byte : super
+line_load_frame : super
+line_fast_load_frame : super
+line_load_global : super
+load_deref : base, simple
+store_deref : base, simple
+jump : base, replace
+end_loop : base, replace
+on_true : base, replace
+on_false : base, replace
+end_protect : base, replace
+recursion_exit : trace
+return_exit : trace
+gen_check : trace
+func_check : trace
+make_frame : trace
+exit_on_true : trace
+exit_on_false : trace
+i_add : spec
+i_sub : spec
+i_inc : spec
+i_dec : spec
+i_comp_lt : spec
+i_comp_gt : spec
+i_comp_eq : spec
+i_comp_ne : spec
+i_comp_le : spec
+i_comp_ge : spec
+i_exit_lt : super
+i_exit_gt : super
+i_exit_eq : super
+i_exit_ne : super
+i_exit_le : super
+i_exit_ge : super
+f_lt : spec
+f_gt : spec
+f_eq : spec
+f_ne : spec
+f_le : spec
+f_ge : spec
+native_call_no_prot : spec
+native_setitem : spec
+load_slot : spec
+deoptimise_check : spec
+check_keys : spec
+line_fast_load_global : super
+ensure_initialised : spec
+ensure_type : spec
+ensure_type_drop : spec
+ensure_type2 : spec
+ensure_value : spec
+ensure_tagged_drop : spec
+ensure_tagged : spec
+ensure_tagged2 : spec

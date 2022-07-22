@@ -1,0 +1,69 @@
+
+$notify_call(R_object callable -- )
+If sys.settrace() is set, notify trace-object of call.
+If sys.setprofile() is set, notify profile-object of call.
+
+$notify_line( -- )
+If sys.settrace() is set, notify trace-object of the current line.
+
+$notify_exception(R_BaseException except -- )
+If sys.settrace() is set, notify trace-object of the exception.
+
+$notify_return( -- )
+If sys.settrace() is set, notify trace-object of a return.
+If sys.setprofile() is set, notify profile-object of a return.
+
+$from_dict_or_goto(R_object obj, R_object key -- R_object value)
+Lookup in {obj}'s dictionary. 
+If {obj} doesn't have a dictionary or {key} is not in it, then jump by offset.
+
+$gen_enter(R_object sent, R_generator gen  -- R_object sent)
+Enter generator. Save current instruction pointer, 
+push frame from generator to frame stack, setting the instruction pointer and
+executing from there.
+
+load_special_or_goto(int #name_index, int #offset, R_object obj -- R_object value)
+Lookup {special_name[key]} in {type(obj)}'s dictionary, then lookup in each super-class.
+If not found, then jump by offset.
+Otherwise, if {attr} is a descriptor, then 
+%value = type(attr).__get__(attr, obj, type(obj)
+or if its not a descriptor then 
+%value = attr
+
+$class_attr_or_goto(R_type t, R_str name -- R_object value)
+Lookup {name}  in {type(obj)}'s dictionary, then lookup in each super-class.
+If not found, then jump by offset.
+
+$gen_in_handler(R_generator gen -- R_bool b)
+If {gen} (which must be a generator
+
+$exit_on_false(intptr_t #@original_ip, R_bool value -- )
+Exit the trace if {value} (which must be a bool) is false.
+
+$exit_on_true(intptr_t #@original_ip, R_bool value -- )
+Exit the trace if {value} (which must be a bool) is true. 
+
+$fast_constant[protected](unsigned #@address -- R_object object)
+Loads the constant value at address.
+
+$load_special_or_exit(intptr_t #index, intptr_t #@original_ip, R_object obj -- R-object value)
+Like load_special_or_goto, but exits if no special
+
+$no_special_or_exit(intptr_t #index, intptr_t #@original_ip, R_object obj -- )
+Like load_special_or_goto, but exits if special does exist
+
+$class_attr_or_exit(intptr_t ##name, intptr_t #@original_ip, R_object obj -- R-object value)
+Like from_dict_goto, but exits if no special
+
+$not_in_dict_or_exit(intptr_t ##name, intptr_t #@original_ip, R_object obj -- )
+Like from_dict_goto, but exits if attribute does exist
+
+$special_from_type_or_exit(intptr_t #index, intptr_t #@original_ip, R_object obj -- R-object value)
+Like special_from_type_or_goto, but exits if no special
+
+$no_special_from_type_or_exit(intptr_t #index, intptr_t #@original_ip, R_object obj -- )
+Like special_from_type_or_goto, but exits if special does exist
+
+**Standard bytecodes defined in terms of lower-bytecodes
+
+

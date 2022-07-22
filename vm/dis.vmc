@@ -1,0 +1,402 @@
+
+#include "stdio.h"
+#include "hotpy.h"
+#include "opcodes.h"
+
+/********* Disassembler definition ***********/
+
+locals {
+    FILE* out;
+    R_tuple names;
+    uint8_t* ip_start;
+    R_tuple local_names;
+}
+
+__preamble [private] (FILE* output, R_code_object c -- ) {
+    out = output;
+    names = c->constants->__names;
+    local_names = c->local_names;
+    ip_start = gvmt_ip();
+}
+
+__postamble [private]: RETURN_V;
+
+_name[private](unsigned ##index -- ) {
+    R_str name;
+    if (index < 256) {
+        name = (R_str)ITEM(standard_names, index);
+    } else {
+        name = (R_str)ITEM(names, index-256);
+    }
+    py_fprint(out, name);
+    fprintf(out, " ");
+}
+
+_spec_name[private](unsigned #index -- ) {
+    R_str name = (R_str)ITEM(standard_names, index);
+    py_fprint(out, name);
+    fprintf(out, " ");
+}
+
+op_name[private]( -- ) {
+    int location = gvmt_ip() - ip_start;
+    fprintf(out, "%-7d:", location);
+    fprintf(out, "%s ", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+}
+
+nl[private]( -- ) {
+    fprintf(out, "\n");
+}
+
+op[private](unsigned #op -- ) {
+    fprintf(out, "%d ", op);
+}
+
+local_name[private](unsigned #op -- ) {
+    R_str lname = (R_str)ITEM(local_names, op);
+    fprintf(out, "%d(", op);
+    py_fprint(out, lname);
+    fprintf(out, ") ");
+}
+
+s_op[private](int8_t #op -- ) {
+    fprintf(out, "%d ", op);
+}
+
+op2[private](unsigned ##op -- ) {
+    fprintf(out, "%d ", op);
+}
+
+type_id[private](unsigned ####addr -- ) {
+    R_type t = (R_type)gvmt_pinned_object((void*)addr);
+    fprintf(out, "%s ", t->tp_name);
+}
+
+addr[private](unsigned ####a -- ) {
+    fprintf(out, "0x%x ", a);
+}
+
+skip [private] : #@ DROP;
+skip2 [private] : #@ DROP #@ DROP;
+skip4 [private] : skip2 skip2;
+
+name: op_name _name nl;
+
+is: op_name nl ;
+
+contains: op_name nl ;
+
+truth: op_name nl ;
+
+not: op_name nl ;
+fast_not: op_name nl ;
+
+type_check: op_name nl ;
+
+load_from_cache: op_name op nl ;
+store_to_cache: op_name op nl ;
+clear_cache: op_name op nl ;
+
+none: op_name nl ;
+true: op_name nl ;
+false: op_name nl ;
+
+byte: op_name s_op nl ;
+
+constant: op_name op2 nl ;
+
+line: op_name op2 nl ;
+fast_line: op_name op2 nl ;
+
+import: op_name nl ;
+
+pack: op_name op nl ;
+pack_params:  op_name op nl ;
+new_scope: op_name nl ;
+
+pop_scope: op_name  nl ;
+
+pick: op_name op nl;
+
+error: op_name nl ;
+
+dictionary: op_name nl ;
+
+store_frame: op_name local_name nl ;
+
+load_frame: op_name local_name nl ;
+
+delete: op_name op nl ;
+
+load: op_name _name nl ;
+
+store: op_name _name nl ;
+
+raise: op_name nl ;
+reraise: op_name nl ;
+
+nop: op_name nl ;
+drop: op_name nl ;
+copy: op_name nl ;
+swap: op_name nl ;
+over: op_name nl ;
+rotate: op_name nl ;
+rotate4: op_name nl ;
+rrot: op_name nl ;
+flip3: op_name nl ;
+two_copy: op_name nl ;
+drop_under: op_name nl ;
+
+operator_name[private](int #op -- ) {
+    R_str op_name = (R_str)ITEM(operator_names, op);
+    py_fprint(out, op_name);
+    fprintf(out, " ");
+}
+
+binary: op_name operator_name nl ;
+inplace: op_name operator_name nl ;
+unary: op_name operator_name nl ;
+
+getitem: op_name nl ;
+setitem: op_name nl ;
+delitem: op_name nl ;
+
+current_exception: op_name nl ;
+
+next: op_name op2 nl ;
+iter: op_name nl ;
+
+list: op_name op nl ;
+
+make_class: op_name _name nl ;
+
+make_func: op_name op nl ;
+make_closure: op_name op nl ;
+
+sequence_to_list_or_tuple: op_name nl ;
+
+unpack: op_name op nl ;
+
+yield: op_name nl ;
+
+load_attr: op_name _name nl ;
+load_special: op_name _spec_name nl ;
+has_special: op_name _spec_name nl ;
+has_dict: op_name nl ;
+
+list_append: op_name nl ;
+slice: op_name nl ;
+
+f_call: op_name nl ;
+tail_call: op_name nl;
+f_call_direct: op_name nl ;
+
+fast_frame: op_name op addr nl ;
+type: op_name nl;
+subtype: op_name nl;
+
+bind: op_name nl;
+next_exit: op_name nl;
+
+make_exception_handler: op_name op addr addr nl;
+trace_protect: op_name op addr nl;
+
+gen_check: op_name addr addr nl;
+gen_enter: op_name nl;
+gen_link: op_name nl;
+
+new_enter: op_name addr nl;
+
+ensure_value: op_name op addr addr nl;
+ensure_value_drop: op_name addr addr nl;
+
+interpret: op_name addr nl;
+
+set_next_ip: op_name addr nl;
+make_frame: op_name op nl;
+init_frame: op_name nl;
+
+pop_frame: op_name nl;
+gen_yield: op_name addr nl;
+profile_return: op_name nl;
+
+check_keys: op_name op2 addr addr nl;
+fast_get: op_name addr addr nl;
+
+get_class_attr: op_name nl;
+has_class_attr: op_name nl;
+value_in_object_dict_or_jump2: op_name nl;
+set_in_object_dict: op_name nl;
+value_in_object_dict_or_exit: op_name addr nl;
+value_not_in_object_dict_or_exit: op_name addr nl;
+
+gen_exit: op_name nl;
+as_tuple: op_name nl;
+
+delete_attr: op_name _name nl ;
+store_attr: op_name _name nl ;
+
+load_local: op_name _name nl ;
+delete_local: op_name _name nl ;
+store_local: op_name _name nl ;
+delete_global: op_name _name nl ;
+load_global: op_name _name nl ;
+store_global: op_name _name nl ;
+load_deref: op_name op op nl ;
+store_deref: op_name op op nl ;
+
+target[private](int16_t ##offset -- ) {
+    fprintf(out, "%d ", gvmt_ip()-ip_start+offset);
+}
+
+check_initialised: op_name local_name nl ;
+
+jump: op_name target nl ;
+counting_end_loop: op_name op addr target nl;
+
+end_loop: op_name skip target nl ;
+done_if: op_name target nl ;
+
+//obj_dict_get_or_branch: op_name target nl ;
+//obj_dict_get_or_exit: op_name addr nl ;
+//exit_if_obj_dict_get: op_name addr nl ;
+
+//cls_attr_get_or_branch: op_name target nl ;
+//cls_attr_get_or_exit: op_name addr nl ;
+//exit_if_cls_attr_get: op_name addr nl ;
+
+continue: op_name target nl ;
+break: op_name target nl ;
+on_true: op_name target nl ;
+on_false: op_name target nl ;
+debug: op_name nl ;
+protect: op_name target nl ;
+end_protect: op_name target nl ;
+pop_handler: op_name nl ;
+pop_caller_handler: op_name nl ;
+return: op_name nl ;
+
+
+recursion_exit:  op_name addr addr nl;
+
+trace_exit: op_name addr nl;
+return_exit: op_name addr nl;
+exit_on_true: op_name addr nl;
+exit_on_false: op_name addr nl;
+
+empty_tuple : op_name nl ;
+tuple_concat : op_name nl ;
+copy_dict : op_name nl ;
+dict_insert : op_name nl ;
+
+fast_load_frame: load_frame ;
+
+//new_frame1: op_name op nl ;
+//new_frame2: op_name op nl ;
+
+fast_load_global: op_name skip4 skip2 nl ;
+fast_store_global: op_name skip4 skip2 nl ;
+
+fast_constant: op_name skip4 nl;
+
+type_ensure: op_name type_id addr nl;
+type_ensure_drop: op_name type_id addr nl;
+type_ensure2: type_ensure ;
+
+ensure_tagged: op_name addr nl ;
+ensure_tagged_drop: op_name addr nl ;
+ensure_tagged2: ensure_tagged ;
+
+native_call: op_name op addr nl ;
+native_call_no_prot: native_call ;
+native_call_protect: op_name op addr addr nl ;
+
+unpack_native_params: op_name addr nl ;
+deoptimise_check: op_name addr addr nl ;
+
+prepare_bm_call: op_name nl ;
+
+load_slot: op_name nl;
+load_slot_imm: op_name op nl;
+store_slot: op_name nl;
+store_slot_imm: op_name op nl;
+fast_load_attr: op_name op2 op2 addr nl;
+fast_store_attr: op_name op2 op2 addr nl;
+
+i_add: op_name addr nl;
+i_sub: op_name addr nl;
+i_mul: op_name nl;
+i_div: op_name nl;
+i_prod: op_name s_op nl;
+
+i_rshift: op_name nl;
+
+i_inc: op_name op addr nl;
+i_dec: op_name op addr nl;
+
+i_add_no_overflow: op_name nl;
+i_sub_no_overflow: op_name nl;
+i_inc_no_overflow: op_name op nl;
+i_dec_no_overflow: op_name op nl;
+
+i_comp_lt: op_name nl;
+i_comp_gt: op_name nl;
+i_comp_eq: op_name nl;
+i_comp_ne: op_name nl;
+i_comp_le: op_name nl;
+i_comp_ge: op_name nl;
+
+f_lt: op_name nl;
+f_gt: op_name nl;
+f_eq: op_name nl;
+f_ne: op_name nl;
+f_le: op_name nl;
+f_ge: op_name nl;
+
+i_exit_eq: op_name addr nl ;
+i_exit_ne: op_name addr nl ;
+
+f_add: op_name nl;
+f_sub: op_name nl;
+f_mul: op_name nl;
+f_div: op_name nl;
+f_neg: op_name nl;
+i2f: op_name nl;
+i2d: op_name nl;
+f2d: op_name nl;
+
+d_add: op_name nl;
+d_sub: op_name nl;
+d_mul: op_name nl;
+d_div: op_name nl;
+d_idiv: op_name nl;
+d_neg: op_name nl;
+
+d2f: op_name nl;
+d_byte: op_name op nl;
+
+check_valid: op_name nl;
+
+loop_start_nop: op_name nl;
+
+array_setitem_int: op_name nl;
+array_getitem_int: op_name nl;
+
+copy_store_frame: op_name local_name nl ;
+copy_store_to_cache: op_name op nl ;
+
+fast_load_frame_fast_load_frame: op_name local_name local_name nl ;
+fast_load_frame_load_from_cache: op_name local_name op nl ;
+load_from_cache_fast_load_frame: op_name op local_name nl ;
+load_from_cache_load_from_cache: op_name op op nl ;
+
+store_frame_fast_load_frame: op_name local_name local_name nl ;
+store_frame_load_from_cache: op_name local_name op nl ;
+store_to_cache_fast_load_frame: op_name op local_name nl ;
+store_to_cache_load_from_cache: op_name op op nl ;
+
+drop_fast_load_frame: op_name local_name nl ;
+drop_load_from_cache: op_name op nl ;
+
+fast_line_set_next_ip: op_name op2 addr nl ;
+

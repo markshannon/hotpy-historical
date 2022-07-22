@@ -1,0 +1,689 @@
+
+array: object {
+    uintptr_t  length
+    R(object) array[]
+}
+
+BasicBlock: object (special) {
+    R(array) local_types;
+    R(BasicBlock) successor1; ro
+    R(BasicBlock) successor2; ro
+    R(bool) unlikely;
+    R(bool) exception_handler;
+    R(inference) tos;
+    R(tuple) protect_stack;
+    uintptr_t begin;
+    uintptr_t end;
+    int scratch;
+}
+
+binary_operator: operator {
+    R(str) rfunc_name
+}
+
+comparison_operator: binary_operator {
+}
+
+binary_api: object {
+    P(binaryfunc) func
+    R(str) name
+}
+
+binary_pred_api: object {
+    P(objobjproc) func
+    R(str) name
+}
+
+binary_r_api: object {
+    P(binaryfunc) func
+    R(str) name
+}
+
+// Must have same layout as int, since it bool is a sublclass of int
+// "length" is always one, it can be ignored.
+bool: object {
+    intptr_t always_one
+    uint32_t value
+}
+
+bound_method: object {
+    R(object) object 
+    R(object) callable
+}
+
+bytearray: bytes {
+}
+
+bytes: object {
+    uintptr_t  length
+    char bytes[]
+}
+
+bytelist: object {
+    intptr_t size
+    intptr_t lock
+    R(bytearray) array
+}
+
+call_descriptor: object {
+}
+
+char_array: object {
+    uintptr_t  length
+    char chars[]
+}
+
+class_descriptor: object {
+}
+
+class_method: object {
+    R(object) callable
+}
+
+closure: object {
+    R(function) function
+    R(frame) frame
+}
+
+code_object: object {
+    uintptr_t  kind
+    uintptr_t  params
+    uintptr_t  locals
+    R(tuple) names
+    R(bytes) code ; ro
+    R(str) name ; ro
+    R(Constants) constants ; ro
+    R(tuple) local_names ; ro
+}
+
+compare_api: object {
+    int op
+    R(str) name
+    P(richcmpfunc) func
+}
+
+Condition: object (special) {
+    P(void*) condition
+    P(void*) lock
+}
+ 
+Constants: object {
+    R(str) __file__; ro  
+    R(tuple) __names; ro 
+    R(tuple) __constants; ro
+    R(tuple) __functions; ro
+}
+
+complex: object {
+    double real
+    double imag
+}
+
+deferred: object (special) {
+    int kind
+    R(type) type
+    R(object) value
+}
+
+deferred_frame: object (special) {
+    int line_number
+    P(uint8_t*) ip
+    R(tuple) locals
+    R(function) function
+}
+
+deferred_state: object (special) {
+    int cached_objects
+    int line_number
+    R(list) frame_stack
+    R(list) deferred_stack
+}
+
+dict: object {
+    intptr_t lock
+    R(dict_values) values
+}
+
+dict_descriptor: object {
+}
+
+dict_table: object {
+    uintptr_t  length
+    intptr_t size; ro
+    intptr_t load
+    intptr_t used
+    R(object) array[]
+}
+
+dict_keys: object {
+    uintptr_t  length 
+    intptr_t load
+    intptr_t used
+    R(object) array[]
+}
+
+dict_values: object {
+    uintptr_t  length 
+    intptr_t size
+    R(dict_keys) keys
+    R(object) array[]
+}
+
+// Although this has extra1/2 before the array, in fact the values
+// are laid out as per dict_values with the guards at the end.
+module_dict_values: object {
+    uintptr_t  length 
+    intptr_t size
+    R(dict_keys) keys
+    R(object) extra1
+    R(object) extra2
+    R(object) array[]
+}
+
+dict_iterator: object {
+    intptr_t next
+    R(dict_keys) keys
+}
+
+dict_proxy: object {
+    R(type) type;
+}
+
+dict_proxy_iterator: object {
+    intptr_t next
+    R(dict_table) table
+}
+
+dict_values_iterator: object {
+    intptr_t next
+    intptr_t size
+    R(dict) dict
+    R(dict_values) values
+}
+
+enumerate: object (special) {
+    R(object) iterator; ro
+    R(int) index; rw
+}
+
+BaseException: object {
+    R(traceback) __traceback__; ro
+    R(object) args; rw
+    R(dict) dictionary
+}
+
+// If exit is not NULL, ip is ignored.
+// Otherwise ip is the actual ip of the except block.
+exception_handler: object (special) {
+    P(GVMT_StackItem*) data_stack;
+    P(uint8_t*) ip;
+    R(exception_handler) next;
+    R(exec_link) exit
+}
+
+file: object {
+    intptr_t handle
+}
+
+float: object {
+    double value
+}
+
+globals: object {
+    R(object) module
+    R(object) builtins
+}
+
+frame: object (special) {
+    uintptr_t  length
+    uintptr_t  f_lineno; ro
+    P(uint8_t*) next_ip;
+    uintptr_t depth;
+    R(exception_handler) exception_stack;
+    R(code_object) f_code; ro
+    R(globals) globals
+    R(frame) f_back; ro
+    R(object) array[]
+}
+
+base_function: object (special notype) {
+    intptr_t parameter_format
+    R(str) __name__ ; rw
+    R(str) __doc__; rw
+    R(tuple) paramNames ; ro
+    R(tuple) defaults ; ro
+}
+
+method_api: base_function {
+    P(void*) func
+    int flags
+}
+
+builtin_function: base_function {
+    R(str) source_name
+    R(tuple) param_types ; ro
+    R(type) return_type
+    P(behaviour) executable
+}
+
+function: base_function {
+    R(dict) dictionary
+    R(code_object) __code__ ; ro
+    R(globals) globals
+    R(dict) __annotations__ ; ro
+    R(guard) code_guard;
+    R(array) instrumentation
+    intptr_t execution_count
+    P(uint8_t*) bytecodes
+    intptr_t byte_code_length
+}
+
+generator_function: function {
+}
+
+generator: object (special) {
+    R(frame) frame;
+}
+
+getset_wrapper: object {
+    P(getter) getter
+    P(setter) setter
+    P(void*) closure
+    R(str) name
+    R(str) __doc__; ro
+}
+
+guard: object (special) {
+    P(guard_delete_func) delete;
+    R(object) object
+    R(str) name;
+    R(trace) trace
+    R(guard) ring;
+    R(guard) next;
+}
+
+hash_api: object {
+    P(hashfunc) func
+    R(str) name
+}
+
+hashtable: object {
+    uintptr_t  size
+    uintptr_t  load
+    uintptr_t  mask
+    R(int_vector) codes
+    R(array) values
+}
+
+inference: object (special) {
+    uintptr_t type
+    P(uint8_t*) source
+    R(object) value
+}
+
+info_item0: object (special) {
+    P(uint8_t*) ip
+}
+
+info_item1: object (special) {
+    P(uint8_t*) ip
+    R(object) value1
+}
+
+info_item2: object (special) {
+    P(uint8_t*) ip
+    R(object) value1
+    R(object) value2    
+}
+
+info_item3: object (special) {
+    P(uint8_t*) ip
+    R(object) value1
+    R(object) value2
+    R(object) value3    
+}
+
+int: object {
+    uintptr_t length
+    uint32_t digits[]
+}
+
+int_iterator: object {
+    R(int) next
+    R(int) end
+}
+
+int_slot_descriptor: object {
+    int offset
+    int writeable
+    R(str) name
+    R(str) __doc__; rw
+}
+
+int_vector: object {
+    uintptr_t  length
+    intptr_t vector[]
+}
+    
+len_api: object {
+    P(lenfunc) func
+}
+
+Lexer: object (special) {
+    uint32_t pending_dedents
+    uint32_t new_line
+    uint32_t open_brackets
+    uint32_t indent_level
+    uint32_t line
+    uint32_t indents[32]
+    P(uint16_t*) next_char
+    P(uint16_t*) limit
+    R(object) source
+    R(str) text
+}
+
+list: object {
+    intptr_t size
+    intptr_t lock
+    R(array) array
+}
+
+listiterator: object {
+    intptr_t next
+    R(list) list
+}
+
+local_dict: object {
+    R(tuple) names
+    R(frame) frame
+}
+
+local_dict_iterator: object {
+    uintptr_t index
+    R(local_dict) locals
+}
+
+Lock: object (special) {
+    int locked
+    P(void*) lock
+}
+
+mini_frame: object (special) {
+    R(object)   f_back
+    uintptr_t  f_lineno; ro
+}
+
+module: object {
+    R(dict) dictionary
+    R(str) filename
+}
+
+NoneType: object {
+}
+
+NotImplementedType: object {
+}
+
+object {
+    R(type) ob_type ; ro
+//    uint32_t ref_count
+}
+
+objint_api: object {
+    P(ssizeargfunc) func
+    R(str) name
+}
+
+objintobj_api: object {
+    P(ssizeobjargproc) func
+    R(str) name
+}
+
+operator: object {
+    intptr_t arity
+    R(hashtable) pre_defined
+    R(str) name ; ro
+    R(str) func_name
+    R(object) fallback
+}
+
+new_api: object {
+    P(newfunc) func
+    R(str) name
+}
+
+partial_operator: object {
+    intptr_t right
+    R(type) type
+    R(binary_operator) op
+}
+
+range: object {
+    R(int) _begin; ro
+    R(int) _end; ro
+    R(int) _step; ro
+}
+
+range_iterator: object {
+    R(int) next
+    R(int) end 
+    R(int) step
+}
+
+set: dict {
+}
+
+setitem_api: object {
+    P(objobjargproc) func
+    R(str) name
+}
+
+slice: object {
+    R(object) start; ro
+    R(object) stop; ro
+    R(object) step; ro
+}
+
+slot_descriptor: object {
+    int offset
+    int writeable
+    R(str) name
+    R(str) __doc__; rw
+}
+
+specialiser: object (special) {
+    int is_loop
+    P(int32_t*) invalidated_address
+    R(trace) trace
+    R(bytelist) out
+    R(dict) guards
+    R(array) frame
+    R(tuple) back
+    R(bytearray) uninitialised_loads
+}
+
+static_method: object {
+    R(object) callable
+}
+
+str: object (replace) {
+    uintptr_t  length
+    uintptr_t  hashcode
+    uint16_t text[]
+}
+
+str_buf: object {
+    int size
+    R(char_array) array
+}                       
+
+str_iterator: object (replace) {
+    uintptr_t next
+    R(str) str
+}
+
+thread_state: object (special) {
+    int request
+    uintptr_t stop_depth
+    double start_time
+    P(thread_t) thread
+    P(GVMT_StackItem*) stack_base;
+    P(uint8_t*) on_exception
+    R(frame) current_frame
+    R(frame) top_frame
+    R(object) profiler
+    R(guard) profile_guards
+    R(object) tracer
+    R(guard) trace_guards
+    R(dict) tls_dict
+    R(list) repr_list
+    R(dict) trace_cache
+    R(trace_record) trace
+    R(BaseException) c_exception
+    // Used for handling trace stitiching
+    R(exec_link) current_exit
+    R(object) frame_cache[64]
+}
+
+Thread: object (special) {
+    P(thread_t) thread
+    int is_alive
+    R(str) name
+    R(object) target
+    R(tuple) args
+    R(dict) kwargs
+}
+
+Token: object (special) {
+    uint32_t kind
+    R(object) data
+}
+
+traceback: object (special) {
+    uintptr_t  tb_lineno; ro
+    R(frame) tb_frame; ro
+    R(traceback) tb_next; ro
+}
+
+exec_link: object (special) {
+    uint32_t execution_count
+    P(uint8_t*) ip
+    P(exit_handler) call
+    R(type_state) state
+    R(trace) trace
+}
+
+trace: object (special) {
+    uint32_t execution_count
+    uint32_t enqueued
+    P(uint8_t*) optimised
+    P(exit_handler) compiled
+    uintptr_t invalidated;
+    R(set) pinned_objects
+    R(guard) guard_ring
+}
+
+trace_record: object (special) {
+    P(uint8_t*) start
+    int call_depth;
+    int allow_back_branch
+    R(bytelist) instructions
+    R(list) info
+    R(code_object) initial_code_object
+    R(set) pinned_objects
+    R(type_state) initial_state
+    R(exec_link) exit
+    R(list) call_stack
+}
+
+tuple: object {
+    uintptr_t  length
+    R(object) array[]
+}
+
+tupleiterator: object {
+    intptr_t next
+    R(tuple) tuple
+}
+
+type: object {
+    int32_t length
+    int32_t shape[5]
+    int32_t variable
+    intptr_t dict_offset
+    uintptr_t unique_index
+    uintptr_t flags
+    P(char*) tp_name; For API compatibility (and its handy for debugging)
+    P(gvmt_write_func) marshaller
+    P(call_func) call
+    P(get_func) get
+    P(set_func) set
+    P(hash_func) hash
+    intptr_t lock;
+    P(getattribute_function)  __getattribute__
+    P(setattr_function) __setattr__
+    P(getattrofunc) api_getattro
+    P(setattrofunc) api_setattro
+    P(ternaryfunc) api_call
+    R(dict_proxy) __dict__; ro
+    R(dict_table) attributes
+    R(str) __name__ ; ro
+    R(tuple) __bases__ ; ro
+    R(tuple) __mro__ ; ro
+    R(dict) guards
+    R(base_function) override_getattr
+    R(dict_keys) keys_cache
+    R(function) surrogate_new
+}
+
+//type_profile: object (special) {
+//    R(type) type0;
+//    R(type) type1;
+//    uint32_t count0;
+//    uint32_t count1;
+//    uint32_t other_count;
+//    uint32_t trip;
+//    uint32_t last_rand;
+//}
+//
+//type_profile1: type_profile (special) {
+//    R(inference) attribute1;
+//}
+//
+//type_profile2: type_profile (special) {
+//    R(inference) attribute1;
+//    R(inference) attribute2;
+//}
+
+frozen_type_info: type_info (special) {
+}
+
+type_info: object (special) {
+    uintptr_t kind
+    R(object) value
+    R(dict_keys) keys
+}
+
+type_state: object (special) {
+    intptr_t hashcode
+    R(tuple) frame
+    R(tuple) back
+}
+
+unary_operator: operator {
+}
+
+unary_api: object {
+    P(unaryfunc) func
+    R(str) name
+}
+
+unary_pred_api: object {
+    P(inquiry) func
+    R(str) name
+}
+
+zip: object (special) {
+    R(tuple) iterators
+}
+

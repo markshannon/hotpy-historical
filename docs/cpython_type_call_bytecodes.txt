@@ -1,0 +1,41 @@
+
+ 0 LOAD_FAST                0 (cls)
+ 3 SPECIAL_OR_GOTO          0 (__new__) 92 
+ 6 LOAD_FAST                0 (cls)
+ 9 LOAD_FAST                1 (args)
+12 LOAD_FAST                2 (kws)
+15 CALL_FUNCTION_VAR_KW     1
+18 STORE_FAST               3 (obj)
+
+36 LOAD_FAST                3 (obj)
+39 TYPE
+42 LOAD_FAST                0 (cls)
+45 COMPARE_OP               10 (subtype)
+48 POP_JUMP_IF_FALSE       88
+
+51 LOAD_FAST                3 (obj)
+54 LOAD_SPECIAL_OR_GOTO     2 (__init__) 102
+57 LOAD_FAST                1 (args)
+60 LOAD_FAST                2 (kws)
+63 CALL_FUNCTION_VAR_KW     0
+66 LOAD_CONST               0 (None)
+69 COMPARE_OP               9 (is not)
+72 POP_JUMP_IF_FALSE       88
+
+75 LOAD_CONST               4 (error)
+78 LOAD_FAST                3 (obj)
+81 CALL_FUNCTION            1
+82 RETURN_VALUE
+
+88 LOAD_FAST                3 (obj)
+91 RETURN_VALUE
+
+92 LOAD_CONST               1 (new_missing_error)
+95 LOAD_FAST                3 (obj)
+98 CALL_FUNCTION            1
+101 RETURN_VALUE
+
+102 LOAD_CONST               2 (init_missing_error)
+105 LOAD_FAST                3 (obj)
+108 CALL_FUNCTION            1
+111 RETURN_VALUE

@@ -1,0 +1,8 @@
+
+i_floordiv(R_int o1, R_int o2 -- R_int result) {
+    result = floordiv_tagged_int(o1, o2);
+}
+
+i_mod(R_int o1, R_int o2 -- R_int result) {
+    result = mod_tagged_int(o1, o2);
+}

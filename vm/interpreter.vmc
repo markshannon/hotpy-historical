@@ -1,0 +1,2315 @@
+#include "hotpy.h"
+#include "dictionary.h"
+#include "attributes.h"
+#include "function.h"
+#include "intobject.h"
+#include "operators.h"
+#include "optimise.h"
+#include <assert.h>
+
+// The master interpreter definition.
+
+// The GVMT manual explains the syntax.
+
+
+/// Internal codes.
+
+skip [private] : #@ DROP;
+skip2 [private] : skip skip;
+skip4 [private] : skip2 skip2;
+
+locals {
+    R_frame frame_pointer;
+    R_thread_state thread_state;
+}
+
+__preamble [private](R_frame f, R_thread_state ts -- ) {
+    TYPE_ASSERT(f, frame);
+    TYPE_ASSERT(ts, thread_state);
+    assert(ts->current_frame == f);
+    thread_state = ts;
+    frame_pointer = f;
+}
+
+__enter [private](--) {
+    assert(thread_state->request == REQUEST_NONE);
+    assert(thread_state == THREAD_STATE);
+    assert (thread_state->current_frame == frame_pointer);
+#ifndef NDEBUG
+# ifdef TRACING
+    interpreter_trace(gvmt_ip(), frame_pointer, 1);
+# else
+    interpreter_trace(gvmt_ip(), frame_pointer, 0);
+# endif
+# ifndef BOOTSTRAP
+    (*instruction_counter)++;
+# endif
+#endif
+}
+
+trace0[private]( -- ) {
+    TRACE0;
+}
+
+name_ [private] (int ##index -- R_str name) {
+    if (index < 256) {
+        name = (R_str)ITEM(standard_names, index);
+    } else {
+        assert(index < LEN(frame_pointer->f_code->names)+256);
+        name = (R_str)ITEM(frame_pointer->f_code->names, index-256);
+    }
+    TYPE_ASSERT(name, str);
+}
+
+trace_name [private] (R_object name -- R_object name) {
+#ifdef TRACING
+    TRACE1(name);
+    TRACE_OP(OPCODE(name));
+#endif
+}
+
+name: name_ trace_name;
+
+/// Stack permutations ***********
+
+nop: ;
+
+drop=5(R_object x --)  { TRACE0; }
+    // Removes the value in TOS
+
+copy (R_object x -- R_object x, R_object x)  { TRACE0; }
+    // Duplicates the value in TOS
+
+swap (R_object x, R_object x1 -- R_object x1, R_object x) { TRACE0; }
+    // Exchanges the top two values on the stack
+
+over_ [private] (R_object x, R_object x1 -- R_object x, R_object x1, R_object x)  { }
+    // Pushes a copy of the second value on the stack to the stack.
+over: trace0 over_ ;
+
+rotate (R_object x1, R_object x2, R_object x3 --
+        R_object x2, R_object x3, R_object x1)  { TRACE0; }
+    // Rotates the top three values on the stack.
+
+rotate4 (R_object x1, R_object x2, R_object x3, R_object x4 --
+        R_object x2, R_object x3, R_object x4, R_object x1)  { TRACE0; }
+    // Rotates the top four values on the stack.
+
+rrot (R_object x1, R_object x2, R_object x3 --
+        R_object x3, R_object x1, R_object x2)  { TRACE0; }
+    // Counter rotates the top three values on the stack.
+
+flip3 (R_object x1, R_object x2, R_object x3 --
+       R_object x3, R_object x2, R_object x1)  { TRACE0; }
+    // Flips the top three values on the stack.
+
+drop_under (R_object nos, R_object tos -- R_object tos) { TRACE0; }
+    // Drops nos leaving TOS in place.
+
+pick: PICK_R ;
+
+two_copy: trace0 over_ over_;
+
+//********* Operators ********
+
+binary[nocomp](uint8_t #index, R_object l, R_object r -- R_object value) {
+    // Binary operators, such as x + y
+    R_operator op = operators[index];
+#ifdef TRACING
+    R_function py = NULL;
+    R_base_function f = binary_lookup_exact(op, TYPE(l), TYPE(r));
+    if (f) {
+        value = binary_call(op, l, r);
+        assert(value);
+        TRACE3(l, r, value);
+    } else {
+        py = op->python_equivalent;
+        if (py) {
+            if (optimiser_controls.pre_spec) {
+                PRE_SPECIALISE(l, 2);
+                PRE_SPECIALISE(r, 1);
+            }
+            // Record entry to trace.
+            frame_pointer = trace_enter_surrogate(py, thread_state, gvmt_next_ip());
+            ITEM(frame_pointer, 0) = l;
+            ITEM(frame_pointer, 1) = r;
+            gvmt_far_jump(py->bytecodes);
+        } else {
+            // assert("All operators  should have py equivalents" && py);
+            value = binary_call(op, l, r);
+            assert(value);
+            TRACE3(l, r, value);
+        }
+    }
+#else
+    if (hotpy_low_level) {
+        R_base_function f = binary_lookup_exact(op, TYPE(l), TYPE(r));
+        if (f) {
+            value = binary_call(op, l, r);
+            assert(value);
+        } else {
+            R_function py = op->python_equivalent;
+            assert("All operators should have py equivalents" && py);
+            frame_pointer = enter_surrogate(py, thread_state, gvmt_next_ip());
+            ITEM(frame_pointer, 0) = l;
+            ITEM(frame_pointer, 1) = r;
+            gvmt_far_jump(py->bytecodes);
+        }
+    } else {
+        value = binary_call(op, l, r);
+        assert(value);
+    }
+#endif
+}
+
+inplace[nocomp](uint8_t #index, R_object l, R_object r -- R_object value) {
+    // Inplace binary operators such as: x += y
+#ifdef TRACING
+    R_operator op = operators[index];
+    R_function py = op->python_equivalent;
+    if (py) {
+        frame_pointer = trace_enter_surrogate(py, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = l;
+        ITEM(frame_pointer, 1) = r;
+        gvmt_far_jump(py->bytecodes);
+    } else {
+        // assert("All operators  should have py equivalents" && py);
+        value = inplace_call(op, l, r);
+        assert(value);
+        TRACE3(l, r, value);
+    }
+#else
+    if (hotpy_low_level) {
+        R_operator op = operators[index];
+        R_function py = op->python_equivalent;
+        assert("All operators  should have py equivalents" && py);
+        frame_pointer = enter_surrogate(py, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = l;
+        ITEM(frame_pointer, 1) = r;
+        gvmt_far_jump(py->bytecodes);
+    } else {
+        value = inplace_call(operators[index], l, r);
+        assert(value);
+    }
+#endif
+}
+
+unary[nocomp](uint8_t #index, R_object o -- R_object value) {
+    R_operator op = operators[index];
+#ifdef TRACING
+    R_function py = op->python_equivalent;
+    assert("All operators  should have py equivalents" && py);
+    frame_pointer = trace_enter_surrogate(py, thread_state, gvmt_next_ip());
+    ITEM(frame_pointer, 0) = o;
+    gvmt_far_jump(py->bytecodes);
+#else
+    if (hotpy_low_level) {
+        R_function py = op->python_equivalent;
+        assert("All operators  should have py equivalents" && py);
+        frame_pointer = enter_surrogate(py, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = o;
+        gvmt_far_jump(py->bytecodes);
+    } else {
+        value = unary_call(op, o);
+        assert(value);
+    }
+#endif
+}
+
+iter[nocomp](R_object o -- R_object value) {
+    // value = iter(o)
+#ifdef TRACING
+    R_function surrogate = function_iter_surrogate;
+    if (optimiser_controls.pre_spec) {
+        PRE_SPECIALISE(o, 1);
+    }
+    frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+    ITEM(frame_pointer, 0) = o;
+    gvmt_far_jump(surrogate->bytecodes);
+    value = 0;
+#else
+    if (hotpy_low_level) {
+        R_function surrogate = function_iter_surrogate;
+        frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = o;
+        gvmt_far_jump(surrogate->bytecodes);
+    } else {
+        frame_pointer->next_ip = gvmt_next_ip();
+        value = HotPyObject_GetIter(o);
+        assert(value);
+    }
+#endif
+}
+
+next[nocomp](uint16_t ##offset, R_object iter -- R_object iter, R_object value) {
+#ifdef TRACING
+    R_function surrogate = function_next_surrogate;
+    R_int off;
+    R_exception_handler h = make_exception_handler(1, frame_pointer->exception_stack, gvmt_ip()+offset);
+    frame_pointer->exception_stack = h;
+    if (optimiser_controls.pre_spec) {
+        PRE_SPECIALISE(iter, 1);
+    }
+    trace_add_byte(thread_state->trace, OPCODE(trace_protect));
+    trace_add_byte(thread_state->trace, 1);
+    TRACE_ADDR(gvmt_ip()+offset);
+    GVMT_PUSH(iter);
+    trace_add_byte(thread_state->trace, OPCODE(copy));
+    frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+    ITEM(frame_pointer, 0) = iter;
+    gvmt_far_jump(surrogate->bytecodes);
+    value = 0;
+#else
+    if (hotpy_low_level) {
+        R_function surrogate = function_next_surrogate;
+        R_exception_handler h = make_exception_handler(1, frame_pointer->exception_stack, gvmt_ip()+offset);
+        frame_pointer->exception_stack = h;
+        GVMT_PUSH(iter);
+        frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = iter;
+        gvmt_far_jump(surrogate->bytecodes);
+    } else {
+        value = HotPyIter_Next(iter);
+        if (value == NULL) {
+            gvmt_far_jump(gvmt_ip() + offset);
+        }
+    }
+#endif
+}
+
+getitem[nocomp](R_object seq, R_object index -- R_object value) {
+    // value = seq[index]
+#ifdef TRACING
+    R_function surrogate = function_getitem_surrogate;
+    if (optimiser_controls.pre_spec) {
+        PRE_SPECIALISE(seq, 2);
+    }
+    frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+    ITEM(frame_pointer, 0) = seq;
+    ITEM(frame_pointer, 1) = index;
+    gvmt_far_jump(surrogate->bytecodes);
+    value = 0;
+#else
+    if (hotpy_low_level) {
+        R_function surrogate = function_getitem_surrogate;
+        frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = seq;
+        ITEM(frame_pointer, 1) = index;
+        gvmt_far_jump(surrogate->bytecodes);
+    } else {
+        frame_pointer->next_ip = gvmt_next_ip();
+        value = HotPyObject_GetItem(seq, index);
+    }
+#endif
+}
+
+setitem[nocomp](R_object value, R_object seq, R_object index -- ) {
+    // seq[index] = value
+#ifdef TRACING
+    R_function surrogate = function_setitem_surrogate;
+    if (optimiser_controls.pre_spec) {
+        PRE_SPECIALISE(seq, 2);
+    }
+    frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+    ITEM(frame_pointer, 0) = value;
+    ITEM(frame_pointer, 1) = seq;
+    ITEM(frame_pointer, 2) = index;
+    gvmt_far_jump(surrogate->bytecodes);
+#else
+    if (hotpy_low_level) {
+        R_function surrogate = function_setitem_surrogate;
+        frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = value;
+        ITEM(frame_pointer, 1) = seq;
+        ITEM(frame_pointer, 2) = index;
+        gvmt_far_jump(surrogate->bytecodes);
+    } else {
+        frame_pointer->next_ip = gvmt_next_ip();
+        HotPyObject_SetItem(seq, index, value);
+    }
+#endif
+}
+
+delitem(R_object seq, R_object index -- ) {
+    // del seq[item]
+    frame_pointer->next_ip = gvmt_next_ip();
+    HotPyObject_DelItem(seq, index);
+    TRACE2(seq, index);
+}
+
+contains[nocomp](R_object item, R_object container -- R_object result) {
+    // result = item in container
+#ifdef TRACING
+    R_function surrogate = function_contains_surrogate;
+    if (optimiser_controls.pre_spec) {
+        PRE_SPECIALISE(container, 1);
+    }
+    frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+    ITEM(frame_pointer, 0) = item;
+    ITEM(frame_pointer, 1) = container;
+    gvmt_far_jump(surrogate->bytecodes);
+#else
+    if (hotpy_low_level) {
+        R_function surrogate = function_contains_surrogate;
+        frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = item;
+        ITEM(frame_pointer, 1) = container;
+        gvmt_far_jump(surrogate->bytecodes);
+    } else {
+        frame_pointer->next_ip = gvmt_next_ip();
+        result = (R_object)vm_contains(container, item);
+    }
+#endif
+}
+
+truth[nocomp](R_object o  -- R_bool b) {
+    // b = bool(o)
+    // Trace by calling bool_new
+    if (gvmt_is_tagged(o)) {
+        b = booleans[((intptr_t)gvmt_untag(o)) != 1];
+#ifdef TRACING
+        add_opcode_info(thread_state->trace, OPCODE(truth), gvmt_ip(), o);
+#endif
+    } else if (TYPE(o) == type_bool) {
+        b = (R_bool)o;
+#ifdef TRACING
+        add_opcode_info(thread_state->trace, OPCODE(truth), gvmt_ip(), o);
+#endif
+    } else if (o == (R_object)None) {
+        b = FALSE;
+#ifdef TRACING
+        add_opcode_info(thread_state->trace, OPCODE(truth), gvmt_ip(), o);
+#endif
+    } else {
+#ifdef TRACING
+        R_function surrogate = function_truth_surrogate;
+        // Note that this returns to here, but with an int or bool.
+        if (optimiser_controls.pre_spec) {
+            PRE_SPECIALISE(o, 1);
+        }
+        frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_ip());
+        ITEM(frame_pointer, 0) = o;
+        gvmt_far_jump(surrogate->bytecodes);
+        b = 0;
+#else
+        if (hotpy_low_level) {
+            R_function surrogate = function_truth_surrogate;
+            // Note that this returns to here, but with an int or bool.
+            frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_ip());
+            ITEM(frame_pointer, 0) = o;
+            gvmt_far_jump(surrogate->bytecodes);
+        } else {
+            b = truth(o);
+        }
+#endif
+    }
+}
+
+is(R_object o1, R_object o2 -- R_bool b) {
+    // b = o1 is o2
+    TRACE0;
+    b = booleans[o1 == o2];
+    assert(b == TRUE || b == FALSE);
+}
+
+not[nocomp](R_object o -- R_bool b) {
+    // FIX ME -- Use bool_surrogate if not simple type
+    if (gvmt_is_tagged(o)) {
+        b = booleans[((intptr_t)gvmt_untag(o)) == 1];
+        TRACE1(o);
+    } else if (TYPE(o) == type_bool) {
+        b = booleans[!((R_bool)o)->value];
+        TRACE1(o);
+    } else if (o == (R_object)None) {
+        b = TRUE;
+        TRACE1(o);
+    } else {
+#ifdef TRACING
+        R_function surrogate = function_truth_surrogate;
+        // Note that this returns to here, but with an int or bool.
+        if (optimiser_controls.pre_spec) {
+            PRE_SPECIALISE(o, 1);
+        }
+        frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_ip());
+        ITEM(frame_pointer, 0) = o;
+        gvmt_far_jump(surrogate->bytecodes);
+#else
+        if (hotpy_low_level) {
+            R_function surrogate = function_truth_surrogate;
+            // Note that this returns to here, but with an int or bool.
+            frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_ip());
+            ITEM(frame_pointer, 0) = o;
+            gvmt_far_jump(surrogate->bytecodes);
+        } else {
+            b = truth(o);
+            b = booleans[!b->value];
+        }
+#endif
+    }
+}
+
+fast_not[protected](R_bool b1 -- R_bool b2) {
+    b2 = booleans[!b1->value];
+}
+
+type_check(R_object object, R_type c -- R_bool b) {
+    // b = isinstance(object, c)
+    TRACE2(object, c);
+    if (TYPE(object) == c) {
+        b = TRUE;
+    } else {
+        if (!IS_TYPE(c)) {
+            raise_char(type_TypeError, "Typechecking non-class");
+        }
+        b = booleans[is_subclass_of(TYPE(object), c)];
+    }
+}
+
+type(R_object object -- R_type t) {
+    // t = type(object)
+    t = TYPE(object);
+    TRACE1(object);
+}
+
+subtype(R_type t1, R_type t2 -- R_bool b) {
+    if (!IS_TYPE(t1) || !IS_TYPE(t2)) {
+        raise_char(type_TypeError, "Subtype operand must be types");
+    }
+    if (t1 == t2) {
+        b = TRUE;
+    } else {
+        b = booleans[is_proper_subclass_of(t1, t2)];
+    }
+    TRACE2(t1, t2);
+}
+
+//*********** Constants ************
+// Combine with constant opcode?
+
+none ( -- R_NoneType n) {
+    // n = None
+    TRACE0;
+    n = None;
+}
+
+true ( -- R_bool b) {
+    // b = True
+    TRACE0;
+    b = TRUE;
+}
+
+false ( -- R_bool b) {
+    // b = False
+    TRACE0;
+    b = FALSE;
+}
+
+byte (int8_t #val -- R_int i) {
+    // i = val
+    TRACE0;
+    i = PY_SMALL_INT(val);
+}
+
+constant(unsigned ##index -- R_object object) {
+    // object = sys._getframe().f_code.constants_array[index]
+    object = ITEM(frame_pointer->f_code->constants->__constants, index);
+    TRACE1(object);
+}
+
+fast_constant[protected](unsigned ####address -- R_object object) {
+    object = (R_object)gvmt_pinned_object((void*)address);
+    TRACE0;
+}
+
+//********** Utility ************
+
+line(unsigned ##lineno --) {
+    // sys._getframe().f_lineno = lineno
+    TRACE0;
+    frame_pointer->f_lineno = lineno;
+    if (thread_state->tracer)
+        do_system_trace(thread_state, name_line, (R_object)None);
+}
+
+import(R_object file -- R_object object) {
+    // object = __import__(file)
+    R_tuple t = make_tuple(1);
+    TRACE0;
+    ITEM(t, 0) = file;
+    frame_pointer->next_ip = gvmt_next_ip();
+    object = CALLABLE(import_function)((R_object)import_function, t, 0);
+}
+
+list(... vector, uint8_t #count -- R_list l) {
+    // l = [ a, b, .. ]
+    TRACE0;
+    l = pack_list_reverse(count, vector);
+    gvmt_drop(count);
+}
+
+// This instruction is only to be used on newly created lists
+//  (the parser uses it for list comprehensions only)
+list_append(R_list list, R_object o -- ) {
+    TRACE0;
+    list_append_nolock(list, o);
+}
+
+pack_ [private] (... vector, uint8_t #count -- R_object object) {
+    object = (R_object)pack_tuple_reverse(count, vector);
+    gvmt_drop(count);
+}
+
+pack : trace0 pack_ ;
+
+sequence_to_list_or_tuple(R_object sequence -- R_object sequence) {
+    R_type scls = TYPE(sequence);
+    TRACE1(sequence);
+    if (scls != type_tuple && scls != type_list) {
+        frame_pointer->next_ip = gvmt_next_ip();
+        sequence = (R_object)HotPySequence_List(sequence);
+    }
+}
+
+as_tuple(R_object sequence -- R_object t) {
+    R_type scls = TYPE(sequence);
+    TRACE1(sequence);
+    if (scls == type_tuple) {
+        t = sequence;
+    } else {
+        assert(scls == type_list);
+        t = PY_tuple_from_list((R_list)sequence, type_tuple);
+    }
+}
+
+unpack (uint8_t #count, R_object object -- ) {
+    GVMT_Value* vector = gvmt_insert(count);
+    TRACE1(object);
+    if (IS_TUPLE(object)) {
+        unpack_tuple(count, (R_tuple)object, vector);
+    } else {
+        TYPE_ASSERT(object, list);
+        unpack_list(count, (R_list)object, vector);
+    }
+}
+
+empty_tuple( -- R_tuple t) {
+    TRACE0;
+    t = empty_tuple;
+}
+
+tuple_concat(R_tuple t1, R_tuple t2 -- R_tuple t3) {
+    TRACE0;
+    t3 = tuple_concat(t1, t2);
+}
+
+copy_dict(R_dict d -- R_dict d) {
+    TRACE0;
+    d = dict_copy(d);
+}
+
+dict_insert(R_dict d, R_str key, R_object value -- R_dict d) {
+    TRACE0;
+    insert_keyword_arg(d, key, value);
+}
+
+create_class [private] (R_object dict, R_tuple supers, R_str name -- R_type cls) {
+    cls = makeClass(name, supers, dict);
+}
+
+make_class: trace0 name_ create_class;
+
+new_scope(--) {
+    TRACE0;
+    thread_state->current_frame = frame_pointer = push_frame(frame_pointer);
+}
+
+pop_scope(-- R_object locals) {
+    TRACE0;
+    locals = frame_pointer->array[0];
+    assert(locals);
+    thread_state->current_frame = frame_pointer = frame_pointer->f_back;
+    assert(frame_pointer);
+}
+
+make_func: trace0 get_code new_func;
+make_closure: trace0 get_code new_func new_closure;
+
+error = 0 (--) {
+    assert(0);
+}
+
+//Creates a new (empty) dictionary
+dictionary( -- R_object object) {
+    TRACE0;
+    object = (R_object)new_empty_dict();
+}
+
+get_code[private](uint8_t #index -- R_code_object c) {
+    c = (R_code_object)ITEM(frame_pointer->f_code->constants->__functions, index);
+}
+
+new_func[private] (R_tuple defaults, R_dict annotations, R_code_object c -- R_object value) {
+    value = (R_object)make_function(c, defaults, annotations, frame_pointer->scopes);
+}
+
+new_closure[private] (R_function func -- R_function func) {
+    func->parameter_format |= CLOSURE;
+    func->func_closure = frame_pointer;
+}
+
+current_exception( -- R_BaseException ex) {
+    ex = thread_state->c_exception;
+    if (ex == NULL) {
+        R_str msg = string_from_c_string("No active exception to reraise");
+        ex =  make_exception(type_RuntimeError, msg);
+    }
+}
+
+yield[nocomp](R_object yielded -- ) {
+    frame_pointer->next_ip = gvmt_next_ip();
+    generator_save_stack();
+    GVMT_PUSH(yielded);
+    assert(frame_pointer->f_back);
+    thread_state->current_frame = frame_pointer = frame_pointer->f_back;
+# ifdef TRACING
+    thread_state->trace->call_depth--;
+    if (LIST_SIZE(thread_state->trace->call_stack))
+        list_pop(thread_state->trace->call_stack);
+
+    thread_state->trace->allow_back_branch  =
+        (thread_state->trace->allow_back_branch >> 1);
+    if (thread_state->trace->call_depth < 0) {
+        close_trace(thread_state, gvmt_ip(), "too many yields");
+        gvmt_transfer(NULL);
+    } else {
+        TRACE1(frame_pointer->f_code);
+        TRACE_OP(OPCODE(gen_yield));
+        TRACE_ADDR(gvmt_next_ip());
+        gvmt_far_jump(frame_pointer->next_ip);
+    }
+# else
+    if (thread_state->stop_depth > frame_pointer->depth)
+        gvmt_transfer(NULL);
+    else
+        gvmt_far_jump(frame_pointer->next_ip);
+# endif
+}
+
+slice(R_object o1, R_object o2, R_object o3 -- R_slice s) {
+    TRACE0;
+    s = gc_allocate(slice);
+    SET_TYPE(s, type_slice);
+    s->start = o1;
+    s->stop = o2;
+    s->step = o3;
+}
+
+/*** Calls ***********/
+
+f_call[nocomp](R_object callable, R_tuple t, R_dict d -- R_object value) {
+    int i, n;
+    call_func f;
+    frame_pointer->next_ip = gvmt_next_ip();
+#ifndef BOOTSTRAP
+    while (TYPE(callable) == type_bound_method) {
+        R_bound_method bm = (R_bound_method)callable;
+#ifdef TRACING
+        add_opcode_info(thread_state->trace, OPCODE(prepare_bm_call), gvmt_ip(), callable);
+#endif
+        callable = bm->callable;
+        t = tuple_prepend(bm->object, t);
+    }
+    if (IS_PY_FUNCTION(callable) && (((R_function)callable)->parameter_format & GENERATOR_FUNCTION) == 0) {
+        R_function func = (R_function)callable;
+        R_frame frame = function_frame(func, frame_pointer);
+        R_list call_stack;
+        void *exit;
+        init_frame_td(frame, func, t, d);
+        if (func->bytecodes == NULL)
+            func->bytecodes = get_bytecodes_from_code_object(func->__code__);
+        frame->next_ip = func->bytecodes;
+# ifdef TRACING
+        if (trace_length(thread_state->trace) == 0)
+            exit = make_interpret_exit(gvmt_ip(), thread_state->trace->pinned_objects);
+        else
+            exit = make_mono_exit(gvmt_ip(), thread_state->trace->pinned_objects, NULL);
+        trace_add_byte(thread_state->trace, OPCODE(ensure_value));
+        trace_add_byte(thread_state->trace, 2);
+        TRACE_ADDR(gvmt_pin((GVMT_Object)func));
+        TRACE_ADDR(exit);
+        if ((frame_pointer->f_code->kind & GENERATOR_FUNCTION) == 0 &&
+            gvmt_ip()[0] == OPCODE(tail_call) &&
+            frame_pointer->exception_stack == NULL) {
+            // Do tail-call here.
+            TRACE1(frame_pointer->f_code);
+            TRACE_OP(OPCODE(pop_frame));
+            thread_state->current_frame = frame_pointer = frame_pointer->f_back;
+            frame->f_back = frame_pointer;
+            frame->depth = frame_pointer->depth+1;
+            if (LIST_SIZE(thread_state->trace->call_stack))
+                list_pop(thread_state->trace->call_stack);
+            thread_state->trace->call_depth--;
+            thread_state->trace->allow_back_branch  =
+                (thread_state->trace->allow_back_branch >> 1);
+            assert(thread_state->stop_depth <= frame_pointer->depth);
+        } else {
+            trace_add_byte(thread_state->trace, OPCODE(set_next_ip));
+            trace_write_addr(thread_state->trace, frame_pointer->next_ip);
+        }
+        thread_state->trace->allow_back_branch  =
+            (thread_state->trace->allow_back_branch << 1);
+        trace_setup_frame(thread_state->trace, func, t, d);
+        thread_state->current_frame = frame_pointer = frame;
+        // TO DO ensure func is in pinned objects for trace.
+        // Need to check for recursion at this point.
+        if (func->bytecodes == thread_state->trace->start) {
+            R_trace loop;
+            trace_close_loop(thread_state->trace, OPCODE(jump));
+            loop = completed_trace(thread_state);
+            gvmt_ireturn_r((GVMT_Object)execute_trace(loop, thread_state, frame_pointer));
+        }
+        call_stack = thread_state->trace->call_stack;
+        for (i = LIST_SIZE(call_stack)-1; i >= 0; i--) {
+            // Do not treat nested generators as recursive
+            if (ITEM(call_stack->array, i) == NULL) {
+                break;
+            } else if (callable == ITEM(call_stack->array, i)) {
+                // Recursion detected - Stop tracing and start tracing at target of call.
+                void* exit = make_poly_exit(thread_state->trace->pinned_objects, NULL);
+                trace_add_byte(thread_state->trace, OPCODE(recursion_exit));
+                trace_write_addr(thread_state->trace, func->bytecodes);
+                trace_write_addr(thread_state->trace, exit);
+                close_trace(thread_state, gvmt_ip(), "recursion");
+                thread_state->request = REQUEST_NONE;
+                thread_state->optimise_type_state = NULL;
+                gvmt_transfer(NULL);
+            }
+        }
+        thread_state->trace->call_depth++;
+        list_append(call_stack, callable);
+# else
+        thread_state->current_frame = frame_pointer = frame;
+        if (func->execution_count >= 20) {
+            // Find executable link for this function. If none then...
+            thread_state->request = REQUEST_ENTER_OPTIMISED;
+            thread_state->optimise_type_state = NULL;
+            gvmt_transfer(NULL);
+        }
+        func->execution_count++;
+# endif
+        gvmt_far_jump(func->bytecodes);
+    } else if (IS_TYPE(callable)) {
+        R_type cls = (R_type)callable;
+        if (cls == type_type) {
+            value = (R_object)_HotPy_type(t, d);
+            TRACE3(callable, t, value);
+            TRACE_OP(OPCODE(f_call_direct));
+        } else {
+            // Simplify this - Use same surrogate for all classes.
+            R_object new_obj = class_attribute(cls, name___new__);
+            R_object init_obj = class_attribute(cls, name___init__);
+            R_frame frame;
+            R_function surrogate = find_surrogate_for_new(cls, new_obj, init_obj);
+            void *exit;
+            t = tuple_prepend((R_object)cls, t);
+            frame = function_frame(surrogate, frame_pointer);
+            init_frame_td(frame, surrogate, t, d);
+            if (surrogate->bytecodes == NULL)
+                surrogate->bytecodes = get_bytecodes_from_code_object(surrogate->__code__);
+            frame->next_ip = surrogate->bytecodes;
+            thread_state->current_frame = frame_pointer = frame;
+# ifdef TRACING
+            thread_state->trace->allow_back_branch  =
+                (thread_state->trace->allow_back_branch << 1);
+            if (trace_length(thread_state->trace) == 0)
+                exit = make_interpret_exit(gvmt_ip(), thread_state->trace->pinned_objects);
+            else
+                exit = make_mono_exit(gvmt_ip(), thread_state->trace->pinned_objects, NULL);
+            trace_add_byte(thread_state->trace, OPCODE(ensure_value));
+            trace_add_byte(thread_state->trace, 2);
+            TRACE_ADDR(gvmt_pin((GVMT_Object)cls));
+            TRACE_ADDR(exit);
+            trace_add_byte(thread_state->trace, OPCODE(set_next_ip));
+            TRACE_ADDR(gvmt_next_ip());
+            trace_add_byte(thread_state->trace, OPCODE(new_enter));
+            TRACE_ADDR(gvmt_pin((GVMT_Object)surrogate));
+            trace_setup_frame(thread_state->trace, surrogate, t, d);
+            thread_state->trace->call_depth++;
+            list_append(thread_state->trace->call_stack, callable);
+# endif
+            gvmt_far_jump(surrogate->bytecodes);
+        }
+    } else {
+        f = CALLABLE(callable);
+        value = f(callable, t, d);
+#ifdef TRACING
+        TRACE3(callable, t, value);
+        TRACE_OP(OPCODE(f_call_direct));
+        if (thread_state->trace->call_depth < 0) {
+            close_trace(thread_state, gvmt_ip(), "too many pop_frames");
+            gvmt_transfer(NULL);
+        }
+#endif
+        GVMT_PUSH(value);
+        frame_pointer = thread_state->current_frame;
+        if (thread_state->stop_depth > frame_pointer->depth)
+            gvmt_transfer(NULL);
+        else
+            gvmt_far_jump(frame_pointer->next_ip);
+    }
+#else
+    f = CALLABLE(callable);
+    value = f(callable, t, d);
+    frame_pointer = thread_state->current_frame;
+    GVMT_PUSH(value);
+    if (thread_state->stop_depth > frame_pointer->depth)
+        gvmt_transfer(NULL);
+    else
+        gvmt_far_jump(frame_pointer->next_ip);
+#endif
+}
+
+tail_call[nocomp]: f_call ;
+
+f_call_direct(R_object callable, R_tuple t, R_dict d -- R_object value) {
+    call_func f = CALLABLE(callable);
+#ifndef BOOTSTRAP
+    assert(instruction_counter == &on_trace_instruction_counter);
+    value = f(callable, t, d);
+# ifndef NDEBUG
+    instruction_counter = &on_trace_instruction_counter;
+# endif
+#else
+    value = f(callable, t, d);
+#endif
+
+}
+
+load_special[nocomp](R_object obj, unsigned #index -- R_object attr) {
+    R_str name = (R_str)ITEM(standard_names, index);
+#ifdef TRACING
+    R_function surrogate = function_load_special_surrogate;
+    if (optimiser_controls.pre_spec) {
+        PRE_SPECIALISE(obj, 1);
+    }
+    add_opcode_info(thread_state->trace, OPCODE(name), gvmt_ip(), (R_object)name);
+    trace_add_byte(thread_state->trace, 0);
+    trace_add_byte(thread_state->trace, index);
+    frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+    ITEM(frame_pointer, 0) = obj;
+    ITEM(frame_pointer, 1) = (R_object)name;
+    gvmt_far_jump(surrogate->bytecodes);
+#else
+    if (hotpy_low_level) {
+        R_function surrogate = function_load_special_surrogate;
+        frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = obj;
+        ITEM(frame_pointer, 1) = (R_object)name;
+        gvmt_far_jump(surrogate->bytecodes);
+    } else {
+        frame_pointer->next_ip = gvmt_next_ip();
+        attr = _HotPyObject_LookupSpecial(obj, name);
+    }
+#endif
+}
+
+has_special(R_object obj, unsigned #index -- R_bool b) {
+    R_str name = (R_str)ITEM(standard_names, index);
+    b = booleans[class_attribute(TYPE(obj), name) != NULL];
+    TRACE2(obj, name);
+}
+
+has_dict(R_object obj -- R_bool b) {
+    b = booleans[TYPE(obj)->dict_offset != 0];
+    TRACE1(obj);
+}
+
+get_class_attr(R_type cls, R_object key -- R_object attr) {
+    if (!IS_TYPE(cls)) {
+        raise_char(type_InternalError, "get_class_attr: first operand must be a type");
+    }
+    if (is_subclass_of(TYPE(key), type_str)) {
+        attr = class_attribute(cls, (R_str)key);
+    } else {
+        attr = NULL;
+    }
+    if (attr == NULL) {
+        raise_str(type_AttributeError, py_sprintf(
+            "'%s' object has no attribute '%s'", cls->__name__, key));
+    }
+    TRACE2(cls, key);
+}
+
+has_class_attr(R_type cls, R_object key -- R_bool b) {
+    if (!IS_TYPE(cls)) {
+        raise_char(type_InternalError, "first operand of 'has_class_attr' must be a type");
+    }
+    if (is_subclass_of(TYPE(key), type_str)) {
+        b = booleans[class_attribute(cls, (R_str)key) != NULL];
+    } else {
+        b = FALSE;
+    }
+    TRACE2(cls, key);
+}
+
+value_in_object_dict_or_jump2[nocomp](R_str key, R_object obj --) {
+    R_type klass = TYPE(obj);
+    R_object result = NULL;
+    if (!IS_STR(key)) {
+        raise_char(  type_InternalError, "first operand of 'value_in_object_dict_or_jump2' must be a string");
+    }
+    if (klass->dict_offset) {
+        result = _HotPyObject_dict_get(obj, key);
+    }
+    TRACE2(obj, key);
+    if (result) {
+#ifdef TRACING
+        TRACE_OP(OPCODE(value_in_object_dict_or_exit));
+        TRACE_ADDR(gvmt_ip()+2);
+#endif
+        GVMT_PUSH(result);
+    } else {
+#ifdef TRACING
+        TRACE_OP(OPCODE(value_not_in_object_dict_or_exit));
+        TRACE_ADDR(gvmt_ip()+1);
+#endif
+        gvmt_far_jump(gvmt_ip()+2);
+    }
+}
+
+set_in_object_dict(R_object value, R_str key, R_object obj -- ) {
+    if (!IS_STR(key)) {
+        raise_char(type_InternalError, "second operand of 'set_in_object_dict' must be a string");
+    }
+    if (TYPE(obj)->dict_offset) {
+        _HotPyObject_dict_set(obj, key, value);
+    } else {
+        raise_str(type_InternalError, py_sprintf(
+            "'%s' object has no __dict__", TYPE_NAME(obj)));
+    }
+    TRACE3(value, obj, key);
+}
+
+pack_params: pack_ dictionary ;
+
+new_enter[protected](unsigned ####addr, R_type cls, R_tuple t, R_dict d -- R_function new, R_tuple t, R_dict d) {
+    t = tuple_prepend((R_object)cls, t);
+    new = (R_function)gvmt_pinned_object((void*)addr);
+}
+
+//******* Variable access ***************
+
+store_frame(R_object value, uintptr_t #index --) {
+    TRACE1(value);
+    assert(thread_state == THREAD_STATE);
+    assert(thread_state->current_frame == frame_pointer);
+    assert(index < frame_pointer->length);
+    ITEM(frame_pointer, index) = value;
+}
+
+load_frame(uintptr_t #index -- R_object value) {
+    assert(index < frame_pointer->length);
+    value = ITEM(frame_pointer, index);
+    if (value == 0) {
+#ifdef TRACING
+        frame_pointer->next_ip = gvmt_next_ip();
+#endif
+        null_local(frame_pointer, index);
+    }
+    TRACE1(value);
+}
+
+load_from_cache(uintptr_t #index -- R_object value) {
+    value = thread_state->frame_cache[index];
+    assert(thread_state == THREAD_STATE);
+    assert(thread_state->current_frame == frame_pointer);
+    assert(value);
+    TRACE1(value);
+}
+
+store_to_cache(uintptr_t #index, R_object value -- ) {
+    thread_state->frame_cache[index] = value;
+    assert(thread_state == THREAD_STATE);
+    assert(thread_state->current_frame == frame_pointer);
+    TRACE1(value);
+}
+
+clear_cache(uintptr_t #count -- ) {
+    int i;
+    for (i = 0; i < count; i++) {
+        thread_state->frame_cache[i] = NULL;
+    }
+    TRACE0;
+}
+
+delete(uintptr_t #index -- ) {
+    int i = index;
+    R_object value = ITEM(frame_pointer, i);
+    assert(i < frame_pointer->length);
+    if (value)
+        ITEM(frame_pointer, i) = 0;
+    else{
+#ifdef TRACING
+        frame_pointer->next_ip = gvmt_next_ip();
+#endif
+        null_local(frame_pointer, index);
+    }
+    TRACE0;
+}
+
+// This is wrong, need to call __delattr__, so that user code can be called.
+delete_attr_ [private](R_object obj, R_object name -- ) {
+    HotPyObject_DelAttr(obj, name);
+    TRACE2(obj, name);
+}
+
+delete_attr: name_ delete_attr_ ;
+
+load_named_attr[private nocomp] (R_object object, R_str name -- R_object value) {
+#ifdef TRACING
+    R_function surrogate = function_load_attr_surrogate;
+    frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+    ITEM(frame_pointer, 0) = object;
+    ITEM(frame_pointer, 1) = (R_object)name;
+    gvmt_far_jump(surrogate->bytecodes);
+#else
+    if (hotpy_low_level) {
+        R_function surrogate = function_load_attr_surrogate;
+        frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = object;
+        ITEM(frame_pointer, 1) = (R_object)name;
+        gvmt_far_jump(surrogate->bytecodes);
+    } else {
+        frame_pointer->next_ip = gvmt_next_ip();
+        value = _HotPyObject_GetAttr(object, name);
+    }
+#endif
+}
+
+load_attr[nocomp]: name load_named_attr;
+
+store_named_attr[private nocomp] (R_object value, R_object obj, R_str name --) {
+#ifdef TRACING
+    R_function surrogate = function_store_attr_surrogate;
+    frame_pointer = trace_enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+    ITEM(frame_pointer, 0) = value;
+    ITEM(frame_pointer, 1) = obj;
+    ITEM(frame_pointer, 2) = (R_object)name;
+    gvmt_far_jump(surrogate->bytecodes);
+#else
+    if (hotpy_low_level) {
+        R_function surrogate = function_store_attr_surrogate;
+        frame_pointer = enter_surrogate(surrogate, thread_state, gvmt_next_ip());
+        ITEM(frame_pointer, 0) = value;
+        ITEM(frame_pointer, 1) = obj;
+        ITEM(frame_pointer, 2) = (R_object)name;
+        gvmt_far_jump(surrogate->bytecodes);
+    } else {
+        frame_pointer->next_ip = gvmt_next_ip();
+        _HotPyObject_SetAttr(obj, name, value);
+    }
+#endif
+}
+
+store_attr[nocomp]: name store_named_attr ;
+
+load(unsigned ##name -- R_object value) {
+    // TO DO - Implement this
+    // General load, searches dicts, functions, then globals
+    fatal("Not implemented");
+    value = 0;
+    TRACE1(value);
+}
+
+store(unsigned ##name, R_object value --) {
+    // TO DO - Implement this
+    fatal("Not implemented");
+    TRACE1(value);
+}
+
+load_local_ [private] (R_str name -- R_object value) {
+    value = load_local(frame_pointer, name);
+    TRACE2(name, value);
+}
+
+load_local: name_ load_local_ ;
+
+delete_local_[private] (R_str name --) {
+    store_local(frame_pointer, name, 0);
+    TRACE1(name);
+}
+
+delete_local: name_ delete_local_ ;
+
+store_local_[private] (R_object value, R_str name --) {
+    store_local(frame_pointer, name, value);
+    TRACE2(name, value);
+}
+
+store_local: name_ store_local_ ;
+
+delete_global_ [private](R_str name -- ) {
+    R_object d = frame_pointer->scopes->module;
+    if (IS_DICT_EXACT(d))
+        dict_del_str((R_dict)d, name);
+    else
+        HotPyObject_DelItem(d, (R_object)name);
+    TRACE2(d, name);
+}
+
+delete_global: name_ delete_global_;
+
+load_named_global[private] (R_str name -- R_object object) {
+    R_object globals, builtins;
+    globals = frame_pointer->scopes->module;
+    if (IS_DICT_EXACT(globals))
+        object = dict_get_str((R_dict)globals, name);
+    else
+        object = HotPyObject_GetItem(globals, (R_object)name);
+    if (object == NULL) {
+        builtins = frame_pointer->scopes->builtins;
+        if (IS_DICT_EXACT(builtins))
+            object = dict_get_str((R_dict)builtins, name);
+        else
+            object = HotPyObject_GetItem(builtins, (R_object)name);
+        if (object == NULL) {
+            name_not_defined(name);
+        }
+    }
+    TRACE3(globals, name, frame_pointer->scopes->builtins);
+}
+
+store_named_global[private] (R_object object, R_str name --) {
+    R_object d = frame_pointer->scopes->module;
+    if (IS_DICT_EXACT(d))
+        dict_set_str((R_dict)d, name, object);
+    else
+        HotPyObject_SetItem(d, (R_object)name, (R_object)object);
+    TRACE3(d, name, object);
+}
+
+load_global: name_ load_named_global;
+store_global: name_ store_named_global;
+
+get_frame[private] (unsigned #level -- R_frame f) {
+    int i;
+    f = frame_pointer;
+    TYPE_ASSERT(f, frame);
+    for (i = 0; i < level; i++) {
+        f = (R_frame)ITEM(f, 0);
+        TYPE_ASSERT(f, frame);
+    }
+}
+
+load_from_frame[private] (unsigned #index, R_frame f -- R_object value) {
+    value = ITEM(f, index);
+    TRACE1(value);
+}
+
+store_to_frame[private] (unsigned #index, R_object value, R_frame f --) {
+    ITEM(f, index) = value;
+    TRACE1(value);
+}
+
+//  -- R_object value
+load_deref : get_frame load_from_frame;
+
+// R_object value --
+store_deref : get_frame store_to_frame;
+
+//********** Flow control ************
+
+debug ( -- R_bool val) {
+    val = global_debug;
+#ifdef TRACING
+    TRACE0;
+    if (val == TRUE) {
+        TRACE_OP(OPCODE(true));
+    } else {
+        assert(val == FALSE);
+        TRACE_OP(OPCODE(false));
+    }
+#endif
+}
+
+// Unconditional jumps do not need to be traced.
+jump: JUMP;
+done_if: jump;
+continue: jump;
+break: jump;
+
+inc_to_32[private](uint8_t #count -- int b) {
+    count++;
+    gvmt_ip()[1] = count;
+    b = (count & 31) == 0;
+}
+
+compile_loop[private nocomp](unsigned ####addr, int16_t ##offset -- ) {
+#ifndef  BOOTSTRAP
+    R_trace trace = (R_trace)gvmt_pinned_object((void*)addr);
+    exit_handler compiled = increase_trace_count_and_maybe_compile(thread_state, trace);
+    if (compiled) {
+        gvmt_ireturn_r((GVMT_Object)compiled(thread_state, frame_pointer, DUMMY_LINK));
+    } else {
+        gvmt_far_jump(gvmt_ip()+offset);
+    }
+#endif
+}
+
+counting_end_loop[protected nocomp]: inc_to_32 IF compile_loop ELSE skip4 JUMP ENDIF ;
+
+increment_count[private](uint8_t #count -- int b) {
+#ifdef  BOOTSTRAP
+    b = 0;
+#elif defined TRACING
+    b = 1;
+#else
+    if (count >= 10) {
+        b = 1;
+    } else {
+        b = 0;
+        gvmt_ip()[1] = count+1;
+    }
+#endif
+}
+
+end_loop_ [private](int16_t ##offset -- ) {
+#ifndef BOOTSTRAP
+    R_exec_link exit;
+    uint8_t* target = gvmt_ip()+offset;
+    frame_pointer->next_ip = target;
+    assert(thread_state == THREAD_STATE);
+    assert (thread_state->current_frame == frame_pointer);
+# ifdef TRACING
+    if (target == thread_state->trace->start) {
+        R_trace loop;
+        trace_close_loop(thread_state->trace, OPCODE(jump));
+        loop = completed_trace(thread_state);
+        gvmt_ireturn_r((GVMT_Object)execute_trace(loop, thread_state, frame_pointer));
+    } else if (thread_state->trace->allow_back_branch & 1) {
+        thread_state->trace->allow_back_branch &= -2;
+        gvmt_far_jump(target);
+    } else {
+        void* addr = make_mono_exit(target, thread_state->trace->pinned_objects, NULL);
+        trace_add_byte(thread_state->trace, OPCODE(trace_exit));
+        trace_write_addr(thread_state->trace, addr);
+        completed_trace(thread_state);
+        thread_state->request = REQUEST_ENTER_OPTIMISED;
+        thread_state->optimise_type_state = NULL;
+        gvmt_transfer(NULL);
+    }
+# else
+    thread_state->request = REQUEST_ENTER_OPTIMISED;
+    thread_state->optimise_type_state = NULL;
+    gvmt_transfer(NULL);
+# endif
+#endif
+}
+
+end_loop [nocomp]: GC_SAFE increment_count IF end_loop_ ELSE JUMP ENDIF ;
+
+_forward_[private] (R_bool obj, int on_true, int16_t ##offset -- int b) {
+    void* exit;
+    uint8_t* target;
+    TYPE_ASSERT(obj, bool);
+    b = !(obj->value ^ on_true);
+    assert(offset > 0);
+#ifdef TRACING
+    target = b ? gvmt_ip() + offset : gvmt_next_ip();
+    if (obj->value)
+        trace_add_byte(thread_state->trace, OPCODE(exit_on_false));
+    else
+        trace_add_byte(thread_state->trace, OPCODE(exit_on_true));
+    exit = make_mono_exit( b ? gvmt_next_ip() : gvmt_ip() + offset, thread_state->trace->pinned_objects, NULL);
+    trace_write_addr(thread_state->trace, exit);
+    if (trace_length(thread_state->trace) >= 5000) {
+        close_trace(thread_state, target, "trace too long");
+        frame_pointer->next_ip = target;
+        gvmt_transfer(NULL);
+    }
+    if (target == thread_state->trace->start) {
+        void* addr = make_mono_exit(target, thread_state->trace->pinned_objects, NULL);
+        trace_add_byte(thread_state->trace, OPCODE(trace_exit));
+        trace_write_addr(thread_state->trace, addr);
+        completed_trace(thread_state);
+        thread_state->request = REQUEST_ENTER_OPTIMISED;
+        thread_state->optimise_type_state = NULL;
+        gvmt_transfer(NULL);
+    }
+#endif
+}
+
+
+branch [private]: IF JUMP ELSE skip2 ENDIF;
+on_true[nocomp]: truth #[1] #[1] 1 _forward_ branch;
+on_false[nocomp]: truth #[1] #[1] 0 _forward_ branch;
+
+protect(int ##offset -- ) {
+    R_exception_handler h = make_exception_handler(0, frame_pointer->exception_stack, gvmt_ip()+offset);
+    frame_pointer->exception_stack = h;
+# ifdef TRACING
+    trace_add_byte(thread_state->trace, OPCODE(trace_protect));
+    trace_add_byte(thread_state->trace, 0);
+    TRACE_ADDR(gvmt_ip()+offset);
+# endif
+}
+
+value_in_object_dict_or_exit[protected] (int ####addr, R_str key, R_object obj -- ) {
+#ifdef BOOTSTRAP
+    assert(0);
+#else
+    R_type klass = TYPE(obj);
+    R_object result = NULL;
+    if (klass->dict_offset) {
+        result = _HotPyObject_dict_get(obj, key);
+    }
+    TRACE2(obj, key);
+    if (result) {
+        GVMT_PUSH(result);
+    } else {
+        R_exec_link next;
+        uint8_t* ip = (uint8_t*)addr;
+        frame_pointer->next_ip = (uint8_t*)ip;
+        assert(thread_state == THREAD_STATE);
+        assert(thread_state->current_frame == frame_pointer);
+# ifndef NDEBUG
+        instruction_counter = &off_trace_instruction_counter;
+        exec_links_counter++;
+# endif
+        next = interpreter(ip, thread_state, frame_pointer);
+        gvmt_ireturn_r((GVMT_Object)next);
+    }
+#endif
+}
+
+value_not_in_object_dict_or_exit[protected] (int ####addr, R_str key, R_object obj -- ) {
+#ifdef BOOTSTRAP
+    assert(0);
+#else
+    R_type klass = TYPE(obj);
+    R_object result = NULL;
+    if (klass->dict_offset) {
+        result = _HotPyObject_dict_get(obj, key);
+    }
+    TRACE2(obj, key);
+    if (result) {
+        R_exec_link next;
+        uint8_t* ip = (uint8_t*)addr;
+        GVMT_PUSH(result);
+        frame_pointer->next_ip = (uint8_t*)ip;
+        assert(thread_state == THREAD_STATE);
+        assert(thread_state->current_frame == frame_pointer);
+# ifndef NDEBUG
+        instruction_counter = &off_trace_instruction_counter;
+        exec_links_counter++;
+# endif
+        next = interpreter(ip, thread_state, frame_pointer);
+        gvmt_ireturn_r((GVMT_Object)next);
+    }
+#endif
+}
+
+trace_protect[protected] (int #stop, int ####addr -- ) {
+    R_exception_handler h = make_exception_handler(stop, frame_pointer->exception_stack, (uint8_t*)addr);
+    frame_pointer->exception_stack = h;
+    assert(stop == 0 || stop == 1);
+    h->data_stack += stop;
+}
+
+make_exception_handler[protected] (int #stop, int ####stack_addr, int ####ip_addr -- ) {
+    R_exception_handler h = make_exception_handler(stop, frame_pointer->exception_stack, (uint8_t*)ip_addr);
+    frame_pointer->exception_stack = h;
+    h->data_stack = (GVMT_Value*)stack_addr;
+}
+
+pop_handler( -- ) {
+# ifdef TRACING
+    trace_add_byte(thread_state->trace, OPCODE(pop_handler));
+# endif
+    frame_pointer->exception_stack = frame_pointer->exception_stack->next;
+}
+
+pop_caller_handler( -- ) {
+# ifdef TRACING
+    trace_add_byte(thread_state->trace, OPCODE(pop_caller_handler));
+# endif
+    frame_pointer->f_back->exception_stack = frame_pointer->f_back->exception_stack->next;
+}
+
+end_protect: pop_handler JUMP;
+
+profile_return (--) {
+    if (thread_state->tracer)
+        do_system_trace(thread_state, name_return, (R_object)None);
+}
+
+return[nocomp]( -- ) {
+    void* exit;
+    if (thread_state->tracer)
+        do_system_trace(thread_state, name_return, (R_object)None);
+    if (frame_pointer->f_code->kind & GENERATOR_FUNCTION) {
+#ifdef TRACING
+        trace_add_byte(thread_state->trace, OPCODE(profile_return));
+        trace_add_byte(thread_state->trace, OPCODE(gen_exit));
+#endif
+        generator_save_stack();
+        stop_iteration();
+    } else {
+        thread_state->current_frame = frame_pointer = frame_pointer->f_back;
+#ifdef BOOTSTRAP
+        gvmt_ireturn_v();
+#else
+# ifdef TRACING
+        thread_state->trace->call_depth--;
+        if (LIST_SIZE(thread_state->trace->call_stack))
+            list_pop(thread_state->trace->call_stack);
+        trace_add_byte(thread_state->trace, OPCODE(profile_return));
+        TRACE1(frame_pointer->f_code);
+        if (thread_state->trace->call_depth < 0) {
+            TRACE_OP(OPCODE(return_exit));
+            exit = make_poly_exit(thread_state->trace->pinned_objects, NULL);
+            trace_write_addr(thread_state->trace, exit);
+            close_trace(thread_state, gvmt_ip(), "too many returns");
+            gvmt_transfer(NULL);
+        } else {
+            TRACE_OP(OPCODE(pop_frame));
+        }
+        thread_state->trace->allow_back_branch  =
+            (thread_state->trace->allow_back_branch >> 1);
+# endif
+        if (thread_state->stop_depth > frame_pointer->depth) {
+            gvmt_transfer(NULL);
+        } else {
+            assert("Invalid return address" && check_frame_next_ip(frame_pointer));
+            gvmt_far_jump(frame_pointer->next_ip);
+        }
+#endif
+    }
+}
+
+set_next_ip(unsigned ####addr -- ) {
+    frame_pointer->next_ip = (uint8_t*)addr;
+}
+
+recursion_exit: set_next_ip trace_exit ;
+
+stop_check[private]( -- ) {
+   if (thread_state->stop_depth > frame_pointer->depth)
+        gvmt_transfer(NULL);
+}
+
+return_exit: pop_frame stop_check trace_exit ;
+
+gen_exit ( -- ) {
+    TRACE0;
+    generator_save_stack();
+    stop_iteration();
+}
+
+raise(R_object o -- ) {
+    R_BaseException ex;
+    TRACE1(o);
+    assert(thread_state == THREAD_STATE);
+    assert(thread_state->current_frame == frame_pointer);
+    if (IS_RAISEABLE(o)) {
+        ex = (R_BaseException)o;
+    } else if (IS_TYPE(o) &&
+            is_subclass_of(((R_type)o), type_BaseException)) {
+            ex = make_exception((R_type)o, empty_string);
+    } else {
+        raise_char(type_TypeError, "Cannot raise non-exceptions");
+        ex = 0;
+    }
+    if (thread_state->tracer)
+        do_system_trace(thread_state, name_raise,
+                        exception_tuple_from_exception(ex));
+    RAISE(ex);
+}
+
+reraise(R_BaseException ex --) {
+    TYPE_ASSERT(ex, BaseException);
+    TRACE1(ex);
+    gvmt_transfer((GVMT_Object)ex);
+}
+
+
+/****** On entry check for validity *****/
+
+check_valid[protected](R_trace t -- ) {
+#ifndef BOOTSTRAP
+    TYPE_ASSERT(t, trace);
+    if (t->invalidated) {
+        // TO DO
+        assert(0);
+    }
+#endif
+}
+
+/******** Optimised bytecodes ************/
+
+is_correct_gen_state[private] (unsigned ####addr, R_generator gen -- int b) {
+    uint8_t* expected_ip = (uint8_t*)addr;
+    b = (TYPE(gen) == type_generator && gen->frame->next_ip == expected_ip);
+}
+
+gen_link(R_generator gen -- ) {
+    R_frame f = frame_pointer;
+    R_frame gen_frame = gen->frame;
+    gen_frame->f_back = f;
+    gen_frame->depth = f->depth + 1;
+    generator_restore_stack(gen);
+    thread_state->current_frame = frame_pointer = gen_frame;
+}
+
+gen_enter[nocomp](R_generator gen -- ) {
+    R_frame f = frame_pointer;
+    R_frame gen_frame = gen->frame;
+    f->next_ip = gvmt_next_ip();
+    gen_frame->f_back = f;
+    gen_frame->depth = f->depth + 1;
+    generator_restore_stack(gen);
+    thread_state->current_frame = frame_pointer = gen_frame;
+#ifdef TRACING
+    trace_add_byte(thread_state->trace, OPCODE(gen_check));
+    trace_write_addr(thread_state->trace, (void*)frame_pointer->next_ip);
+    trace_write_addr(thread_state->trace, gvmt_ip());
+    trace_add_byte(thread_state->trace, OPCODE(set_next_ip));
+    trace_write_addr(thread_state->trace, (void*)gvmt_next_ip());
+    TRACE1(frame_pointer->f_code);
+    TRACE_OP(OPCODE(gen_link));
+    thread_state->trace->allow_back_branch  =
+        (thread_state->trace->allow_back_branch << 1) | 1;
+#endif
+    gvmt_far_jump(frame_pointer->next_ip);
+}
+
+gen_check[protected]: copy is_correct_gen_state IF skip4 ELSE abort ENDIF ;
+
+_make_frame[private](R_function func -- ) {
+    R_frame frame = function_frame(func, frame_pointer);
+    thread_state->current_frame = frame_pointer = frame;
+    TRACE1(func);
+}
+
+init_frame[protected](R_function func, R_tuple t, R_dict d -- ) {
+    init_frame_td(frame_pointer, func, t, d);
+    TRACE0;
+}
+
+make_frame[protected]: PICK_R _make_frame ;
+
+//frame0(unsigned ####addr, unsigned ####next_ip -- ) {
+//    int i;
+//    R_function func = (R_function)gvmt_pinned_object((void*)addr);
+//    R_frame frame = function_frame(func, frame_pointer);
+//    frame_pointer->next_ip = (uint8_t*)next_ip;
+//    thread_state->current_frame = frame_pointer = frame;
+//}
+
+fast_frame(... stack, uint8_t #count, unsigned ####addr -- ) {
+    int i;
+    R_function func = (R_function)gvmt_pinned_object((void*)addr);
+    R_frame frame = function_frame(func, frame_pointer);
+    for (i = 0; i < count; i++) {
+        R_object o = (R_object)gvmt_stack_read_object(stack+count-1-i);
+        ITEM(frame, i) = o;
+    }
+    gvmt_drop(count);
+    thread_state->current_frame = frame_pointer = frame;
+}
+
+prepare_bm_call(R_bound_method bm, R_tuple t, R_dict d --
+                R_object callable, R_tuple t, R_dict d) {
+    if (TYPE(bm) == type_bound_method) {
+        callable = bm->callable;
+        t = tuple_prepend(bm->object, t);
+    } else {
+        callable = (R_object)bm;
+    }
+}
+
+pop_frame ( -- ) {
+    thread_state->current_frame = frame_pointer = frame_pointer->f_back;
+}
+
+next_exit[nocomp](R_object iter, R_int offset -- ) {
+    intptr_t off;
+    assert(gvmt_is_tagged(offset));
+    off = int_from_py_int(offset);
+#ifdef TRACING
+    {
+        void *exit;
+        if (trace_length(thread_state->trace) == 0)
+            exit = make_interpret_exit(gvmt_ip(), thread_state->trace->pinned_objects);
+        else
+            exit = make_mono_exit(gvmt_ip(), thread_state->trace->pinned_objects, NULL);
+        trace_add_byte(thread_state->trace, OPCODE(ensure_value));
+        trace_add_byte(thread_state->trace, 0);
+        trace_write_addr(thread_state->trace, (void *)((off<<1)+1));
+        trace_write_addr(thread_state->trace, exit);
+        trace_add_byte(thread_state->trace, OPCODE(drop));
+        trace_add_byte(thread_state->trace, OPCODE(pop_frame));
+        trace_add_byte(thread_state->trace, OPCODE(drop));
+    }
+#endif
+    thread_state->current_frame = frame_pointer = frame_pointer->f_back;
+    gvmt_far_jump(frame_pointer->next_ip+off);
+}
+
+bind(R_object obj, R_object func-- R_bound_method bm) {
+    bm = gc_allocate(bound_method);
+    SET_TYPE(bm, type_bound_method);
+    bm->object = obj;
+    bm->callable = func;
+    TRACE1(obj);
+}
+
+gen_yield(unsigned ####resume_addr, R_object yielded --  R_object yielded) {
+    frame_pointer->next_ip = (uint8_t*)resume_addr;
+    generator_save_stack();
+    assert(frame_pointer->f_back);
+    thread_state->current_frame = frame_pointer = frame_pointer->f_back;
+    TRACE1(frame_pointer->f_code);
+}
+
+fast_line(unsigned ##lineno --) {
+    frame_pointer->f_lineno = lineno;
+    TRACE0;
+}
+
+bool_is_true_[private] (R_object b -- int val) {
+    assert(b == (R_object)TRUE || b == (R_object)FALSE);
+    val = ((R_bool)b)->value;
+}
+
+exit_on_true: bool_is_true_ IF trace_exit ELSE skip4 ENDIF ;
+
+exit_on_false: bool_is_true_ 0 EQ_I4 IF trace_exit ELSE skip4 ENDIF ;
+
+is_value[private] (unsigned ####obj_addr, R_object o -- int b) {
+    void* ptr = (void*)obj_addr;
+    b = (o == ptr);
+}
+
+trace_exit(unsigned ####addr -- ) {
+#ifdef  BOOTSTRAP
+    assert(0);
+#else
+    R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)addr);
+    TYPE_ASSERT(exit, exec_link);
+# ifdef TRACING
+    TRACE0;
+    close_trace(thread_state, gvmt_ip(), "trace exit");
+# endif
+    gvmt_ireturn_r((GVMT_Object)exit);
+#endif
+}
+
+object_new_exit[private] ( -- ) {
+#ifndef BOOTSTRAP
+# ifndef NDEBUG
+      trace_object_init_exits_counter++;
+# endif
+#endif
+}
+
+poly_exit[private] (unsigned ####address -- ) {
+#ifdef  BOOTSTRAP
+    assert(0);
+#else
+    uint8_t* ip = (uint8_t*)address;
+    frame_pointer->next_ip = (uint8_t*)ip;
+    assert(thread_state == THREAD_STATE);
+    assert(thread_state->current_frame == frame_pointer);
+    //To do - fix this...
+# ifndef NDEBUG
+    instruction_counter = &off_trace_instruction_counter;
+    exec_links_counter++;
+# endif
+    gvmt_ireturn_r((GVMT_Object)interpreter(ip, thread_state, frame_pointer));
+#endif
+}
+
+interpret(unsigned ####address -- ) {
+#ifdef  BOOTSTRAP
+    assert(0);
+#else
+    frame_pointer->next_ip = (uint8_t*)address;
+    gvmt_transfer(NULL);
+    // Can't reach here, this just tells the compiler generator
+    // that we can't fall off the end of this instruction.
+    // Although it ought to recognise gvmt_transfer as not returning.
+    gvmt_ireturn_r(NULL);
+#endif
+}
+
+abort [private](unsigned ####address -- ) {
+    // This is an unlikely exit, so don't attempt to stitch code together
+#ifdef  BOOTSTRAP
+    assert(0);
+#else
+    uint8_t* ip = (uint8_t*)address;
+    R_exec_link next;
+    frame_pointer->next_ip = (uint8_t*)ip;
+    assert(thread_state == THREAD_STATE);
+    assert(thread_state->current_frame == frame_pointer);
+#ifndef NDEBUG
+    instruction_counter = &off_trace_instruction_counter;
+    exec_links_counter++;
+#endif
+    next = interpreter(ip, thread_state, frame_pointer);
+    gvmt_ireturn_r((GVMT_Object)next);
+#endif
+}
+
+_i_add[private](R_int o1, R_int o2 -- intptr_t repr, int overflow) {
+    intptr_t i1, i2, val;
+    i1 = (intptr_t)gvmt___untag__((GVMT_Object)o1);
+    i2 = (intptr_t)gvmt___untag__((GVMT_Object)o2);
+    assert (i1 & i2 & 1);
+    val = (i1 >> 1) + (i2 >> 1);
+    repr = (i1 + i2) - 1;
+    overflow = (val ^ repr) < 0;
+}
+
+ibox_overflow[private](intptr_t repr -- R_int result) {
+    // This has overflowed - So carry bit is opposite of sign.
+    intptr_t reverse_sign = ((repr >= 0) << 31);
+    intptr_t val = (((uintptr_t)repr)>>1) | reverse_sign ;
+    result = HotPyLong_FromSsize_t(val);
+}
+
+tag[private](intptr_t repr -- R_int result) {
+    result = (R_int)gvmt_tag(repr);
+}
+
+i_add: _i_add IF ibox_overflow trace_exit ELSE tag skip4 ENDIF ;
+
+i_add_no_overflow[protected](intptr_t i1, intptr_t i2 -- intptr_t repr) {
+    assert (i1 & i2 & 1);
+    repr = (i1 + i2) - 1;
+}
+
+_i_sub[private](R_int o1, R_int o2 -- intptr_t repr, int overflow) {
+    intptr_t i1, i2, val;
+    i1 = (intptr_t)gvmt___untag__((GVMT_Object)o1);
+    i2 = (intptr_t)gvmt___untag__((GVMT_Object)o2);
+    assert (i1 & i2 & 1);
+    val = (i1 >> 1) - (i2 >> 1);
+    repr = (i1 - i2) + 1;
+    overflow = (val ^ repr) < 0;
+}
+
+i_sub: _i_sub IF ibox_overflow trace_exit ELSE tag skip4 ENDIF ;
+
+i_sub_no_overflow[protected](intptr_t i1, intptr_t i2 -- intptr_t repr) {
+    assert (i1 & i2 & 1);
+    repr = (i1 - i2) + 1;
+}
+
+i_mul(R_int o1, R_int o2 -- R_int result) {
+    intptr_t i1, i2, val;
+    i1 = (intptr_t)gvmt___untag__((GVMT_Object)o1);
+    i2 = (intptr_t)gvmt___untag__((GVMT_Object)o2);
+    assert (i1 & i2 & 1);
+    if ((((int16_t)i1) == i1) & (((int16_t)i2) == i2)) {
+        val = (i1 >> 1) * (i2 >> 1);
+        result = (R_int)gvmt_tag((val << 1) + 1);
+    } else {
+        result = py_int_from_int64(((int64_t)(i1 >> 1)) * (i2 >> 1));
+    }
+}
+
+i_div(R_int o1, R_int o2 -- R_float result) {
+    intptr_t i1, i2, val;
+    double d1, d2;
+    i1 = (intptr_t)gvmt___untag__((GVMT_Object)o1);
+    i2 = (intptr_t)gvmt___untag__((GVMT_Object)o2);
+    assert (i1 & i2 & 1);
+    if (i2 == 1) zero_division_error("integer division");
+    d1 = i1 >> 1;
+    d2 = i2 >> 1;
+    result = gc_allocate(float);
+    SET_TYPE(result, type_float);
+    result->value = d1/d2;
+}
+
+/// Optimisations for tagged int rshift, o2 >= 0 && o2 < bits per word
+i_rshift(R_int o1, R_int o2 -- R_int result) {
+    intptr_t i1, i2;
+    assert (gvmt_is_tagged(o1) && gvmt_is_tagged(o2));
+    i1 = ((intptr_t)gvmt_untag(o1));
+    i2 = ((intptr_t)gvmt_untag(o2))>>1;
+    assert(i2 >= 0 && i2 < 8*sizeof(intptr_t));
+    result = (R_int)gvmt_tag((i1>>i2)|1);
+}
+
+i_prod(R_int o1, int8_t #x -- R_int result) {
+    intptr_t i1, repr;
+    i1 = (intptr_t)gvmt___untag__((GVMT_Object)o1);
+    assert(i1 & 1);
+    if (((i1<<8)>>8) == i1) {
+        repr = (i1-1) * x + 1;
+        result = (R_int)gvmt_tag(repr);
+    } else {
+        result = py_int_from_int64(((int64_t)(i1 >> 1)) * x);
+    }
+}
+
+_i_inc[private](R_int o1, unsigned #x -- intptr_t repr, int overflow) {
+    int inc = x << 1;
+    intptr_t i1 = (intptr_t)gvmt___untag__((GVMT_Object)o1);
+    assert(i1 & 1);
+    repr = i1 + inc;
+    overflow = i1 > INT_MAX - inc;
+}
+
+i_inc: _i_inc IF ibox_overflow trace_exit ELSE tag skip4 ENDIF ;
+
+_i_dec[private](R_int o1, unsigned #x -- intptr_t repr, int overflow) {
+    int inc = x << 1;
+    intptr_t i1 = (intptr_t)gvmt___untag__((GVMT_Object)o1);
+    assert(i1 & 1);
+    repr = i1 - inc;
+    overflow = i1 < INT_MIN + inc;
+}
+
+i_dec: _i_dec IF ibox_overflow trace_exit ELSE tag skip4 ENDIF ;
+
+i_inc_no_overflow[protected](intptr_t i1, unsigned #x -- intptr_t repr) {
+    int inc = x << 1;
+    assert(i1 & 1);
+    repr = i1 + inc;
+}
+
+i_dec_no_overflow[protected](intptr_t i1, unsigned #x -- intptr_t repr) {
+    int inc = x << 1;
+    assert(i1 & 1);
+    repr = i1 - inc;
+}
+
+i_lt [private] (R_int o1, R_int o2 -- int b) {
+    intptr_t i1, i2;
+    i1 = (intptr_t)gvmt_untag(o1);
+    i2 = (intptr_t)gvmt_untag(o2);
+    assert(i1 & i2 & 1);
+    b = i1 < i2;
+}
+
+i_gt [private] (R_int o1, R_int o2 -- int b) {
+    intptr_t i1, i2;
+    i1 = (intptr_t)gvmt_untag(o1);
+    i2 = (intptr_t)gvmt_untag(o2);
+    assert(i1 & i2 & 1);
+    b = i1 > i2;
+}
+
+i_eq [private] (R_int o1, R_int o2 -- int b) {
+    intptr_t i1, i2;
+    i1 = (intptr_t)gvmt_untag(o1);
+    i2 = (intptr_t)gvmt_untag(o2);
+    assert(i1 & i2 & 1);
+    b = i1 == i2;
+}
+
+box_bool [private](int x -- R_bool b) {
+    assert(x == 0 || x == 1);
+    b = booleans[x];
+}
+
+// Do not reorder these two blocks of 6 instructions
+// The peephole optimiser relies on the ordering.
+i_comp_lt [protected]: i_lt box_bool ;
+i_comp_gt [protected]: i_gt box_bool ;
+i_comp_eq [protected]: i_eq box_bool ;
+i_comp_ne [protected]: i_eq 0 EQ_I4 box_bool ;
+i_comp_le [protected]: i_gt 0 EQ_I4 box_bool ;
+i_comp_ge [protected]: i_lt 0 EQ_I4 box_bool ;
+
+i_exit_eq [protected]: i_eq IF trace_exit ELSE skip4 ENDIF ;
+i_exit_ne [protected]: i_eq 0 EQ_I4 IF trace_exit ELSE skip4 ENDIF ;
+
+_f_lt [private] (R_float f1, R_float f2 -- int b) {
+    b = f1->value < f2->value;
+}
+
+_f_gt [private] (R_float f1, R_float f2 -- int b) {
+    b = f1->value > f2->value;
+}
+
+_f_eq [private] (R_float f1, R_float f2 -- int b) {
+    b = f1->value == f2->value;
+}
+
+_f_ne [private] (R_float f1, R_float f2 -- int b) {
+    b = f1->value != f2->value;
+}
+
+_f_le [private] (R_float f1, R_float f2 -- int b) {
+    b = f1->value <= f2->value;
+}
+
+_f_ge [private] (R_float f1, R_float f2 -- int b) {
+    b = f1->value >= f2->value;
+}
+
+f_lt [protected]: _f_lt box_bool ;
+f_gt [protected]: _f_gt box_bool ;
+f_eq [protected]: _f_eq box_bool ;
+f_ne [protected]: _f_ne box_bool ;
+f_le [protected]: _f_le box_bool ;
+f_ge [protected]: _f_ge box_bool ;
+
+ok_for_new[private](unsigned ##type_code, R_type t -- int b) {
+    b = TYPE(t) == type_type && t->unique_index == type_code;
+}
+
+get_function[private](unsigned ####address -- R_function f) {
+    void* root = (void*)address;
+    f = (R_function)gvmt_gc_read_root(root);
+}
+
+// Three variants of native_call:
+// 1. native_call -         Call a native function which could do anything.
+//                          Need to do a de-opt afterwards,
+//                          in case guards have been triggered
+// 2. native_call_protect - Call a well behaved native function.
+//                          It won't mess with global state,
+//                          but it may raise an exception.
+//                          The DOC pass may need to be able to restore VM
+//                          state in case of exception,
+//                          so this installs sequence around call.
+// 3. native_call_no_prot - Either function is very well behaved and
+//                          won't even raise an exception,
+//                          or there was no state to restore.
+//                          This is the fastest.
+//
+//                          Note that native_call & native_call_no_prot
+//                          have the same semantics, the need for 2 opcodes
+//                          is so optimisers know what to do.
+
+native_call [protected] (int #count, uint32_t ####address -- R_object value) {
+    behaviour f = (behaviour)address;
+    value = f();
+    assert(thread_state == THREAD_STATE);
+    assert(thread_state->current_frame == frame_pointer);
+}
+
+native_call_protect [protected] (int #count, uint32_t ####address, uint32_t ####on_except_addr -- R_object value) {
+    behaviour f = (behaviour)address;
+    thread_state->on_exception = (uint8_t*)on_except_addr;
+    value = f();
+    assert(thread_state == THREAD_STATE);
+    assert(thread_state->current_frame == frame_pointer);
+    thread_state->on_exception = NULL;
+}
+
+native_call_no_prot: native_call ;
+
+unpack_native_params[protected] (uint32_t ####address, R_object c, R_tuple t, R_dict d -- ) {
+    R_builtin_function bf = (R_builtin_function)gvmt_pinned_object((void*)address);
+    unpack_native_parameters(bf, t, d);
+}
+
+// This can be replaced with fast_constant(address) (swap?) native_call(2, get)
+fast_get(uint32_t ####address, uint32_t ####get, R_object obj -- R_object val) {
+    R_object descriptor = (R_object)gvmt_pinned_object((void*)address);
+    get_func getter = (get_func)get;
+    val = getter(descriptor, obj, TYPE(obj));
+}
+
+bool_value[private](R_object o -- int b) {
+    b = bool_value(o);
+}
+
+bool_not[private](int b1 -- R_bool b2) {
+    b2 = booleans[1-b1];
+}
+
+fast_load_frame [protected](uintptr_t #index -- R_object value) {
+    assert(thread_state == THREAD_STATE);
+    assert(thread_state->current_frame == frame_pointer);
+    assert(index < frame_pointer->length);
+    value = ITEM(frame_pointer, index);
+    assert(value);
+    TRACE1(value);
+}
+
+load_slot_imm(unsigned #offset, R_object object -- R_object value) {
+    value = *((R_object*)(((char*)object)+offset));
+    if (value == NULL) {
+#ifdef  BOOTSTRAP
+        assert(0);
+#else
+        null_slot_error(object, offset);
+#endif
+    }
+}
+
+load_slot(R_object descriptor, R_object obj -- R_object result) {
+    if (is_subclass_of(TYPE(descriptor), type_slot_descriptor)) {
+        result = desc_get_slot_descriptor(descriptor, obj, NULL);
+    } else {
+        raise_char(type_TypeError, "Expecting a slot-descriptor");
+        result = NULL;
+    }
+    TRACE2(descriptor, obj);
+}
+
+store_slot_imm(unsigned #offset, R_object value, R_object object -- ) {
+    *((R_object*)(((char*)object)+offset)) = value;
+}
+
+store_slot(R_object value, R_object descriptor, R_object obj -- ) {
+    if (is_subclass_of(TYPE(descriptor), type_slot_descriptor)) {
+        desc_set_slot_descriptor(descriptor, obj, value);
+    } else {
+        raise_char(type_TypeError, "Expecting a slot-descriptor");
+    }
+    TRACE3(descriptor, obj, value);
+}
+
+_invalidated [private](unsigned ####addr -- int i) {
+    int32_t* ptr = (int32_t*)addr;
+    i = *ptr;
+    assert(i == 1 || i == 0);
+}
+
+deoptimise_check : _invalidated IF abort ELSE skip4 ENDIF ;
+
+fast_store_attr(unsigned ##dict_offset, unsigned ##index, unsigned ####key_address, R_object value, R_object object -- ) {
+    R_dict_values vals = FIELD(R_dict_values, object, dict_offset);
+    R_dict_keys k = (R_dict_keys)gvmt_pinned_object((void*)key_address);
+    assert(offsetof(GVMT_OBJECT(dict), values) == offsetof(GVMT_OBJECT(dict_values), keys));
+    assert(TYPE(object)->dict_offset > 0);
+    assert(TYPE(object)->dict_offset == dict_offset);
+    if (FIELD(R_dict_values, object, dict_offset)->keys == k) {
+        ITEM(vals, index) = value;
+    } else {
+        R_str key = (R_str)ITEM(k, index);
+        _HotPyObject_dict_set(object, key, value);
+    }
+}
+
+fast_load_attr(unsigned ##dict_offset , unsigned ##index, unsigned ####key_address, R_object object -- R_object value) {
+    R_dict_values vals = FIELD(R_dict_values, object, dict_offset);
+    R_dict_keys k = (R_dict_keys)gvmt_pinned_object((void*)key_address);
+    assert(offsetof(GVMT_OBJECT(dict), values) == offsetof(GVMT_OBJECT(dict_values), keys));
+    assert(TYPE(object)->dict_offset > 0);
+    assert(TYPE(object)->dict_offset == dict_offset);
+    if (FIELD(R_dict_values, object, dict_offset)->keys == k) {
+        value = ITEM(vals, index);
+        if (value == NULL) {
+            load_attr_error(object, index);
+        }
+    } else {
+         R_str key = (R_str)ITEM(k, index);
+         value = _HotPyObject_dict_get(object, key);
+    }
+}
+
+_check_keys[private](unsigned ##dict_offset, unsigned ####key_address, R_object o -- int b) {
+    R_dict_keys k = (R_dict_keys)gvmt_pinned_object((void*)key_address);
+    assert(offsetof(GVMT_OBJECT(dict), values) == offsetof(GVMT_OBJECT(dict_values), keys));
+    b = (FIELD(R_dict_values, o, dict_offset)->keys == k);
+}
+
+check_keys: copy _check_keys IF skip4 ELSE abort ENDIF ;
+
+fast_load_global(unsigned ####address, unsigned ##index -- R_object value) {
+    R_dict_values values = (R_dict_values)gvmt_pinned_object((void*)address);
+    value = ITEM(values, index);
+}
+
+fast_store_global(unsigned ####address, unsigned ##index, R_object value  -- ) {
+    R_dict_values values = (R_dict_values)gvmt_pinned_object((void*)address);
+    ITEM(values, index) = value;
+}
+
+is_class [private](unsigned ####addr, R_object object -- R_object object, int b) {
+    R_type t = (R_type)gvmt_pinned_object((void*)addr);
+    b = TYPE(object) == t;
+}
+
+is_null [private](R_object object -- int b) {
+    b = (object == NULL);
+}
+
+check_initialised(uintptr_t #index -- ) {
+    assert(index < frame_pointer->length);
+    if (ITEM(frame_pointer, index) == NULL) {
+        null_local(frame_pointer, index);
+    }
+}
+
+type_ensure: is_class IF skip4 ELSE trace_exit ENDIF ;
+
+type_ensure_drop: is_class swap DROP IF skip4 ELSE trace_exit ENDIF ;
+
+type_ensure2: swap is_class rotate swap IF skip4 ELSE trace_exit ENDIF ;
+
+is_tagged [private](R_object object -- R_object object, int b) {
+    assert(object);
+    b = gvmt_is_tagged(object);
+}
+
+ensure_value_[private](unsigned ####address, R_object object -- int b) {
+    b = object == (R_object)gvmt_pinned_object((void*)address);
+}
+
+ensure_value_drop: ensure_value_ IF skip4 ELSE trace_exit ENDIF ;
+
+ensure_value: PICK_R ensure_value_drop ;
+
+ensure_tagged_drop: is_tagged swap DROP IF skip4 ELSE trace_exit ENDIF ;
+
+ensure_tagged: is_tagged IF skip4 ELSE trace_exit ENDIF ;
+
+ensure_tagged2: swap is_tagged rotate swap IF skip4 ELSE trace_exit ENDIF ;
+
+// Floating point operations
+// These exist mainly to communicate between specialiser and deferred gen
+
+f_add(R_float f1, R_float f2 -- R_float result) {
+    double value = f1->value + f2->value;
+    result = gc_allocate(float);
+    SET_TYPE(result, type_float);
+    result->value = value;
+}
+
+f_sub(R_float f1, R_float f2 -- R_float result) {
+    double value = f1->value - f2->value;
+    result = gc_allocate(float);
+    SET_TYPE(result, type_float);
+    result->value = value;
+}
+
+f_mul(R_float f1, R_float f2 -- R_float result) {
+    double value = f1->value * f2->value;
+    result = gc_allocate(float);
+    SET_TYPE(result, type_float);
+    result->value = value;
+}
+
+f_neg(R_float f -- R_float result) {
+    double value = -f->value;
+    result = gc_allocate(float);
+    SET_TYPE(result, type_float);
+    result->value = value;
+}
+
+f_div(R_float f1, R_float f2 -- R_float result) {
+    double value;
+    if (f2->value == 0.0) zero_division_error("float division");
+    value = f1->value / f2->value;
+    result = gc_allocate(float);
+    SET_TYPE(result, type_float);
+    result->value = value;
+}
+
+i2f(R_object o -- R_float result) {
+    intptr_t i = (intptr_t)gvmt___untag__((GVMT_Object)o);
+    assert (i & 1);
+    result = gc_allocate(float);
+    SET_TYPE(result, type_float);
+    result->value = i >> 1;
+}
+
+i2d(R_object o -- double out) {
+    intptr_t i = (intptr_t)gvmt___untag__((GVMT_Object)o);
+    assert (i & 1);
+    out = i >> 1;
+}
+
+d_add(double l, double r -- double out) {
+    out = l + r;
+}
+
+d_sub(double l, double r -- double out) {
+    out = l - r;
+}
+
+d_mul(double l, double r -- double out) {
+    out = l * r;
+}
+
+d_div(double l, double r -- double out) {
+    if (r == 0.0) zero_division_error("float division");
+    out = l / r;
+}
+
+d_idiv(R_int o1, R_int o2 -- double out) {
+    intptr_t i1, i2, val;
+    double d1, d2;
+    i1 = (intptr_t)gvmt___untag__((GVMT_Object)o1);
+    i2 = (intptr_t)gvmt___untag__((GVMT_Object)o2);
+    assert (i1 & i2 & 1);
+    if (i2 == 1) zero_division_error("integer division");
+    d1 = i1 >> 1;
+    d2 = i2 >> 1;
+    out = d1/d2;
+}
+
+d_neg(double f -- double out) {
+    out = -f;
+}
+
+d2f(double x -- R_float result) {
+    result = gc_allocate(float);
+    SET_TYPE(result, type_float);
+    result->value = x;
+}
+
+f2d(R_float f -- double out) {
+    //TYPE_ASSERT(f, float);
+    out = f->value;
+}
+
+d_byte(int8_t #x -- double out) {
+    out = x;
+}
+
+loop_start_nop( -- ) {
+    // Marker for loop-target in optimised (and unrolled) loops.
+    // Should be removed by peephoel optimiser and never executed.
+}
+
+/** Unsafe primitive operations */
+
+array_setitem_int(R_array a, R_int i, R_object o -- ) {
+    intptr_t index = ((intptr_t)gvmt_untag(i)) >> 1;
+    TYPE_ASSERT(a, array);
+    assert(index >= 0 && index < a->length);
+    ITEM(a, index) = o;
+}
+
+array_getitem_int(R_array a, R_int i -- R_object val) {
+    intptr_t index = ((intptr_t)gvmt_untag(i)) >> 1;
+    assert(TYPE(a) == type_array || TYPE(a) == type_tuple);
+    assert(index >= 0 && index < a->length);
+    val = ITEM(a, index);
+    assert(val);
+}
+
+/****** Super-instructions ******/
+
+// i_exit_eq & i_exit_ne are super-instructions.
+
+copy_store_frame: copy store_frame;
+copy_store_to_cache: copy store_to_cache;
+
+fast_load_frame_fast_load_frame: fast_load_frame fast_load_frame ;
+fast_load_frame_load_from_cache: fast_load_frame load_from_cache ;
+load_from_cache_fast_load_frame: load_from_cache fast_load_frame ;
+load_from_cache_load_from_cache: load_from_cache load_from_cache ;
+
+store_frame_fast_load_frame: store_frame fast_load_frame ;
+store_frame_load_from_cache: store_frame load_from_cache ;
+store_to_cache_fast_load_frame: store_to_cache fast_load_frame ;
+store_to_cache_load_from_cache: store_to_cache load_from_cache ;
+
+drop_fast_load_frame: drop fast_load_frame ;
+drop_load_from_cache: drop load_from_cache ;
+
+fast_line_set_next_ip: fast_line set_next_ip ;
+

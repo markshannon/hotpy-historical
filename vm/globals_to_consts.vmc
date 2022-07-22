@@ -1,0 +1,63 @@
+#include "hotpy.h"
+
+locals {
+    R_function func;
+}
+
+__preamble [private](R_function f --) {
+    func = f;
+}
+
+__postamble [private] ( -- ) {
+    gvmt_ireturn_r((GVMT_Object)None);
+}
+
+name_ [private] (int ##index -- R_str name) {
+    if (index < 256) {
+        name = (R_str)ITEM(standard_names, index);
+    } else {
+        assert(index < LEN(func->__code__->names)+256);
+        name = (R_str)ITEM(func->__code__->names, index-256);
+    }
+    TYPE_ASSERT(name, str);
+}
+
+load_named_global[private] (R_str name -- ) {
+    R_object globals, builtins;
+    R_object object;
+    R_tuple temp;
+    R_tuple consts = func->__code__->constants->__constants;
+    int i;
+    globals = func->scopes->module;
+    if (IS_DICT_EXACT(globals))
+        object = dict_get_str((R_dict)globals, name);
+    else
+        object = HotPyObject_GetItem(globals, (R_object)name);
+    if (object == NULL) {
+        builtins = func->scopes->builtins;
+        if (IS_DICT_EXACT(builtins))
+            object = dict_get_str((R_dict)builtins, name);
+        else
+            object = HotPyObject_GetItem(builtins, (R_object)name);
+        if (object == NULL) {
+            name_not_defined(name);
+        }
+    }
+    for (i = 0; i < LEN(consts); i++) {
+        if (ITEM(consts, i) == object) {
+            break;
+        }
+    }
+    if (i == LEN(consts)) {
+        temp = make_tuple(1);
+        ITEM(temp, 0) = object;
+        func->__code__->constants->__constants = tuple_concat(consts, temp);
+    }
+    gvmt_ip()[0] = OPCODE(constant);
+    gvmt_ip()[1] = i >> 8;
+    gvmt_ip()[2] = i;
+}
+
+
+load_global: name_ load_named_global;
+

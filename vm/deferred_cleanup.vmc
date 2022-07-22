@@ -1,0 +1,250 @@
+
+#include "hotpy.h"
+#include "deferred_object.h"
+#include <malloc.h>
+
+/// This pass cleans up after DOC,
+/// removing some store/load/clean cache instructions.
+/// This is an inplace pass, it modifies the bytecodes.
+/// It also introduces no-ops and copy-drop pairs, so needs
+/// peephole to clean up after it.
+///
+
+locals {
+   R_array stores;
+   uint8_t* start;
+   int max;
+   int live;
+}
+
+__preamble [private] ( -- ) {
+    live = 0;
+    stores = create_array(64);
+    start = gvmt_ip();
+    max = -1;
+}
+
+
+__postamble [private] ( -- ) {
+    gvmt_ireturn_r((GVMT_Object)NULL);
+}
+
+__default [private] ( -- ) {
+    if (live) {
+        int i;
+        for (i = 0; i <= max; i++) {
+            if (debug_optimise && ITEM(stores, i)) {
+                char* opname = gvmt_opcode_names_interpreter[*gvmt_ip()];
+                fprintf(stderr, "DOC clean-up: Store-elimination %d by %s\n", i, opname);
+            }
+            ITEM(stores, i) = NULL;
+        }
+    }
+    live = 0;
+}
+
+store_to_cache(int #index -- ) {
+    uint8_t next_op = gvmt_ip()[2];
+    live = 1;
+    if (index > max) {
+        max = index;
+    }
+    if (next_op == OPCODE(load_from_cache) && index == gvmt_ip()[3]) {
+        gvmt_ip()[0] = OPCODE(copy);
+        gvmt_ip()[1] = OPCODE(store_to_cache);
+        gvmt_ip()[2] = index;
+        gvmt_ip()[3] = OPCODE(nop);
+        ITEM(stores, index) = (R_object)R_int_from_ssize_t(gvmt_ip() + 1 - start);
+        gvmt_far_jump(gvmt_ip() + 4);
+    } else if ((next_op == OPCODE(load_frame) || next_op == OPCODE(fast_load_frame)) &&
+                gvmt_ip()[4] == OPCODE(load_from_cache) && index == gvmt_ip()[5]) {
+        uint8_t frame_index = gvmt_ip()[3];
+        gvmt_ip()[0] = OPCODE(copy);
+        gvmt_ip()[1] = OPCODE(store_to_cache);
+        gvmt_ip()[2] = index;
+        gvmt_ip()[3] = next_op;
+        gvmt_ip()[4] = frame_index;
+        gvmt_ip()[5] = OPCODE(swap);
+        ITEM(stores, index) = (R_object)R_int_from_ssize_t(gvmt_ip() + 1 - start);
+        gvmt_far_jump(gvmt_ip() + 6);
+    } else {
+        ITEM(stores, index) = (R_object)R_int_from_ssize_t(gvmt_ip() - start);
+    }
+}
+
+load_from_cache(int #index -- ) {
+    ITEM(stores, index) = NULL;
+    if (index > max) {
+        max = index;
+    }
+}
+
+clear_cache(int #index -- ) {
+    if (live) {
+        int i;
+        for (i = 0; i < index; i++) {
+            R_int x = (R_int)ITEM(stores, i);
+            if (x != NULL) {
+                int offset = int_from_py_int(x);
+                start[offset] = OPCODE(drop);
+                start[offset+1] = OPCODE(nop);
+            }
+        }
+        while (index && ITEM(stores, index-1))
+            index--;
+        if (index == 0) {
+            gvmt_ip()[0] = OPCODE(nop);
+            gvmt_ip()[1] = OPCODE(nop);
+        } else {
+            gvmt_ip()[1] = index;
+        }
+        for (i = 0; i < index; i++) {
+            ITEM(stores, i) = NULL;
+        }
+    }
+}
+
+skip [private] : #@ DROP;
+skip2 [private] : #@ DROP #@ DROP;
+skip4 [private] : skip2 skip2;
+
+error( -- ) {
+    assert("Illegal opcode" && 0);
+}
+
+store_frame: skip ;
+fast_load_frame: skip;
+
+nop: ;
+drop: ;
+copy: ;
+swap: ;
+over: ;
+rotate: ;
+rrot: ;
+flip3: ;
+two_copy: ;
+
+is: ;
+
+line: skip2 ;
+
+list: skip ;
+list_append: ;
+pack: skip;
+
+byte: skip ;
+constant:  skip2 ;
+fast_constant:  skip4 ;
+
+empty_tuple:  ;
+tuple_concat:  ;
+copy_dict:   ;
+
+dictionary:  ;
+slice: ;
+
+set_next_ip: skip4 ;
+
+none:  ;
+true:  ;
+false:  ;
+
+i_comp_lt:  ;
+i_comp_gt:  ;
+i_comp_eq:  ;
+i_comp_ne:  ;
+i_comp_le:  ;
+i_comp_ge:  ;
+
+i_mul: ;
+
+f_lt:  ;
+f_gt:  ;
+f_eq:  ;
+f_ne:  ;
+f_le:  ;
+f_ge:  ;
+
+pack_params: skip ;
+
+load_slot: ;
+load_slot_imm: skip ;
+store_slot: ;
+store_slot_imm: skip ;
+fast_store_attr:  skip2 skip2 skip4 ;
+fast_load_attr: skip2 skip2 skip4 ;
+fast_load_global:  skip4 skip2 ;
+fast_store_global:skip4 skip2;
+
+native_call: skip skip4 ;
+
+loop_start_nop: ;
+
+gen_yield: skip4 ;
+
+interpret(int ####addr -- ) {
+    int i;
+    int64_t load_vector;
+    uint8_t* ip = (uint8_t*)addr;
+    load_vector = load_cache_use(ip, NULL);
+    for (i = 0; i < 64; i++) {
+        if (load_vector & (1 << i)) {
+            if (debug_optimise) {
+                char* opname = gvmt_opcode_names_interpreter[*gvmt_ip()];
+                fprintf(stderr, "DOC clean-up: Store-elimination %d by %s\n", i, opname);
+            }
+            ITEM(stores, i) = NULL;
+        }
+    }
+}
+
+trace_exit(int ####addr -- ) {
+    int i;
+    int64_t load_vector;
+    R_mono_exec_link exit = (R_mono_exec_link)gvmt_pinned_object((void*)addr);
+    TYPE_ASSERT(exit, mono_exec_link);
+    assert(exit->ip);
+    load_vector = load_cache_use(exit->ip, NULL);
+    for (i = 0; i < 64; i++) {
+        if (load_vector & (1 << i)) {
+            if (debug_optimise) {
+                char* opname = gvmt_opcode_names_interpreter[*gvmt_ip()];
+                fprintf(stderr, "DOC clean-up: Store-elimination %d by %s\n", i, opname);
+            }
+            ITEM(stores, i) = NULL;
+        }
+    }
+}
+
+bind: ;
+
+fast_line: skip2 ;
+
+native_call_protect: skip skip4 interpret;
+
+type_ensure: skip4 trace_exit;
+
+i_add: trace_exit;
+i_inc: skip trace_exit;
+i_sub: trace_exit;
+i_dec: skip trace_exit;
+
+type_ensure_drop: skip4 trace_exit;
+
+type_ensure2: skip4 trace_exit;
+
+ensure_value: skip skip4 trace_exit;
+
+prepare_bm_call: ;
+
+ensure_value_drop: skip4 trace_exit;
+
+ensure_tagged: trace_exit;
+
+ensure_tagged2: trace_exit;
+
+exit_on_true: trace_exit;
+
+exit_on_false: trace_exit;
+

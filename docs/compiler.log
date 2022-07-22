@@ -1,0 +1,134 @@
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=latex 2009.8.2)  20 APR 2011 18:53
+entering extended mode
+ %&-line parsing enabled.
+**compiler.tex
+(./compiler.tex
+LaTeX2e <2005/12/01>
+Babel <v3.8h> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2005/09/16 v1.4f Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo
+File: size10.clo 2005/09/16 v1.4f Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (./compiler.aux)
+\openout1 = `compiler.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 10.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 10.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 10.
+ [1
+
+]
+Overfull \hbox (1.77805pt too wide) in paragraph at lines 58--60
+\OT1/cmr/m/n/10 List com-pre-hen-sions are pro-duced by first gen-er-at-ing an 
+empty list (with []\OT1/cmtt/m/n/10 list 0\OT1/cmr/m/n/10 )
+ []
+
+
+Overfull \hbox (72.19397pt too wide) in paragraph at lines 58--60
+\OT1/cmr/m/n/10 and then it-er-at-ing over the gen-er-at-ing se-quence: the lis
+t com-pre-hen-sion []\OT1/cmtt/m/n/10 [expr for var in seq]
+ []
+
+
+Overfull \hbox (1.40482pt too wide) in paragraph at lines 94--98
+\OT1/cmr/m/n/10 lated as []\OT1/cmtt/m/n/10 (code for a) (code for b) None None
+ slice getitem\OT1/cmr/m/n/10 . []\OT1/cmtt/m/n/10 a[b:c:-1]
+ []
+
+
+Overfull \hbox (39.08069pt too wide) in paragraph at lines 94--98
+\OT1/cmr/m/n/10 is trans-lated as []\OT1/cmtt/m/n/10 (code for a) (code for b) 
+(code for c) byte -1 slice getitem\OT1/cmr/m/n/10 . 
+ []
+
+
+Overfull \hbox (120.05222pt too wide) in paragraph at lines 101--107
+[]\OT1/cmtt/m/n/10 f(a, b, c) \OT1/cmr/m/n/10 is trans-lated as []\OT1/cmtt/m/n
+/10 (code for f) (code for a) (code for b) (code for c) call_simple 3\OT1/cmr/m
+/n/10 .
+ []
+
+
+Overfull \hbox (216.7451pt too wide) in paragraph at lines 101--107
+[]\OT1/cmtt/m/n/10 (code for f) (code for a) (code for t) tuple_prepend empty_d
+ict load_constant "b" byte 3 dict_insert f_call 
+ []
+
+[2] [3]
+Overfull \hbox (2.36122pt too wide) in paragraph at lines 144--147
+\OT1/cmr/m/n/10 Assign stat-ments are treated as no-ops if the global (im-mutab
+le) value []\OT1/cmtt/m/n/10 __debug__
+ []
+
+
+Overfull \hbox (45.68312pt too wide) in paragraph at lines 144--147
+\OT1/cmr/m/n/10 is []\OT1/cmtt/m/n/10 False\OT1/cmr/m/n/10 . Oth-er-wise []\OT1
+/cmtt/m/n/10 assert cond \OT1/cmr/m/n/10 is equiv-a-lent to []\OT1/cmtt/m/n/10 
+if not cond: raise AssertionError\OT1/cmr/m/n/10 .
+ []
+
+
+Overfull \hbox (9.94208pt too wide) in paragraph at lines 144--147
+[]\OT1/cmtt/m/n/10 assert cond, msg \OT1/cmr/m/n/10 is equiv-a-lent to []\OT1/c
+mtt/m/n/10 if not cond: raise AssertionError(msg)\OT1/cmr/m/n/10 . 
+ []
+
+
+Overfull \hbox (31.46153pt too wide) in paragraph at lines 148--156
+[]\OT1/cmtt/m/n/10 None store_global id \OT1/cmr/m/n/10 de-pend-ing on whether 
+[]\OT1/cmtt/m/n/10 var \OT1/cmr/m/n/10 is lo-cal or global. []\OT1/cmtt/m/n/10 
+var.attr = None
+ []
+
+
+Overfull \hbox (8.49002pt too wide) in paragraph at lines 158--161
+\OT1/cmr/m/n/10 ple times. For ex-am-ple []\OT1/cmtt/m/n/10 a[b] += c\OT1/cmr/m
+/n/10 , is the (roughly) the same as []\OT1/cmtt/m/n/10 a[b] = a[b] + c\OT1/cmr
+/m/n/10 .
+ []
+
+
+Overfull \hbox (127.49588pt too wide) in paragraph at lines 158--161
+[]\OT1/cmtt/m/n/10 (code for c) (code for a) (code for b) two_copy getitem rota
+te4 inplace 'add' rrot setitem 
+ []
+
+[4] [5] [6] (./compiler.aux) ) 
+Here is how much of TeX's memory you used:
+ 235 strings out of 95087
+ 2507 string characters out of 1183279
+ 49090 words of memory out of 1500000
+ 3480 multiletter control sequences out of 10000+50000
+ 8670 words of font info for 31 fonts, out of 1200000 for 2000
+ 28 hyphenation exceptions out of 8191
+ 23i,4n,19p,288b,245s stack positions out of 5000i,500n,6000p,200000b,5000s
+
+Output written on compiler.dvi (6 pages, 11464 bytes).

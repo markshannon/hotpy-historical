@@ -1,0 +1,56 @@
+\documentclass[a4paper,10pt]{article}
+
+
+%opening
+\title{}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+\section{Special types for bytecodes}
+
+In order to reduce the amount of code produced by tracing, which would slow down the other optimisation steps
+and make the optimisation phases too dependent on each other,
+the following bytecode and type combinations are recorded directly rather than tracing the appropriate function.
+Or in the case of branches, is replaced with the matching exit statement.
+
+\begin{table}
+ \begin{tabular}{c|c}
+Bytecode & Condition \\
+\hline
+binary & If a fast function is found in the operator. \\
+load\_special\_or\_goto & No special attribute or special attribute is a function (which becomes a bound-method) \\
+Branches & If condition is a boolean \\
+load\_attr & If result would be a bound-method, or its a simple dict read or a slot. \\
+not & If condition is a boolean \\
+call_simple & If callable is builtin-function \\
+iter & Common iterable classes, list, tuple, range, dict. \\
+next & Special case generators.
+  
+ \end{tabular} 
+\caption{}
+\end{table} 
+
+\begin{table}
+ \begin{tabular}{c|c|c|c|c}
+\_\_getattribute\_\_ &  Descriptor & dict entry & Trace action \\
+\hline
+Generic & function & no & Record load\_attr (will be a bound method) \\
+Generic & No & yes & Record load\_attr (Simple dict read) \\
+Generic & Slot-descriptor & no &  Record load\_attr (Saves a lot tracing) \\
+ -- & -- & -- & Trace call to load\_attr function
+ \end{tabular} 
+\caption{Load\_attr Special Casing}
+\end{table} 
+
+\section{Tracing Calls}
+
+
+
+\end{document}

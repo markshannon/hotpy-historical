@@ -1,0 +1,52 @@
+/home/mark/Python-3.2b2/Doc/c-api/allocation.rst
+/home/mark/Python-3.2b2/Doc/c-api/arg.rst
+#Omit bool.rst - Just a couple of macros.
+
+/home/mark/Python-3.2b2/Doc/c-api/bytearray.rst
+/home/mark/Python-3.2b2/Doc/c-api/bytes.rst
+/home/mark/Python-3.2b2/Doc/c-api/capsule.rst
+#No cell as its internal to CPython
+#cobject is deprecated
+/home/mark/Python-3.2b2/Doc/c-api/complex.rst
+# concrete.rst  contains no functions
+# conversion.rst contains only native functions - Copy CPython code?
+# Skip datetime & use CPython impl?
+# /home/mark/Python-3.2b2/Doc/c-api/datetime.rst 
+# descriptor.rst - This is internal?
+/home/mark/Python-3.2b2/Doc/c-api/dict.rst
+/home/mark/Python-3.2b2/Doc/c-api/exceptions.rst
+/home/mark/Python-3.2b2/Doc/c-api/file.rst
+/home/mark/Python-3.2b2/Doc/c-api/float.rst
+# function.rst  -- Internal
+# gcsupport.rst -- Don't know if this is really used.
+/home/mark/Python-3.2b2/Doc/c-api/gen.rst
+/home/mark/Python-3.2b2/Doc/c-api/import.rst
+/home/mark/Python-3.2b2/Doc/c-api/init.rst
+
+/home/mark/Python-3.2b2/Doc/c-api/iterator.rst
+/home/mark/Python-3.2b2/Doc/c-api/iter.rst
+/home/mark/Python-3.2b2/Doc/c-api/list.rst
+/home/mark/Python-3.2b2/Doc/c-api/long.rst
+/home/mark/Python-3.2b2/Doc/c-api/mapping.rst
+/home/mark/Python-3.2b2/Doc/c-api/marshal.rst
+
+/home/mark/Python-3.2b2/Doc/c-api/method.rst
+/home/mark/Python-3.2b2/Doc/c-api/module.rst
+
+/home/mark/Python-3.2b2/Doc/c-api/number.rst
+# objbuffer.rst - deprecated
+/home/mark/Python-3.2b2/Doc/c-api/object.rst
+
+/home/mark/Python-3.2b2/Doc/c-api/sequence.rst
+/home/mark/Python-3.2b2/Doc/c-api/set.rst
+/home/mark/Python-3.2b2/Doc/c-api/slice.rst
+# structures.rst Lists structures used in API, no functions
+# sys.rst only contains one GVMT func, but loads of native ones.
+/home/mark/Python-3.2b2/Doc/c-api/sys.rst
+/home/mark/Python-3.2b2/Doc/c-api/tuple.rst
+
+/home/mark/Python-3.2b2/Doc/c-api/type.rst
+/home/mark/Python-3.2b2/Doc/c-api/unicode.rst
+
+/home/mark/Python-3.2b2/Doc/c-api/veryhigh.rst
+/home/mark/Python-3.2b2/Doc/c-api/weakref.rst

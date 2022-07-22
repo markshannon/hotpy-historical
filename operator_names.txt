@@ -1,0 +1,49 @@
+#Unary operators
+pos
+neg
+invert
+#abs
+#iter
+#len
+#contains
+
+#Arithmetic operators
+add
+sub
+mul
+mod
+truediv
+floordiv
+and_
+or_
+xor
+pow
+lshift
+rshift
+#Inplace versions
+iadd
+isub
+imul
+imod
+itruediv
+ifloordiv
+iand
+ior
+ixor
+ipow
+ilshift
+irshift
+
+#Comparison operators
+lt
+gt
+ge
+le
+eq
+ne
+
+#Item operators
+getitem
+setitem
+delitem
+

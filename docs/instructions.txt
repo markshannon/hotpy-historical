@@ -1,0 +1,653 @@
+
+$nop(--)
+No operation
+
+$name(int ##index -- R_str name)
+Pushes a string from the code-object's name table.
+
+$drop(R_object x --)
+Pops (and discards) TOS
+
+$copy(R_object x -- R_object x, R_object x)
+Duplicates TOS
+
+$swap (R_object x, R_object x1 -- R_object x1, R_object x)
+Exchanges the top two values on the stack
+    
+$over (R_object x, R_object x1 -- R_object x, R_object x1, R_object x)
+Pushes a copy of the second value on the stack to the stack.
+
+$rotate (R_object x1, R_object x2, R_object x3 -- R_object x2, R_object x3, R_object x1) 
+Rotates the top three values on the stack.
+    
+$rotate4 (R_object x1, R_object x2, R_object x3, R_object x4 -- R_object x2, R_object x3, R_object x4, R_object x1)
+Rotates the top four values on the stack.
+
+$rrot(R_object x1, R_object x2, R_object x3 -- R_object x3, R_object x1, R_object x2)
+Counter rotates the top three values on the stack.
+
+$flip3 (R_object x1, R_object x2, R_object x3 -- R_object x3, R_object x2, R_object x1)
+Flips the top three values on the stack.
+
+$drop_under (R_object nos, R_object tos -- R_object tos)
+Drops nos leaving TOS in place.
+    
+$pick (int #n -- R_object o)
+Picks the nth (TOS is index 0) value from the stack
+    
+$byte (int #n -- R_int i)
+Pushes an integer (in the range -128 to 127 inclusive) to the stack.
+    
+$true( -- R_bool t)
+Pushes True to the stack.
+
+$false( -- R_bool f)
+Pushes False to the stack.
+
+$none( -- R_NoneType n)
+Pushes None to the stack.
+
+$dictionary( -- R_dict d)
+Pushes a new, empty dictionary to the stack.
+
+$exit_loop(R_BaseException ex -- )
+If {ex} is not a StopIteration then reraise {ex}.
+Used at exit from a loop to differentiate between loop termination and other exceptions.
+
+$two_copy(R_object x, R_object x1 -- R_object x, R_object x1, R_object x, R_object x1)
+Duplicates the two values on the stack
+
+$binary(uint8_t #index, R_object l, R_object r -- R_object value)
+Applies binary operator. Operators are stored in a global tuple.
+%value = binary_operator_tuple[index](l, r)
+
+$inplace(uint8_t #index, R_object l, R_object r -- R_object value)
+Applies inplace operator. Operators are stored in a global tuple.
+%value = inplace_operator_tuple[index](l, r)
+
+$unary(uint8_t #index, R_object o -- R_object value)
+Apply unary operator (-x, +x, ~x)
+
+$iter(R_object o -- R_object it)
+%it = iter(o)
+
+$next(R_object it -- R_object value) 
+%value = next(it)
+
+$getitem(R_object seq, R_object index -- R_object value)
+%value = seq[index]
+
+$setitem(R_object value, R_object seq, R_object index -- )
+%seq[index] = value
+
+$delitem(R_object seq, R_object index -- )
+%del seq[item]
+
+$contains(R_object item, R_object container -- R_object result)
+%result = item in container
+
+$truth(R_object o  -- R_bool b)
+%b = bool(o)
+
+$is(R_object o1, R_object o2 -- R_bool b) 
+%b = o1 is o2
+
+$not(R_object b1 -- R_bool b2)
+%b2 = not bool(b1)
+
+$debug( -- R_bool d)
+Push value of global constant {__debug__} (either {True} or {False})
+
+$fast_not(R_bool b1 -- R_bool b2)
+%b2 = not b1
+b1 must be a boolean.
+
+$sequence_to_list_or_tuple(R_object obj -- R_object l_t)
+Convert {obj} to a list, unless it is already a list or tuple,
+in which case nothing is done.
+
+$as_tuple(R_object obj -- R_tuple t)
+{obj} must be a list or a tuple. 
+If it is a list then it is converted to a tuple.
+Used for passing parameters (on the caller side).
+
+$constant(unsigned ##index -- R_object object)
+Push a constant to TOS.
+%object = sys._getframe().f_code.co_consts[index]
+
+$fast_constant(unsigned #@address -- R_object object)
+Pushes constant object at address. Used by optimiser.
+
+$new_enter(unsigned #@func_addr, R_type cls, R_tuple t, R_dict d -- R_function func, R_tuple t, R_dict d)
+Enter the surrogate `new' function. Replaces {cls} with the surrogate function {func},
+replaces {t} with {(cls,) + t} and leaves {d} untouched.
+Equivalent to: \\ {flip3} {pack 1} {swap} {tuple_concat} {load_const} {flip3}
+
+$type_check(R_object object, R_type cls -- R_bool b)
+Push True if {object} is an instance of {cls}, False otherwise.
+
+$line(unsigned ##lineno --)
+Set the line number and calls tracing function (if any).
+%sys._getframe().f_lineno = lineno
+
+$import(R_object file -- R_object object)
+Used for the import statement.
+%object = __import__(file)
+
+$type(R_object object -- R_type t)
+t = type(object)
+
+$list(uint8_t #count -- R_list l)
+Remove top count elements from the stack, creating a new list.
+
+$list_append(R_list l, R_object o -- )
+Used in list comprehension, where {l} is guaranteed to be a list.
+
+$pack(uint8_t #count -- R_tuple t)
+Pack the top count elements from the stack into a new tuple.
+
+$empty_tuple( -- R_tuple t) 
+Pushes an empty tuple to the stack.
+
+$tuple_concat(R_tuple t1, R_tuple t2 -- R_tuple t3)
+%t3 = t1 + t2
+t1 and t3 must be tuples, used for parameter marshalling.
+
+$copy_dict(R_dict d -- R_dict d)
+Replace dictionary in TOS with a shallow copy, 
+used for parameter marshalling.
+
+$dict_insert(R_dict d, R_str key, R_object value -- R_dict d)
+%d[key] = value
+Inserts key/value pair into dict, leaving the dict on the stack.
+Used for parameter marshalling.
+
+$new_scope( -- )
+Creates a frame and pushes it. Used in class declarations
+
+$pop_scope( -- R_dict locals)
+Pops the frame pushed by {new_scope}, leaving its locals dictionary on the stack.
+
+$make_class(int ##name, R_object dict, R_tuple bases -- R_type cls)
+Make a new class
+
+$make_func(uint8_t #code_index, R_tuple defaults, R_dict annotations -- R_object f)
+Make a new function, code-object is fetched from constant array.
+
+$make_closure(uint8_t #code_index, R_tuple defaults, R_dict annotations -- R_object f)
+Make a new closure, code-object is fetched from constant array.
+
+$yield(R_object value -- )
+Yields value to caller context by performing the following:
+Pops current frame from stack.
+Sets current ip to value stored in (now current) frame.
+
+$slice(R_object o1, R_object o2, R_object o3 -- R_slice s)
+%s = slice(o1, o2, o3)
+Makes a new slice.
+
+$f_call(R_object callable, R_tuple args, R_dict kws -- R_object value)
+Calls callable with args and kws
+% value = callable(*args, **kws)
+
+$pack_params(uint8_t #count -- R_tuple t, R_dict empty)
+Conceptually ike pack, but also pushes an empty dict.
+Used for parameter marshalling in the common case where there are no named parameters.
+
+$store_frame(R_object value, unsigned #n --)
+Stores value in the nth local variable.
+Equivalent to:
+%sys._getframe()._array[n] = value
+except that {_array} is not visible in python code.
+
+$load_frame(unsigned #n -- R_object value)
+Loads value from the nth local variable.
+Raise an exception if local variable has been assigned.
+Equivalent to:
+%value = sys._getframe()._array[n]
+except that {_array} is not visible in python code.
+
+$delete_frame(unsigned #n -- )
+Deletes the nth local variable.
+Equivalent to:
+%del sys._getframe()._array[n]
+
+$store_attr(unsigned ##index, R_object value, R_object obj -- )
+Fetches name from the code-object's name table.
+%obj.name = value
+
+$delete_attr(unsigned ##index, R_object obj -- )
+Fetches name from the code-object's name table.
+%del obj.name
+
+$load_attr(unsigned ##index, R_object obj -- R_object value)
+Fetches name from the code-object's name table.
+%value = obj.name
+
+$load_local(unsigned ##name -- R_object value) 
+Load from frame locals (as dictionary)
+
+$store_local(unsigned ##name, R_object value --)
+Store to frame locals (as dictionary)
+
+$delete_local(unsigned ##name --)
+Delete from frame locals (as dictionary)
+
+$load_global(unsigned ##name -- R_object value) 
+Load from globals (module dictionary)
+
+$store_global(unsigned ##name, R_object value --)
+Store to globals (module dictionary)
+
+$delete_global(unsigned ##name --)
+Delete from globals (module dictionary)
+
+$load_deref(unsigned #depth, unsigned #n -- R_object value)
+Load a non-local from frame in stack.
+
+$store_deref(unsigned #depth, unsigned #n, R_object value --)
+Store a non-local to frame in stack.
+
+$on_true(int ##offset, R_object o --)
+Jump by offset if TOS evaluates to True
+
+$on_false(int ##offset, R_object o --)
+Jump by offset if TOS evaluates to False
+
+$protect(int ##offset -- )
+Push an exception-handler, 
+which will catch Exception and jump to current ip + offset.
+
+$for_loop(int ##offset -- )
+As protect, but marks a loop rather than a try-except block.
+
+$protect_with_exit(#@link -- )
+Push an exception-handler, 
+which will catch Exception and exit to link.
+
+$end_loop(int ##offset -- )
+Jump by offset (to start of loop)
+Possible start of tracing.
+
+$jump(int ##offset -- )
+Jump by offset.
+
+$end_protect(int ##offset -- )
+Pops exception-handler and jumps by offset
+
+$pop_handler( -- )
+Pops exception-handler.
+
+$return(R_object val -- R_object val)
+If in a generator, raise StopIteration.
+Otherwise, as yield
+
+$raise(R_object o -- )
+Raise an exception; o if it is an exception, an error otherwise.
+
+$unpack (uint8_t #len, R_object object -- )
+{object} must be a list or tuple and of length {len}.
+Unpacks onto the stack.
+
+**Optimiser Bytecodes
+
+
+$fast_load_frame(uintptr_t #n -- R_object value)
+Loads value from the nth local variable.
+Like {load_frame}, but does not check that local variable has been assigned.
+
+$load_special(R_object obj, unsigned #index -- R_object attr)
+Load special attribute, fetching the name from special_name table, {name = special_names[index]}. 
+% attr = obj.name
+There is a fallback function for each index, which is called in the event of
+obj.name not being defined.
+% attr = fallback[index](obj)
+
+$ensure_type(unsigned #@code, intptr_t #@exit, R_object obj -- R_object o)
+Ensure that {obj} has the type specified by code. Leaves {obj} on the stack.
+If it has another type then leave the trace to the handler pointed to by exit.
+
+$ensure_tagged(intptr_t #@exit, R_object obj -- R_object obj)
+Ensure that {obj} is a tagged integer. Leaves {obj} on the stack.
+If it has another type then leave the trace to the handler pointed to by exit.
+
+$ensure_tagged2(intptr_t #@exit, R_object obj, R_object tos -- R_object obj, R_object tos)
+Like ensure_tagged, but for the second value on the stack. Important for binary operations.
+
+$subtype(R_type t0, R_type t1 -- R_bool b)
+% b = t0 \subseteq t1
+
+$make_frame(intptr_t #@ret_addr, R_function func -- ) 
+Set instruction pointer of current frame to {ret_addr}.
+Create a new frame, determining size from {func}.
+Push new frame to frame stack.
+
+$init_frame(R_function func, R_tuple t, R_dict d -- )
+Initialises the current frame from {func}, {t} and {d}. 
+{func} determines number and format of parameters, as well as default values.
+{t} and {d} contain the parameter values.
+
+$unpack_native_params(intptr_t #@func_addr, R_object c, R_tuple t, R_dict d -- )
+Unpacks the parameters in {t} ({d} must be empty) onto the stack, 
+providing the number of parameters is the same as that required by the builtin (C) function 
+at {func_addr}. If parameters do not match, raise an exception.
+
+$ensure_type_drop(intptr_t #@code, intptr_t #@exit, R_object obj -- )
+Like ensure_type, but does not leave {obj} on the stack.
+
+$ensure_tagged_drop(intptr_t #@exit, R_object obj -- )
+Like ensure_tagged, but does not leave {obj} on the stack.
+
+$ensure_type2(intptr_t #@code, intptr_t #@exit, R_object obj, R_object tos -- R_object o, R_object tos)
+Like type_ensure, but for the second item on the stack. Important for binary operations.
+
+$ensure_value(intptr_t #@code, intptr_t #@exit, R_object obj -- R_object o)
+Ensure that the obj is exactly value specified by {code}. Leaves obj on the stack.
+If it is a different value then exit the trace.
+
+$func_check(intptr_t #@code, intptr_t #@exit, R_object obj -- )
+Ensure that the obj is exactly the function specified by {func}.
+If it is a different value then exit the trace.
+
+$gen_check(unsigned #@next_ip, intptr_t #@original_ip, R_generator gen -- )
+Ensure that {gen} is a generator and that the next ip for the generator is as expected.
+If not then resume interpretation of unoptimised code.
+
+$gen_enter(unsigned #@caller_ip, intptr_t #@original_ip, R_generator gen -- )
+Set the return address in current frame to {caller_ip}, and push generator frame.
+
+$gen_exit ( -- ) 
+Raise a StopIteration exception.
+
+$gen_yield(unsigned #@next_ip, R_object val -- R_object val)
+Set the current frame's instruction pointer (for resuming the generator) to {next_ip}.
+Pops current frame from stack.
+Sets current ip to value stored in previous frame.
+
+$check_keys(unsigned ##dict_offset, unsigned #@key_address, intptr_t #@exit, R_object obj -- )
+Ensure that the dict-keys of {obj} matches the expected one.
+If it does not then leave the trace to the handler pointed to by exit.
+Requires that the type of {obj} is known.
+
+$fast_load_attr(unsigned ##dict_offset , unsigned ##index, R_object object -- R_object value)
+Rapidly loads a value from object dictionary.
+Requires that both the type of {obj} is known and that its dict-keys have been checked.
+
+$fast_store_attr(unsigned ##dict_offset, unsigned ##index, R_object value, R_object object -- )
+Rapidly stores a value to the object dictionary.
+Requires that both the type of {obj} is known and that its dict-keys have been checked.
+
+$fast_load_global(intptr_t #@address, unsigned ##index -- R_object value)
+Fetch the {dict_values} object from address.
+The  {dict_values} object will belong to a module-level dictionary.
+Fetch {value} from {index} in the {dict_values} object.
+Requires guards on the module dict to ensure that dict is not resized 
+or that item is not deleted.
+
+%value = ((R_dict_values)address)->values[index];
+
+$fast_store_global(intptr_t #@address, unsigned ##index, R_object value -- )
+Stores a global from module dict-values at address, with offset index.
+Requires guards on the module dict to ensure that dict is not resized.
+
+$ensure_initialised(unsigned #index, intptr_t #@exit -- )
+Ensures that a local variable is initialised.
+If it is not initialised then resume interpretation from exit.
+Used in loop optimisation, moving check out of loop.
+
+$recursion_exit(intptr_t #@next_ip, intptr_t #@exit -- )
+Set next_ip and exits trace.
+
+$interpret(intptr_t #@resume_ip -- )
+Resume the interpreter from resume_ip.
+
+$return_exit(intptr_t #@exit -- )
+Pops frame and exits trace.
+
+$pop_frame( -- )
+Pops frame.
+
+$trace_exit(intptr_t #@exit -- )
+Exits trace.
+
+$trace_protect(#@addr -- )
+Push an exception-handler, 
+which will catch Exception and interpret from {addr}.
+
+$prepare_bm_call(R_bound_method bm, R_tuple t, R_dict d -- R_object func, R_tuple t, R_dict d)
+Prepare a call for a bound-method. 
+Extracts self and callable from {bm}; prefixing {t} with self.
+%t = (bm.__self__,) + t; func = bm.__func__
+
+$fast_frame(uint8_t #count, intptr_t #@func, intptr_t #@next_ip -- )
+Create and push a new frame for the function {func} and initialise it 
+with the top {count} values on the stack.
+
+$exit_on_true(R_bool cond, intptr_t #@exit -- )
+Exit if {cond} is True; {cond} must be a boolean.
+
+$exit_on_false(R_bool cond, intptr_t #@exit -- )
+Exit if {cond} is False; {cond} must be a boolean.
+
+$deoptimise_check(intptr_t #@trace_addr, intptr_t #@original_ip -- )
+If trace has been invalidated, resume interpretation from {original_ip}
+
+$load_slot(unsigned #offset, R_object object -- R_object value)
+Load value from {object} at {offset}.
+Raise exception if slot is uninitialised.
+
+$store_slot(unsigned #offset, R_object value, R_object object -- )
+Store value into {object} at {offset}.
+
+$native_call(int #count, intptr_t #@func_addr -- R_object value)
+Call the native (GVMT) function at {func_addr} with {count} parameters. 
+
+$native_setitem(intptr_t #@func_addr, R_object value, R_object seq, R_object index -- )
+Like native_call, but takes same inputs as setitem and discards return value.
+
+$native_call_protect(int #count, intptr_t #@func_addr, intptr_t #@on_except -- R_object value)
+Call the native (GVMT) function at {func_addr} with {count} parameters.
+If an exception is raised, resume interpreter from {on_except}.
+
+$native_call_no_prot(int #count, intptr_t #@func_addr -- R_object value)
+As native_call. The "no_prot" is to inform the optimisers that this function
+will not raise an exception and does not need to be protected.
+
+$check_initialised(unsigned #n -- )
+If local variable {n} is uninitialised then raise an exception.
+
+$ensure_initialised(unsigned #n, intptr_t #@exit -- )
+If local variable {n} is uninitialised then resume interpreter from {exit}.
+
+
+$load_from_cache(uintptr_t #n -- R_object value)
+Loads the nth cached slot. 
+The cache is used to store values that would be stored in the frame, 
+but cannot as the frame is deferred.
+
+$store_to_cache(uintptr_t #n, R_object value -- )
+Stores {value} to nth cached slot.
+
+$clear_cache(uintptr_t #count -- )
+Clears (sets to NULL to allow the objects to be collected) the first {count}
+cache slots.
+
+**Specialised bytecodes for ints and floats
+
+$check_valid(R_exec_link link -- )
+If trace is invalidated, exit trace to unoptimised code.
+
+$i_add(R_int i1, R_int i2, intptr_t #@exit -- R_int result)
+Addition specialised for tagged integers. {i1} and {i2} must be tagged integers.
+If result overflows then box the result and leave the trace to the handler pointed to by exit.
+%result = i1 + i2
+
+$i_sub(R_int i1, R_int i2, intptr_t #@exit -- R_int result)
+Like i_add, but for subtraction.
+%result = i1 - i2
+
+$i_inc(R_int i1, unsigned #i2, intptr_t #@exit -- R_int result)
+Increment for tagged integers. {i1} must be a tagged integer.
+If result overflows then box the result and leave the trace to the handler pointed to by exit.
+%result = i1 + i2
+
+$i_dec(R_int i1, unsigned #i2, intptr_t #@exit -- R_int result)
+Like i_inc, but for subtraction.
+%result = i1 - i2
+
+$i_mul(R_int i1, R_int i2 -- R_int result)
+Multiplies the tagged integers, {i1} and {i2}.
+Result may be tagged or boxed.
+%result = i1 * i2
+
+$i_prod(R_int i1, unsigned #i2, intptr_t #@exit -- R_int result)
+Multiplies the integers {i1} and {i2}.
+{i1} must be a tagged integer.
+Result may be tagged or boxed.
+%result = i1 * i2
+
+$i_div(R_int i1, R_int i2 -- R_float result)
+%result = i1 / i2
+
+$i_comp_lt(R_int i1, R_int i2 -- R_bool result)
+Comparison for tagged integers.
+%result = i1 < i2
+
+$i_comp_gt(R_int i1, R_int i2 -- R_bool result)
+Comparison for tagged integers.
+
+$i_comp_eq(R_int i1, R_int i2 -- R_bool result)
+Equality test for tagged integers.
+
+$i_comp_ne(R_int i1, R_int i2 -- R_bool result)
+Inequality test for tagged integers.
+
+$i_comp_le(R_int i1, R_int i2 -- R_bool result)
+Comparison for tagged integers.
+
+$i_comp_ge(R_int i1, R_int i2 -- R_bool result)
+Comparison for tagged integers.
+
+$bind(intptr_t #@func, R_object self -- R_bound_method bm)
+Create a bound-method from {self} and {func}.
+%bm.__self__ = self;  bm.__func__ = func
+
+$i_exit_lt(R_int i1, R_int i2, intptr_t #@exit -- )
+Exit trace if {i1} < {i2}, for tagged integers.
+                                 
+$i_exit_gt(R_int i1, R_int i2, intptr_t #@exit -- )
+Exit trace if {i1} > {i2}, for tagged integers.
+                                
+$i_exit_eq(R_int i1, R_int i2, intptr_t #@exit -- )
+Exit trace if {i1} == {i2}, for tagged integers.
+                                 
+$i_exit_ne(R_int i1, R_int i2, intptr_t #@exit -- )
+Exit trace if {i1} != {i2}, for tagged integers.
+                                 
+$i_exit_le(R_int i1, R_int i2, intptr_t #@exit -- )
+Exit trace if {i1} <= {i2}, for tagged integers.
+                                 
+$i_exit_ge(R_int i1, R_int i2, intptr_t #@exit -- )
+Exit trace if {i1} >= {i2}, for tagged integers.
+                                 
+$i_rshift(R_int o1, R_int o2 -- R_int result)
+Right shift {i1} by {i2}. {i1} and {i2} must be tagged integers.
+%result = i1 >> i2
+
+$f_add(R_float f1, R_float f2 -- R_float result)
+Addition specialised for floats. {f1} and {f2} must be floats.
+%result = f1 + f2
+
+$f_sub(R_float f1, R_float f2 -- R_float result)
+Subtraction specialised for floats. {f1} and {f2} must be floats.
+
+$f_mul(R_float f1, R_float f2 -- R_float result)
+Multiplication specialised for floats. {f1} and {f2} must be floats.
+
+$f_div(R_float f1, R_float f2 -- R_float result)
+Diivision specialised for floats. {f1} and {f2} must be floats.
+
+$f_neg(R_float f -- R_float result)
+Negation specialised for floats. {f} must be a float.
+
+$f_eq(R_float f1, R_float f2 -- R_bool result)
+Equality test specialised for floats . {f1} and {f2} must be floats.
+
+$f_ne(R_float f1, R_float f2 -- R_bool result)
+Inequality test specialised for floats . {f1} and {f2} must be floats.
+
+$f_lt(R_float f1, R_float f2 -- R_bool result)
+Comparison specialised for floats . {f1} and {f2} must be floats.
+
+$f_gt(R_float f1, R_float f2 -- R_bool result)
+Comparison specialised for floats . {f1} and {f2} must be floats.
+
+$f_le(R_float f1, R_float f2 -- R_bool result)
+Comparison specialised for floats . {f1} and {f2} must be floats.
+
+$f_ge(R_float f1, R_float f2 -- R_bool result)
+Comparison specialised for floats . {f1} and {f2} must be floats.
+
+$i2f(R_object o -- R_float result)
+Convert a tagged int to a (boxed) float.
+
+$fast_line(unsigned ##lineno --)
+Set the line number (does not call tracing function)
+%sys._getframe().f_lineno = lineno
+
+**Bytecodes produced by the D.O.C. pass.
+
+$i2d(R_object o -- double out)
+Convert a tagged int to a C double (an unboxed float)
+
+$d_add(double l, double r -- double out)
+%out = l + r
+Specialised form for unboxed floats (C doubles).
+
+$d_sub(double l, double r -- double out)
+Specialised form for unboxed floats (C doubles).
+
+$d_mul(double l, double r -- double out)
+Specialised form for unboxed floats (C doubles).
+
+$d_div(double l, double r -- double out)
+Specialised form for unboxed floats (C doubles).
+
+$d_neg(double f -- double out)
+Specialised form for unboxed float (C double).
+
+$d_idiv(R_int o1, R_int o2 -- double out)
+% out = o1/o2
+Produce a double by dividing tagged integers.
+
+$d2f(double x -- R_float result)
+Box a C double to produce a float.
+
+$f2d(R_float f -- double out)
+Unbox a float to produce a double.
+
+$d_byte(int #val -- double out)
+Pushes {val} (small integer) as a double.
+
+$line_byte( -- )
+Super instruction equal to {line} followed by {byte}
+
+$line_fast_constant( -- )
+Super instruction equal to {line} followed by {fast_constant}
+
+$line_fast_load_frame( -- )
+Super instruction equal to {line} followed by {fast_load_frame}
+
+$line_fast_load_global( -- )
+Super instruction equal to {line} followed by {fast_load_global}
+
+$line_load_frame( -- )
+Super instruction equal to {line} followed by {load_frame}
+
+$line_load_global( -- )
+Super instruction equal to {line} followed by {load_global}
+
+$line_none( -- )
+Super instruction equal to {line} followed by {none}
+
+

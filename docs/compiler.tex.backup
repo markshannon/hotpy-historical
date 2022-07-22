@@ -1,0 +1,225 @@
+\documentclass[a4paper,10pt]{article}
+
+
+%opening
+\title{}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+Although the interesting and novel parts of the HotPy VM fcous on execution of bytecodes,
+Python programs are not written in bytecode. The source code needs to translated to bytecode.
+This translation is not complex, as should be easy to follow for anyone familiar with compilers.
+Easily deduced details may be omitted.
+
+\end{abstract}
+
+\section{Translating Expressions}
+
+\subsection{Variables}
+Variables in Python are lexically scoped.
+Local variables are assinged an index and translated as \verb|load_frame index|.
+Global variables are translated as \verb|load_global idx|, where \verb|idx| is the index of the variable's name.
+
+\subsection{Literals}
+Most constants are translated as \verb|load_constant idx|, where\verb|idx| is the index of the value in the constant table.
+Byte-sized integers are translated as \verb|byte val|. \verb|True|, \verb|False| and \verb|None| have their own bytecodes.
+
+\subsection{Collections}
+
+Collections of the form \verb|[a, b]| and \verb|{a:b, c:d}| are translated by first translating the members, then emitting a bytecode to construct the expression. Very large collections may be constructed in stages.
+
+\subsubsection{Lists}
+Lists of the form \verb|[a, b]|  are translated by first translating the members, then emitting the bytecode \verb|list n|.
+Where \verb|n| is number of items in the list.
+
+\subsubsection{Dicts}
+
+Dicts are constructed by creating an empty \verb|dict| with the \verb|dictionary| bytecode. Values are added one key-value pair at a time.
+For example \verb|{a:b, c:d}| translates as:
+\begin{verbatim}
+dictionary
+code for a
+code for b
+dict_insert
+code for c
+code for d
+dict_insert
+\end{verbatim}
+
+\subsection{Comprehensions}
+
+\subsubsection{List Comprehensions}
+
+List comprehensions are produced by first generating an empty list (with \verb|list 0|) and then iterating over the generating sequence:
+the list comprehension \verb|[expr for var in seq]| translates as:
+\begin{verbatim}
+    code for seq
+    iter
+    store_frame temp_iter
+    list 0
+    store_frame temp_list
+start-loop:
+    list_for end
+    load_frame temp_iter
+    next
+    store_frame var
+    load_frame temp_list
+    code for expr
+    list_append
+    end_loop start-loop
+end:
+    load_frame temp_list
+\end{verbatim}
+
+\subsubsection{Dictionary Comprehensions}
+
+Dictionary comprehensions are translated in much the same way as list comprehensions. Replacing the \verb|list| with a \verb|dict| and substituting the \verb|dict_insert| bytecode for the \verb|list_append| bytecode.
+
+\subsection{Attributes}
+
+Attribute fetches are translated to the \verb|load_attr| bytecode. \verb|obj.attr| is translated as: \verb|(code for obj) load_attr idx|,
+ where \verb|idx| is the index in the name table of \verb|attr|.
+
+\subsection{Subscripting}
+Subscripting is implemented with the  \verb|getitem| bytecode.
+The expression \verb|a[b]| is translated as \verb|(code for a) (code for a) getitem|.
+
+\subsection{Slicing}
+
+Slicing is implemented as subscripting, with a slice object as the index.
+\verb|a[:]| is translated as \verb|(code for a) None None None slice getitem|.
+\verb|a[b:]| is translated as \verb|(code for a) (code for b) None None slice getitem|.
+\verb|a[b:c:-1]| is translated as \verb|(code for a) (code for b) (code for c) byte -1 slice getitem|.
+
+\subsection{Calls}
+
+Calls are implemented with the \verb|call_simple n| and \verb|f_call| bytecodes.
+Simple calls taking only positional parameters use \verb|call_simple|, other calls use \verb|f_call|.
+\verb|f(a, b, c)| is translated as \verb|(code for f) (code for a) (code for b) (code for c) call_simple 3|.
+For more complex constructions, the tuple and dictionary pass to \verb|f_call| are constructed explictly.
+For example the call \verb|f(a, *t, b = 3)| is translated as:
+\verb|(code for f) (code for a) (code for t) tuple_prepend empty_dict load_constant "b" byte 3 dict_insert f_call|
+
+\subsection{Unary Operations}
+Unary operations are implemented with the \verb|unary| bytecode. \verb|-x| is translated as \verb|(code for x) unary id|,
+where \verb|id| is the ID of the negate operator. 
+
+\subsection{Binary Operations}
+Binary operations are implemented with the \verb|binary| bytecode. \verb|x + y| is translated as \verb|(code for x) (code for y) binary id|,
+where \verb|id| is the ID of the addition operator. 
+
+\subsection{Yield expressions}
+The HotPy VM model requires that the stack depth in the generator function has a depth of exactly one when it yields.
+The front end lifts yields to the top level. For example the expression \verb|x + (yield y) + z| is translated to:
+\begin{verbatim}
+_t0 = x
+_t1 = yield y
+(_t0 + _t1 + z)
+\end{verbatim}
+Once flattened the yield is translated to tehe \verb|yield| bytecode. \verb|yield y| translates to \verb|(code for y) yield|.
+
+\subsection{Generator expressions}
+Generator expressions are implemented as if the generator were implemented in a seperate function.
+The generator expression \verb|(x+1 for x in seq)| is implemented as \verb|_gen(seq)|, where \verb|_gen| is implemented (in Python) as follows:
+\begin{verbatim}
+def _gen(seq):
+    for x in seq:
+        yield x+1
+\end{verbatim}
+
+\subsection{Evaluation Order}
+
+Python has a script left to right evaluation order. This might require the front-end to insert a few stack manipulation bytecodes in order to get things to work properly.
+
+\section{Translating Statements}
+
+\subsection{Expression Statement}
+An expression statement is simply any expression. It translated byt translating the expression then appending a \verb|drop| bytecode to discard the result.
+\subsection{Assert Statement}
+Assign statments are treated as no-ops if the global (immutable) value \verb|__debug__| is \verb|False|.
+Otherwise \verb|assert cond| is equivalent to \verb|if not cond: raise AssertionError|.
+\verb|assert cond, msg| is equivalent to \verb|if not cond: raise AssertionError(msg)|.
+\subsection{Assignment Statement}
+The right hand of an assignment is translated as an expression, above.
+The right hand side is evaluated before the left hand side
+The translation of the left hand depends on its form and generally follows the left hand side, but with \verb|load| replaced with \verb|store|.
+\verb|var = None| is translated as \verb|None store_frame id| or \verb|None store_global id| depending on whether \verb|var| is local or global.
+\verb|var.attr = None|  is translated as \verb|(code for var) None store_attr idx|.
+\verb|var[0] = None|  is translated as \verb|None (code for var) 0 setitem|.
+\verb|a, b = x| is translated as \verb|(code for x) unpack 2 store_frame id_a store_frame id_b|,
+assuming \verb|a| and \verb|b| are both local variables.
+
+\subsection{Augmented Assignment Statement}
+Augmented assignements are statements of the form \verb|lhs += rhs|, which is equivlent to \verb|lhs = lhs + rhs|, except that augmented assignemnts use the \verb|inplace| bytecode rather than \verb|binary| and values should not be evaluated multiple times.
+For example \verb|a[b] += c|, is the (roughly) the same as \verb|a[b] = a[b] + c|. Stack manipulations are used to avoid re-evalaution.
+\verb|a[b] += c| translates as \verb|(code for c) (code for a) (code for b) two_copy getitem rotate4 inplace 'add' rrot setitem|
+\subsection{Pass Statement}
+Generate no bytecodes.
+\subsection{Del Statement}
+
+\subsection{Return Statement}
+\verb|return expr| is translated as \verb|(code for expr) return|. A plain \verb|return| is equivelent to \verb|return None|.
+
+\subsection{Raise Statement}
+\verb|raise expr| is translated as \verb|(code for expr) raise|. A plain \verb|raise| statement raises the current exception, if any:
+\verb|current_exception raise|.
+
+\subsection{Break and Continue Statements}
+The break and continue statements are implemented with the \verb|jump| bytecode; jumping to the end and start of the loop respectively.
+
+\subsection{Import Statement}
+
+\subsection{Global Statement}
+Declares variable to be global, no bytecode is generated.
+\subsection{Nonlocal Statement}
+Declares variable to be non-local, no bytecode is generated.
+\subsection{If Statement}
+
+\subsection{While statement}
+\verb|while expr: body| is translated as:
+\begin{verbatim}
+start:
+(code for expr)
+on_false end
+(code for body)
+jump start
+end:
+\end{verbatim}
+
+\subsection{For statement}
+\verb|for expr in seq: body|  is translated as:
+\begin{verbatim}
+    (code for seq)
+    iter
+    store_frame _temp
+    protect end:
+start:
+    load_frame _temp
+    next
+    store_frame expr
+    (code for body)
+    jump start
+end:
+    end_protect
+\end{verbatim}
+
+\subsection{Try statement}
+\begin{verbatim}
+    try:
+        body
+    except:
+\end{verbatim}
+
+
+\subsection{With statement}
+\subsection{Function Definition}
+\subsection{Class Definition}
+
+
+
+\end{document}

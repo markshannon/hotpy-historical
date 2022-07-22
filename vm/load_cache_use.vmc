@@ -1,0 +1,102 @@
+
+#include "hotpy.h"
+#include "specialiser.h"
+#include <malloc.h>
+
+/// This pass looks for load_cache insturctions,
+/// It is an assistant to the D.O.C. cleanup pass.
+///
+
+locals {
+   int64_t loads;
+   int64_t stores;
+   uint8_t* start;
+}
+
+__preamble [private] (R_object o  -- ) {
+    loads = 0;
+    stores = 0;
+    start = gvmt_ip();
+//    fprintf(stderr, "----------------\n");
+//}
+//
+//__default[private]( -- ) {
+//    char* opname = gvmt_opcode_names_interpreter[*gvmt_ip()];
+//    fprintf(stderr, "load_cache_use: %s\n", opname);
+}
+
+store_to_cache(int #index -- ) {
+    stores |= (1 << index);
+}
+
+load_from_cache(int #index -- ) {
+    if ((stores & (1 << index)) == 0)
+        loads |= (1 << index);
+}
+
+clear_cache(int #index -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+trace_exit(int ####addr -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+interpret(int ####addr -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+/// If in normal code, must be treminated by one of the following:
+
+return( -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+raise( -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+reraise( -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+/// In normal code, leave ASAP.
+
+binary(int8_t #op -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+unary(int8_t #op -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+inplace(int8_t #op -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+on_false(int16_t ##offset -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+on_true(int16_t ##offset -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+end_loop(uint8_t #count, int16_t ##offset -- ) {
+    gvmt_ireturn_l(loads);
+}
+
+skip [private] : #@ DROP;
+
+copy_store_to_cache: store_to_cache;
+
+fast_load_frame_load_from_cache: skip load_from_cache ;
+load_from_cache_fast_load_frame: load_from_cache skip ;
+load_from_cache_load_from_cache: load_from_cache load_from_cache ;
+
+store_frame_load_from_cache: skip load_from_cache ;
+store_to_cache_fast_load_frame: store_to_cache skip ;
+store_to_cache_load_from_cache: store_to_cache load_from_cache ;
+
+drop_load_from_cache: load_from_cache ;
+

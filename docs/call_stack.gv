@@ -1,0 +1,66 @@
+
+digraph g {
+graph [ size = "7.5, 10.5", rankdir = "LR" ];
+                                                    
+"f0" [ shape = "record", label = "<top>Frame|<ip>next_ip|<code>code|<back>back|depth=0" ];
+
+"code0" [ shape = "record", label = "<top>Code Object|<bytes>bytecodes" ];
+
+"bytes0"  [ shape = "record", label = "<top>Bytes||||||<ip>|||||||" ];
+
+code0:bytes -> bytes0:top
+
+f0:code -> code0:top
+f0:ip -> bytes0:ip
+                                    
+"f1" [ shape = "record", label = "<top>Frame|<ip>next_ip|<code>code|<back>back|depth=1" ];
+
+"code1" [ shape = "record", label = "<top>Code Object|<bytes>bytecodes" ];
+
+"bytes1"  [ shape = "record", label = "<top>Bytes||||<ip>|||||||" ];
+
+code1:bytes -> bytes1:top
+
+f1:code -> code1:top
+f1:ip -> bytes1:ip
+                                    
+"f2" [ shape = "record", label = "<top>Frame|<ip>next_ip|<code>code|<back>back|depth=2" ];
+
+"code2" [ shape = "record", label = "<top>Code Object|<bytes>bytecodes" ];
+
+"bytes2"  [ shape = "record", label = "<top>Bytes||||||<ip>|||" ];
+
+code2:bytes -> bytes2:top
+
+f2:code -> code2:top
+f2:ip -> bytes2:ip
+                                              
+"f3" [ shape = "record", label = "<top>Frame|<ip>next_ip|<code>code|<back>back|depth=3" ];
+
+"code3" [ shape = "record", label = "<top>Code Object|<bytes>bytecodes" ];
+
+"bytes3"  [ shape = "record", label = "<top>Bytes||<ip>||||" ];
+
+code3:bytes -> bytes3:top
+
+f3:code -> code3:top
+                                                        
+f1:back -> f0:top
+
+f2:back -> f1:top 
+
+f3:back -> f2:top 
+
+"thread" [ shape = "record", label = "<top>Thread|<frame>current frame|<ip>current ip" ];
+
+thread:frame -> f3:top
+thread:ip -> bytes3:ip
+    
+//{ rank = same; f0; f1; f2; f3; }
+//{ rank = same; code0; code1; code2; code3; }
+//{ rank = same; bytes0; bytes1; bytes2; bytes3; }
+{ rank = same; f0; code0; bytes0 }
+{ rank = same; f1; code1; bytes1 }
+{ rank = same; f2; code2; bytes2 }
+{ rank = same; f3; code3; bytes3 }
+}

@@ -1,0 +1,104 @@
+
+ binary_primitive rA = rB op[C] rD
+ binary_primitive_imm rA = rB op[C] kD
+ unary_primitive rA = op[B] rC
+ is              rA = rB op[n] rC
+ bool_not        // Implement with is False
+ type            rA = type(rB)
+ subtype         rA => true if rB is a subtype of
+ load_constant   rA = const[BCD]
+ list            rA = list of size B, first two elements: rC,rD.
+ list_append     // Included in binary_primitive
+ unpack   1/2/3  Unpack tuple in rA into rA/rA,rB/rA,rB,rC.
+ tuple_concat    // Included in binary_primitive
+ copy_dict       // Included in unary_primitive
+ dict_insert     // Included in binary_primitive
+ dictionary      rA = {}
+ slice           rA = slice(rB, rC, rD)
+ f_call_direct   rA = rB(*rC, **rD)
+ load_special    rA = rB$__N__
+ has_special     rA = rB?__N__
+ get_class_attr  rA = get_class_attr(rB, rC)
+ has_class_attr  rA = get_class_attr(rB, rC)
+ value_in_object_dict_or_jump rA = rB.__dict__[rC] or jump N.
+ set_in_object_dict rA.__dict__[rB] = rC or jump N
+ new_enter  // Not sure about this.
+ store_frame       lA = rB
+ load_frame        rA = lB
+ clear_registers rA..rB = None
+ protect         Push Protect(???) to protect-stack
+ protect_with_exit
+ value_in_object_dict_or_exit    rA = rB.__dict__[rC] or exit addr[D]
+ value_not_in_object_dict_or_exit rB.__dict__[rC] == NULL or exit addr[D]
+ trace_protect
+ make_exception_handler
+ pop_handler
+
+ set_lasti frame->flasti = Imm
+ gen_exit 77
+ exit_loop 78
+ raise 79
+ reraise 80
+ check_valid 81
+ gen_enter 82
+ init_frame 83
+ fast_frame 84
+ prepare_bm_call 85
+ pop_frame THREAD_STATE->frame = THREAD_STATE->frame->f_back
+ bind     // Use Primitive binary
+ gen_yield 89
+ trace_exit 91
+ leave       Leave trace-interpreter.
+ native_call 101
+ native_call_protect 102
+ unpack_native_params 103
+ fast_get 104
+ fast_load_frame 105
+ load_slot_imm  rA = rB[CD]
+ load_slot 107  rA = rB[rC.offset]
+ store_slot_imm rA[CD] = rB
+ store_slot     rA[rB.offset] = rC
+ fast_store_attr if rA.__dict__.keys == rB, rA.__dict__.values[n] = rC,
+ fast_load_attr if rB.__dict__.keys == rC, rA = rB.__dict__.values[n]
+ fast_load_global rA = *(addresses[n])
+ fast_store_global *(addresses[n]) = rA
+
+ f_add |
+ f_sub |
+ f_mul } All in binary_primitives?
+ f_neg |
+ f_div |
+
+ // No unboxed forms for now.
+
+ mark_loop_start // Just a marker, a no-op.
+
+ nop -- Combine with mark_loop_start?
+
+ pack // Pack up to 3 values into a tuple?
+
+ pack_params  == pack dict.
+
+ load_global rA = globals[rB]
+ store_global globals[rA] = rB
+ load_deref   // These prevent D.O.C from deferring frames?
+ store_deref   // These prevent D.O.C from deferring frames?
+ jump          PC += Imm
+
+ list_for 164
+ end_protect 165
+ recursion_exit 166
+ return_exit 167
+ gen_check 168
+ make_frame     THREAD_STATE->frame = new_frame(???)
+ exit_if_same   if rA is rB exit to addr[CD]
+ exit_if_diff   if rA is not rB exit to addr[CD]
+
+ protect_call   call_protect = addr[Imm]
+ native_setitem kA(rB, rC, rD)
+ deoptimise_check if deoptimised exit to addr?
+ check_keys ??????
+
+ ensure_value  if rA != consts[n] exit to addr[n2]
+ ensure_type  if type(rA) != consts[n] exit to addr[n2]
+

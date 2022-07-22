@@ -1,0 +1,126 @@
+
+single_input: R_AST_mod
+void: R_AST_stmt
+file_input: R_AST_mod
+eval_input: R_AST_mod
+
+decorator: R_AST_expr
+#decorators: 
+decorated: R_AST_stmt
+funcdef: R_AST_stmt
+#parameters: 
+
+targ: R_AST_arg
+#targdef: 
+#tkwarg: 
+#ttuplearg: 
+#targlist_item: 
+typedargslist: R_AST_arguments
+
+#vargdef: 
+#vkwarg: 
+#vtuplearg: 
+#vararg: 
+varargslist: R_AST_arguments
+
+#stmt: 
+#small_stmt_list: 
+#simple_stmt: 
+#small_stmt: 
+            
+expr_stmt: R_AST_stmt
+augassign: R_AST_operator
+del_stmt: R_AST_stmt
+pass_stmt: R_AST_stmt
+flow_stmt: R_AST_stmt
+break_stmt: R_AST_stmt
+continue_stmt: R_AST_stmt
+return_stmt: R_AST_stmt
+yield_stmt: R_AST_stmt
+raise_stmt: R_AST_stmt
+import_stmt: R_AST_stmt
+import_name: R_AST_stmt
+
+level: R_int
+relative_source: R_tuple
+import_source: R_tuple
+import_from: R_AST_stmt
+import_as_name: R_AST_alias
+dotted_as_name: R_AST_alias
+#import_as_names: 
+#dotted_as_names: 
+dotted_name: R_list
+#name_list: 
+global_stmt: R_AST_stmt
+nonlocal_stmt: R_AST_stmt
+assert_stmt: R_AST_stmt
+
+#compound_stmt: 
+if_stmt:  R_AST_stmt
+while_stmt:  R_AST_stmt
+for_stmt:  R_AST_stmt
+try_stmt:  R_AST_stmt
+with_stmt:  R_AST_stmt
+
+#except_clause: 
+#suite: 
+indented_block: R_list
+
+trinary_expr: R_AST_expr
+test: R_AST_expr
+test_nocond: R_AST_expr
+lambdef: R_AST_expr
+lambdef_nocond: R_AST_expr
+or_test: R_AST_expr
+and_test: R_AST_expr
+not_expr: R_AST_expr
+not_test: R_AST_expr
+comparison: R_AST_expr
+comp_op: R_AST_cmpop
+not_in: R_AST_cmpop
+is: R_AST_cmpop
+star_expr: R_AST_expr
+expr: R_AST_expr
+xor_expr: R_AST_expr
+and_expr: R_AST_expr
+shift_expr: R_AST_expr
+arith_expr: R_AST_expr
+mult_op: R_AST_operator
+unary_op: R_AST_unaryop
+term: R_AST_expr
+unary_expr: R_AST_expr
+factor: R_AST_expr
+power: R_AST_expr
+simple: R_AST_expr
+bracketted_expr: R_AST_expr
+list_expr: R_AST_expr
+dictorset_expr: R_AST_expr
+string: R_AST_expr
+atom: R_AST_expr
+testlist_comp: R_AST_expr
+
+call: R_AST_expr
+index: R_AST_expr
+attr: R_AST_expr
+
+subscriptlist: R_AST_slice
+
+rslice: R_AST_slice
+sliceop: R_AST_slice
+slice: R_AST_slice
+
+exprlist: R_AST_expr
+testlist: R_AST_expr 
+dictorsetmaker: R_AST_expr 
+classdef: R_AST_stmt
+
+#kwarg: 
+#tuplearg: 
+argument: R_object
+arg: R_object
+#arglist: 
+
+comp_for: R_list
+#comp_if: 
+
+yield_expr: R_AST_expr

@@ -1,0 +1,561 @@
+
+        All instructions are shown in the GVMT interpreter description format of
+        name followed by stack effect and instruction effect. 
+        Values on the left of the --- divider are inputs, those on the right are 
+        outputs. All outputs go the stack. Inputs come from the stack unless 
+        marked with a \#, in which case they are fetched from the instruction
+        stream. \#x is a one byte value, \#\#x is a two byte value. \#$\uparrow$ is a
+        pointer sized value.
+        
+    For example: \vspace{-1em}
+        \subsubsection{truth(R\_object o  --- R\_bool b)}\vspace{-1em}
+        Explanatory text follows the stack effect.
+        
+        
+        
+\section{Base Instructions}
+
+    The instructions listed in this section are those required to express 
+    unoptimised Python programs. The output of the source-to-bytecode compiler
+    consists entirely of these bytecodes.
+\subsection{Atomic Instructions}
+
+    These instructions are treated as atomic by the optimisers. 
+    They are recorded directly by tracing and either left intact or 
+    removed entirely by subsequent optimisations.
+\subsubsection{as\_tuple(R\_object obj --- R\_tuple t)}
+\vspace{-1em}\texttt{obj} must be a list or a tuple.  If it is a list then it is converted to a tuple. Used for passing parameters (on the caller side). \vspace{-1em}
+\subsubsection{byte (int \#n --- R\_int i)}
+\vspace{-1em}Pushes an integer (in the range -128 to 127 inclusive) to the stack. \vspace{-1em}
+\subsubsection{constant(unsigned \#\#index --- R\_object object)}
+\vspace{-1em}Push a constant to TOS. \vspace{-1em}\begin{verbatim}
+  object = sys._getframe().f_code.co_consts[index]
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{copy(R\_object x --- R\_object x, R\_object x)}
+\vspace{-1em}Duplicates TOS \vspace{-1em}
+\subsubsection{copy\_dict(R\_dict d --- R\_dict d)}
+\vspace{-1em}Replace dictionary in TOS with a shallow copy,  used for parameter marshalling. \vspace{-1em}
+\subsubsection{delete\_global(unsigned \#\#name ---)}
+\vspace{-1em}Delete from globals (module dictionary) \vspace{-1em}
+\subsubsection{delete\_local(unsigned \#\#name ---)}
+\vspace{-1em}Delete from frame locals (as dictionary) \vspace{-1em}
+\subsubsection{dict\_insert(R\_dict d, R\_str key, R\_object value --- R\_dict d)}
+\vspace{-1em}\begin{verbatim}
+  d[key] = value
+\end{verbatim}
+\vspace{-1em}Inserts key/value pair into dict, leaving the dict on the stack. Used for parameter marshalling. \vspace{-1em}
+\subsubsection{dictionary( --- R\_dict d)}
+\vspace{-1em}Pushes a new, empty dictionary to the stack. \vspace{-1em}
+\subsubsection{drop(R\_object x ---)}
+\vspace{-1em}Pops (and discards) TOS \vspace{-1em}
+\subsubsection{empty\_tuple( --- R\_tuple t) }
+\vspace{-1em}Pushes an empty tuple to the stack. \vspace{-1em}
+\subsubsection{exit\_loop(R\_BaseException ex --- )}
+\vspace{-1em}If \texttt{ex} is not a StopIteration then reraise \texttt{ex}. Used at exit from a loop to differentiate between loop termination and other exceptions. \vspace{-1em}
+\subsubsection{false( --- R\_bool f)}
+\vspace{-1em}Pushes False to the stack. \vspace{-1em}
+\subsubsection{flip3 (R\_object x1, R\_object x2, R\_object x3 --- R\_object x3, R\_object x2, R\_object x1)}
+\vspace{-1em}Flips the top three values on the stack. \vspace{-1em}
+\subsubsection{is(R\_object o1, R\_object o2 --- R\_bool b) }
+\vspace{-1em}\begin{verbatim}
+  b = o1 is o2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{line(unsigned \#\#lineno ---)}
+\vspace{-1em}Set the line number and calls tracing function (if any). \vspace{-1em}\begin{verbatim}
+  sys._getframe().f_lineno = lineno
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{list(uint8\_t \#count --- R\_list l)}
+\vspace{-1em}Remove top count elements from the stack, creating a new list. \vspace{-1em}
+\subsubsection{list\_append(R\_list l, R\_object o --- )}
+\vspace{-1em}Used in list comprehension, where \texttt{l} is guaranteed to be a list. \vspace{-1em}
+\subsubsection{load\_deref(unsigned \#depth, unsigned \#n --- R\_object value)}
+\vspace{-1em}Load a non-local from frame in stack. \vspace{-1em}
+\subsubsection{load\_frame(unsigned \#n --- R\_object value)}
+\vspace{-1em}Loads value from the n\textsuperscript{th} local variable. Raise an exception if local variable has been assigned. Equivalent to: \vspace{-1em}\begin{verbatim}
+  value = sys._getframe()._array[n]
+\end{verbatim}
+\vspace{-1em}except that \texttt{\_array} is not visible in python code. \vspace{-1em}
+\subsubsection{load\_global(unsigned \#\#name --- R\_object value) }
+\vspace{-1em}Load from globals (module dictionary) \vspace{-1em}
+\subsubsection{load\_local(unsigned \#\#name --- R\_object value) }
+\vspace{-1em}Load from frame locals (as dictionary) \vspace{-1em}
+\subsubsection{name(int \#\#index --- R\_str name)}
+\vspace{-1em}Pushes a string from the code-object's name table. \vspace{-1em}
+\subsubsection{none( --- R\_NoneType n)}
+\vspace{-1em}Pushes None to the stack. \vspace{-1em}
+\subsubsection{nop(---)}
+\vspace{-1em}No operation \vspace{-1em}
+\subsubsection{over (R\_object x, R\_object x1 --- R\_object x, R\_object x1, R\_object x)}
+\vspace{-1em}Pushes a copy of the second value on the stack to the stack. \vspace{-1em}
+\subsubsection{pack(uint8\_t \#count --- R\_tuple t)}
+\vspace{-1em}Pack the top count elements from the stack into a new tuple. \vspace{-1em}
+\subsubsection{pack\_params(uint8\_t \#count --- R\_tuple t, R\_dict empty)}
+\vspace{-1em}Conceptually ike pack, but also pushes an empty dict. Used for parameter marshalling in the common case where there are no named parameters. \vspace{-1em}
+\subsubsection{pick (int \#n --- R\_object o)}
+\vspace{-1em}Picks the n\textsuperscript{th} (TOS is index 0) value from the stack \vspace{-1em}
+\subsubsection{pop\_handler( --- )}
+\vspace{-1em}Pops exception-handler. \vspace{-1em}
+\subsubsection{rotate (R\_object x1, R\_object x2, R\_object x3 --- R\_object x2, R\_object x3, R\_object x1) }
+\vspace{-1em}Rotates the top three values on the stack. \vspace{-1em}
+\subsubsection{rotate4 (R\_object x1, R\_object x2, R\_object x3, R\_object x4 --- R\_object x2, R\_object x3, R\_object x4, R\_object x1)}
+\vspace{-1em}Rotates the top four values on the stack. \vspace{-1em}
+\subsubsection{rrot(R\_object x1, R\_object x2, R\_object x3 --- R\_object x3, R\_object x1, R\_object x2)}
+\vspace{-1em}Counter rotates the top three values on the stack. \vspace{-1em}
+\subsubsection{slice(R\_object o1, R\_object o2, R\_object o3 --- R\_slice s)}
+\vspace{-1em}\begin{verbatim}
+  s = slice(o1, o2, o3)
+\end{verbatim}
+\vspace{-1em}Makes a new slice. \vspace{-1em}
+\subsubsection{store\_deref(unsigned \#depth, unsigned \#n, R\_object value ---)}
+\vspace{-1em}Store a non-local to frame in stack. \vspace{-1em}
+\subsubsection{store\_frame(R\_object value, unsigned \#n ---)}
+\vspace{-1em}Stores value in the n\textsuperscript{th} local variable. Equivalent to: \vspace{-1em}\begin{verbatim}
+  sys._getframe()._array[n] = value
+\end{verbatim}
+\vspace{-1em}except that \texttt{\_array} is not visible in python code. \vspace{-1em}
+\subsubsection{store\_global(unsigned \#\#name, R\_object value ---)}
+\vspace{-1em}Store to globals (module dictionary) \vspace{-1em}
+\subsubsection{store\_local(unsigned \#\#name, R\_object value ---)}
+\vspace{-1em}Store to frame locals (as dictionary) \vspace{-1em}
+\subsubsection{subtype(R\_type t0, R\_type t1 --- R\_bool b)}
+\vspace{-1em}\begin{verbatim}
+  b = t0 \subseteq t1
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{swap (R\_object x, R\_object x1 --- R\_object x1, R\_object x)}
+\vspace{-1em}Exchanges the top two values on the stack \vspace{-1em}
+\subsubsection{true( --- R\_bool t)}
+\vspace{-1em}Pushes True to the stack. \vspace{-1em}
+\subsubsection{tuple\_concat(R\_tuple t1, R\_tuple t2 --- R\_tuple t3)}
+\vspace{-1em}\begin{verbatim}
+  t3 = t1 + t2
+\end{verbatim}
+\vspace{-1em}t1 and t3 must be tuples, used for parameter marshalling. \vspace{-1em}
+\subsubsection{two\_copy(R\_object x, R\_object x1 --- R\_object x, R\_object x1, R\_object x, R\_object x1)}
+\vspace{-1em}Duplicates the two values on the stack \vspace{-1em}
+\subsubsection{type\_check(R\_object object, R\_type cls --- R\_bool b)}
+\vspace{-1em}Push True if \texttt{object} is an instance of \texttt{cls}, False otherwise. \vspace{-1em}
+\subsubsection{unpack (uint8\_t \#len, R\_object object --- )}
+\vspace{-1em}\texttt{object} must be a list or tuple and of length \texttt{len}. Unpacks onto the stack. \vspace{-1em}
+\subsection{Compound Instructions}
+
+    These instructions can be defined in terms of other instructions.
+    For example the \verb|binary| bytecode can be defined in Python, 
+    as shown in Appendix \ref{app:surrogates}.
+    These bytecodes can be replaced by a call to a function that 
+    implements the same functionality. However, this only done during tracing.
+
+\subsubsection{binary(uint8\_t \#index, R\_object l, R\_object r --- R\_object value)}
+\vspace{-1em}Applies binary operator. Operators are stored in a global tuple. \vspace{-1em}\begin{verbatim}
+  value = binary_operator_tuple[index](l, r)
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{contains(R\_object item, R\_object container --- R\_object result)}
+\vspace{-1em}\begin{verbatim}
+  result = item in container
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{delete\_attr(unsigned \#\#index, R\_object obj --- )}
+\vspace{-1em}Fetches name from the code-object's name table. \vspace{-1em}\begin{verbatim}
+  del obj.name
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{delitem(R\_object seq, R\_object index --- )}
+\vspace{-1em}\begin{verbatim}
+  del seq[item]
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{getitem(R\_object seq, R\_object index --- R\_object value)}
+\vspace{-1em}\begin{verbatim}
+  value = seq[index]
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{inplace(uint8\_t \#index, R\_object l, R\_object r --- R\_object value)}
+\vspace{-1em}Applies inplace operator. Operators are stored in a global tuple. \vspace{-1em}\begin{verbatim}
+  value = inplace_operator_tuple[index](l, r)
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{iter(R\_object o --- R\_object it)}
+\vspace{-1em}\begin{verbatim}
+  it = iter(o)
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{load\_attr(unsigned \#\#index, R\_object obj --- R\_object value)}
+\vspace{-1em}Fetches name from the code-object's name table. \vspace{-1em}\begin{verbatim}
+  value = obj.name
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{next(R\_object it --- R\_object value) }
+\vspace{-1em}\begin{verbatim}
+  value = next(it)
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{not(R\_object b1 --- R\_bool b2)}
+\vspace{-1em}\begin{verbatim}
+  b2 = not bool(b1)
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{sequence\_to\_list\_or\_tuple(R\_object obj --- R\_object l\_t)}
+\vspace{-1em}Convert \texttt{obj} to a list, unless it is already a list or tuple, in which case nothing is done. \vspace{-1em}
+\subsubsection{setitem(R\_object value, R\_object seq, R\_object index --- )}
+\vspace{-1em}\begin{verbatim}
+  seq[index] = value
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{store\_attr(unsigned \#\#index, R\_object value, R\_object obj --- )}
+\vspace{-1em}Fetches name from the code-object's name table. \vspace{-1em}\begin{verbatim}
+  obj.name = value
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{truth(R\_object o  --- R\_bool b)}
+\vspace{-1em}\begin{verbatim}
+  b = bool(o)
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{unary(uint8\_t \#index, R\_object o --- R\_object value)}
+\vspace{-1em}Apply unary operator (-x, +x, ~x) \vspace{-1em}
+\subsubsection{yield(R\_object value --- )}
+\vspace{-1em}Yields value to caller context by performing the following: Pops current frame from stack. Sets current ip to value stored in (now current) frame. \vspace{-1em}
+\subsection{Instructions Replaced During Tracing}
+
+        These instructions are replaced during tracing with a single alternative.
+        Jumps are eliminated and conditional branches are replaced with 
+        condiitonal exits. 
+    
+\subsubsection{debug( --- R\_bool d)}
+\vspace{-1em}Push value of global constant \texttt{\_\_debug\_\_} (either \texttt{True} or \texttt{False}) \vspace{-1em}
+\subsubsection{end\_loop(int \#\#offset --- )}
+\vspace{-1em}Jump by offset (to start of loop) Possible start of tracing. \vspace{-1em}
+\subsubsection{end\_protect(int \#\#offset --- )}
+\vspace{-1em}Pops exception-handler and jumps by offset \vspace{-1em}
+\subsubsection{f\_call(R\_object callable, R\_tuple args, R\_dict kws --- R\_object value)}
+\vspace{-1em}Calls callable with args and kws \vspace{-1em}\begin{verbatim}
+  value = callable(*args, **kws)
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{for\_loop(int \#\#offset --- )}
+\vspace{-1em}As protect, but marks a loop rather than a try-except block. \vspace{-1em}
+\subsubsection{jump(int \#\#offset --- )}
+\vspace{-1em}Jump by offset. \vspace{-1em}
+\subsubsection{on\_false(int \#\#offset, R\_object o ---)}
+\vspace{-1em}Jump by offset if TOS evaluates to False \vspace{-1em}
+\subsubsection{on\_true(int \#\#offset, R\_object o ---)}
+\vspace{-1em}Jump by offset if TOS evaluates to True \vspace{-1em}
+\subsubsection{protect(int \#\#offset --- )}
+\vspace{-1em}Push an exception-handler,  which will catch Exception and jump to current ip + offset. \vspace{-1em}
+\subsubsection{return(R\_object val --- R\_object val)}
+\vspace{-1em}If in a generator, raise StopIteration. Otherwise, as yield \vspace{-1em}
+\subsection{Instructions Not Allowed in a Trace}
+
+        The following instructions have complex semantics and are expected 
+        to occur only in start-up code. If any of thme are encountered during 
+        tracing the trace is abandoned and normal interpretation continues.
+\subsubsection{import(R\_object file --- R\_object object)}
+\vspace{-1em}Used for the import statement. \vspace{-1em}\begin{verbatim}
+  object = __import__(file)
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{make\_class(int \#\#name, R\_object dict, R\_tuple bases --- R\_type cls)}
+\vspace{-1em}Make a new class \vspace{-1em}
+\subsubsection{make\_closure(uint8\_t \#code\_index, R\_tuple defaults, R\_dict annotations --- R\_object f)}
+\vspace{-1em}Make a new closure, code-object is fetched from constant array. \vspace{-1em}
+\subsubsection{make\_func(uint8\_t \#code\_index, R\_tuple defaults, R\_dict annotations --- R\_object f)}
+\vspace{-1em}Make a new function, code-object is fetched from constant array. \vspace{-1em}
+\subsubsection{new\_scope( --- )}
+\vspace{-1em}Creates a frame and pushes it. Used in class declarations \vspace{-1em}
+\subsubsection{pop\_scope( --- R\_dict locals)}
+\vspace{-1em}Pops the frame pushed by \texttt{new\_scope}, leaving its locals dictionary on the stack. \vspace{-1em}
+\subsubsection{raise(R\_object o --- )}
+\vspace{-1em}Raise an exception; o if it is an exception, an error otherwise. \vspace{-1em}
+\section{Instructions Required for Tracing}
+
+    The instructions required for tracing are mainly equivalents of 
+    branch instructions that exit the trace instead.
+    For example the \verb|on_true| bytecode which branhces if the TOS evaluates 
+    as true will be replaced with \verb|exit_on_false| if the branch was taken
+    or \verb|exit_on_true| if it was not.
+    
+\subsubsection{check\_valid(R\_exec\_link link --- )}
+\vspace{-1em}If trace is invalidated, exit trace to unoptimised code. \vspace{-1em}
+\subsubsection{exit\_on\_false(R\_bool cond, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Exit if \texttt{cond} is False; \texttt{cond} must be a boolean. \vspace{-1em}
+\subsubsection{exit\_on\_true(R\_bool cond, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Exit if \texttt{cond} is True; \texttt{cond} must be a boolean. \vspace{-1em}
+\subsubsection{fast\_constant(unsigned \#$\uparrow$address --- R\_object object)}
+\vspace{-1em}Pushes constant object at address. Used by optimiser. \vspace{-1em}
+\subsubsection{fast\_frame(uint8\_t \#count, intptr\_t \#$\uparrow$func, intptr\_t \#$\uparrow$next\_ip --- )}
+\vspace{-1em}Create and push a new frame for the function \texttt{func} and initialise it  with the top \texttt{count} values on the stack. \vspace{-1em}
+\subsubsection{fast\_line(unsigned \#\#lineno ---)}
+\vspace{-1em}Set the line number (does not call tracing function) \vspace{-1em}\begin{verbatim}
+  sys._getframe().f_lineno = lineno
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{func\_check(intptr\_t \#$\uparrow$code, intptr\_t \#$\uparrow$exit, R\_object obj --- )}
+\vspace{-1em}Ensure that the obj is exactly the function specified by \texttt{func}. If it is a different value then exit the trace. \vspace{-1em}
+\subsubsection{gen\_check(unsigned \#$\uparrow$next\_ip, intptr\_t \#$\uparrow$original\_ip, R\_generator gen --- )}
+\vspace{-1em}Ensure that \texttt{gen} is a generator and that the next ip for the generator is as expected. If not then resume interpretation of unoptimised code. \vspace{-1em}
+\subsubsection{gen\_enter(unsigned \#$\uparrow$caller\_ip, intptr\_t \#$\uparrow$original\_ip, R\_generator gen --- )}
+\vspace{-1em}Set the return address in current frame to \texttt{caller\_ip}, and push generator frame. \vspace{-1em}
+\subsubsection{gen\_exit ( --- ) }
+\vspace{-1em}Raise a StopIteration exception. \vspace{-1em}
+\subsubsection{gen\_yield(unsigned \#$\uparrow$next\_ip, R\_object val --- R\_object val)}
+\vspace{-1em}Set the current frame's instruction pointer (for resuming the generator) to \texttt{next\_ip}. Pops current frame from stack. Sets current ip to value stored in previous frame. \vspace{-1em}
+\subsubsection{init\_frame(R\_function func, R\_tuple t, R\_dict d --- )}
+\vspace{-1em}Initialises the current frame from \texttt{func}, \texttt{t} and \texttt{d}.  \texttt{func} determines number and format of parameters, as well as default values. \texttt{t} and \texttt{d} contain the parameter values. \vspace{-1em}
+\subsubsection{interpret(intptr\_t \#$\uparrow$resume\_ip --- )}
+\vspace{-1em}Resume the interpreter from resume\_ip. \vspace{-1em}
+\subsubsection{load\_special(R\_object obj, unsigned \#index --- R\_object attr)}
+\vspace{-1em}Load special attribute, fetching the name from special\_name table, \texttt{name = special\_names[index]}.  \vspace{-1em}\begin{verbatim}
+  attr = obj.name
+\end{verbatim}
+\vspace{-1em}There is a fallback function for each index, which is called in the event of obj.name not being defined. \vspace{-1em}\begin{verbatim}
+  attr = fallback[index](obj)
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{make\_frame(intptr\_t \#$\uparrow$ret\_addr, R\_function func --- ) }
+\vspace{-1em}Set instruction pointer of current frame to \texttt{ret\_addr}. Create a new frame, determining size from \texttt{func}. Push new frame to frame stack. \vspace{-1em}
+\subsubsection{new\_enter(unsigned \#$\uparrow$func\_addr, R\_type cls, R\_tuple t, R\_dict d --- R\_function func, R\_tuple t, R\_dict d)}
+\vspace{-1em}Enter the surrogate `new' function. Replaces \texttt{cls} with the surrogate function \texttt{func}, replaces \texttt{t} with \texttt{(cls,) + t} and leaves \texttt{d} untouched. Equivalent to: \\ \texttt{flip3} \texttt{pack 1} \texttt{swap} \texttt{tuple\_concat} \texttt{load\_const} \texttt{flip3} \vspace{-1em}
+\subsubsection{pop\_frame( --- )}
+\vspace{-1em}Pops frame. \vspace{-1em}
+\subsubsection{prepare\_bm\_call(R\_bound\_method bm, R\_tuple t, R\_dict d --- R\_object func, R\_tuple t, R\_dict d)}
+\vspace{-1em}Prepare a call for a bound-method.  Extracts self and callable from \texttt{bm}; prefixing \texttt{t} with self. \vspace{-1em}\begin{verbatim}
+  t = (bm.__self__,) + t; func = bm.__func__
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{protect\_with\_exit(\#$\uparrow$link --- )}
+\vspace{-1em}Push an exception-handler,  which will catch Exception and exit to link. \vspace{-1em}
+\subsubsection{recursion\_exit(intptr\_t \#$\uparrow$next\_ip, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Set next\_ip and exits trace. \vspace{-1em}
+\subsubsection{return\_exit(intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Pops frame and exits trace. \vspace{-1em}
+\subsubsection{trace\_exit(intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Exits trace. \vspace{-1em}
+\subsubsection{trace\_protect(\#$\uparrow$addr --- )}
+\vspace{-1em}Push an exception-handler,  which will catch Exception and interpret from \texttt{addr}. \vspace{-1em}
+\subsubsection{type(R\_object object --- R\_type t)}
+\vspace{-1em}t = type(object) \vspace{-1em}
+\section{Specialised Instructions}
+
+    Specialised instructions are used when the type of the operands are known.
+    Many are of the form \verb|i_xxx| or \verb|f_xxx| which are operations
+    specialised for integers and floats respectively.
+    The \verb|native_call| instruction allows C functions to be called directly 
+    inplace of the \verb|f_call| or \verb|binary| bytecodes, when the tyes are known.
+        
+\subsubsection{bind(intptr\_t \#$\uparrow$func, R\_object self --- R\_bound\_method bm)}
+\vspace{-1em}Create a bound-method from \texttt{self} and \texttt{func}. \vspace{-1em}\begin{verbatim}
+  bm.__self__ = self;  bm.__func__ = func
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{check\_keys(unsigned \#\#dict\_offset, unsigned \#$\uparrow$key\_address, intptr\_t \#$\uparrow$exit, R\_object obj --- )}
+\vspace{-1em}Ensure that the dict-keys of \texttt{obj} matches the expected one. If it does not then leave the trace to the handler pointed to by exit. Requires that the type of \texttt{obj} is known. \vspace{-1em}
+\subsubsection{deoptimise\_check(intptr\_t \#$\uparrow$trace\_addr, intptr\_t \#$\uparrow$original\_ip --- )}
+\vspace{-1em}If trace has been invalidated, resume interpretation from \texttt{original\_ip} \vspace{-1em}
+\subsubsection{ensure\_initialised(unsigned \#n, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}If local variable \texttt{n} is uninitialised then resume interpreter from \texttt{exit}. \vspace{-1em}
+\subsubsection{ensure\_tagged(intptr\_t \#$\uparrow$exit, R\_object obj --- R\_object obj)}
+\vspace{-1em}Ensure that \texttt{obj} is a tagged integer. Leaves \texttt{obj} on the stack. If it has another type then leave the trace to the handler pointed to by exit. \vspace{-1em}
+\subsubsection{ensure\_tagged2(intptr\_t \#$\uparrow$exit, R\_object obj, R\_object tos --- R\_object obj, R\_object tos)}
+\vspace{-1em}Like ensure\_tagged, but for the second value on the stack. Important for binary operations. \vspace{-1em}
+\subsubsection{ensure\_tagged\_drop(intptr\_t \#$\uparrow$exit, R\_object obj --- )}
+\vspace{-1em}Like ensure\_tagged, but does not leave \texttt{obj} on the stack. \vspace{-1em}
+\subsubsection{ensure\_type(unsigned \#$\uparrow$code, intptr\_t \#$\uparrow$exit, R\_object obj --- R\_object o)}
+\vspace{-1em}Ensure that \texttt{obj} has the type specified by code. Leaves \texttt{obj} on the stack. If it has another type then leave the trace to the handler pointed to by exit. \vspace{-1em}
+\subsubsection{ensure\_type2(intptr\_t \#$\uparrow$code, intptr\_t \#$\uparrow$exit, R\_object obj, R\_object tos --- R\_object o, R\_object tos)}
+\vspace{-1em}Like type\_ensure, but for the second item on the stack. Important for binary operations. \vspace{-1em}
+\subsubsection{ensure\_type\_drop(intptr\_t \#$\uparrow$code, intptr\_t \#$\uparrow$exit, R\_object obj --- )}
+\vspace{-1em}Like ensure\_type, but does not leave \texttt{obj} on the stack. \vspace{-1em}
+\subsubsection{ensure\_value(intptr\_t \#$\uparrow$code, intptr\_t \#$\uparrow$exit, R\_object obj --- R\_object o)}
+\vspace{-1em}Ensure that the obj is exactly value specified by \texttt{code}. Leaves obj on the stack. If it is a different value then exit the trace. \vspace{-1em}
+\subsubsection{f\_add(R\_float f1, R\_float f2 --- R\_float result)}
+\vspace{-1em}Addition specialised for floats. \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}\begin{verbatim}
+  result = f1 + f2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{f\_div(R\_float f1, R\_float f2 --- R\_float result)}
+\vspace{-1em}Diivision specialised for floats. \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}
+\subsubsection{f\_eq(R\_float f1, R\_float f2 --- R\_bool result)}
+\vspace{-1em}Equality test specialised for floats . \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}
+\subsubsection{f\_ge(R\_float f1, R\_float f2 --- R\_bool result)}
+\vspace{-1em}Comparison specialised for floats . \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}
+\subsubsection{f\_gt(R\_float f1, R\_float f2 --- R\_bool result)}
+\vspace{-1em}Comparison specialised for floats . \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}
+\subsubsection{f\_le(R\_float f1, R\_float f2 --- R\_bool result)}
+\vspace{-1em}Comparison specialised for floats . \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}
+\subsubsection{f\_lt(R\_float f1, R\_float f2 --- R\_bool result)}
+\vspace{-1em}Comparison specialised for floats . \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}
+\subsubsection{f\_mul(R\_float f1, R\_float f2 --- R\_float result)}
+\vspace{-1em}Multiplication specialised for floats. \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}
+\subsubsection{f\_ne(R\_float f1, R\_float f2 --- R\_bool result)}
+\vspace{-1em}Inequality test specialised for floats . \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}
+\subsubsection{f\_neg(R\_float f --- R\_float result)}
+\vspace{-1em}Negation specialised for floats. \texttt{f} must be a float. \vspace{-1em}
+\subsubsection{f\_sub(R\_float f1, R\_float f2 --- R\_float result)}
+\vspace{-1em}Subtraction specialised for floats. \texttt{f1} and \texttt{f2} must be floats. \vspace{-1em}
+\subsubsection{fast\_load\_attr(unsigned \#\#dict\_offset , unsigned \#\#index, R\_object object --- R\_object value)}
+\vspace{-1em}Rapidly loads a value from object dictionary. Requires that both the type of \texttt{obj} is known and that its dict-keys have been checked. \vspace{-1em}
+\subsubsection{fast\_load\_frame(uintptr\_t \#n --- R\_object value)}
+\vspace{-1em}Loads value from the n\textsuperscript{th} local variable. Like \texttt{load\_frame}, but does not check that local variable has been assigned. \vspace{-1em}
+\subsubsection{fast\_load\_global(intptr\_t \#$\uparrow$address, unsigned \#\#index --- R\_object value)}
+\vspace{-1em}Fetch the \texttt{dict\_values} object from address. The  \texttt{dict\_values} object will belong to a module-level dictionary. Fetch \texttt{value} from \texttt{index} in the \texttt{dict\_values} object. Requires guards on the module dict to ensure that dict is not resized  or that item is not deleted. \vspace{-1em}\begin{verbatim}
+  value = ((R_dict_values)address)->values[index];
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{fast\_not(R\_bool b1 --- R\_bool b2)}
+\vspace{-1em}\begin{verbatim}
+  b2 = not b1
+\end{verbatim}
+\vspace{-1em}b1 must be a boolean. \vspace{-1em}
+\subsubsection{fast\_store\_attr(unsigned \#\#dict\_offset, unsigned \#\#index, R\_object value, R\_object object --- )}
+\vspace{-1em}Rapidly stores a value to the object dictionary. Requires that both the type of \texttt{obj} is known and that its dict-keys have been checked. \vspace{-1em}
+\subsubsection{fast\_store\_global(intptr\_t \#$\uparrow$address, unsigned \#\#index, R\_object value --- )}
+\vspace{-1em}Stores a global from module dict-values at address, with offset index. Requires guards on the module dict to ensure that dict is not resized. \vspace{-1em}
+\subsubsection{i2d(R\_object o --- double out)}
+\vspace{-1em}Convert a tagged int to a C double (an unboxed float) \vspace{-1em}
+\subsubsection{i2f(R\_object o --- R\_float result)}
+\vspace{-1em}Convert a tagged int to a (boxed) float. \vspace{-1em}
+\subsubsection{i\_add(R\_int i1, R\_int i2, intptr\_t \#$\uparrow$exit --- R\_int result)}
+\vspace{-1em}Addition specialised for tagged integers. \texttt{i1} and \texttt{i2} must be tagged integers. If result overflows then box the result and leave the trace to the handler pointed to by exit. \vspace{-1em}\begin{verbatim}
+  result = i1 + i2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{i\_comp\_eq(R\_int i1, R\_int i2 --- R\_bool result)}
+\vspace{-1em}Equality test for tagged integers. \vspace{-1em}
+\subsubsection{i\_comp\_ge(R\_int i1, R\_int i2 --- R\_bool result)}
+\vspace{-1em}Comparison for tagged integers. \vspace{-1em}
+\subsubsection{i\_comp\_gt(R\_int i1, R\_int i2 --- R\_bool result)}
+\vspace{-1em}Comparison for tagged integers. \vspace{-1em}
+\subsubsection{i\_comp\_le(R\_int i1, R\_int i2 --- R\_bool result)}
+\vspace{-1em}Comparison for tagged integers. \vspace{-1em}
+\subsubsection{i\_comp\_lt(R\_int i1, R\_int i2 --- R\_bool result)}
+\vspace{-1em}Comparison for tagged integers. \vspace{-1em}\begin{verbatim}
+  result = i1 < i2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{i\_comp\_ne(R\_int i1, R\_int i2 --- R\_bool result)}
+\vspace{-1em}Inequality test for tagged integers. \vspace{-1em}
+\subsubsection{i\_dec(R\_int i1, unsigned \#i2, intptr\_t \#$\uparrow$exit --- R\_int result)}
+\vspace{-1em}Like i\_inc, but for subtraction. \vspace{-1em}\begin{verbatim}
+  result = i1 - i2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{i\_div(R\_int i1, R\_int i2 --- R\_float result)}
+\vspace{-1em}\begin{verbatim}
+  result = i1 / i2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{i\_inc(R\_int i1, unsigned \#i2, intptr\_t \#$\uparrow$exit --- R\_int result)}
+\vspace{-1em}Increment for tagged integers. \texttt{i1} must be a tagged integer. If result overflows then box the result and leave the trace to the handler pointed to by exit. \vspace{-1em}\begin{verbatim}
+  result = i1 + i2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{i\_mul(R\_int i1, R\_int i2 --- R\_int result)}
+\vspace{-1em}Multiplies the tagged integers, \texttt{i1} and \texttt{i2}. Result may be tagged or boxed. \vspace{-1em}\begin{verbatim}
+  result = i1 * i2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{i\_prod(R\_int i1, unsigned \#i2, intptr\_t \#$\uparrow$exit --- R\_int result)}
+\vspace{-1em}Multiplies the integers \texttt{i1} and \texttt{i2}. \texttt{i1} must be a tagged integer. Result may be tagged or boxed. \vspace{-1em}\begin{verbatim}
+  result = i1 * i2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{i\_rshift(R\_int o1, R\_int o2 --- R\_int result)}
+\vspace{-1em}Right shift \texttt{i1} by \texttt{i2}. \texttt{i1} and \texttt{i2} must be tagged integers. \vspace{-1em}\begin{verbatim}
+  result = i1 >> i2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{i\_sub(R\_int i1, R\_int i2, intptr\_t \#$\uparrow$exit --- R\_int result)}
+\vspace{-1em}Like i\_add, but for subtraction. \vspace{-1em}\begin{verbatim}
+  result = i1 - i2
+\end{verbatim}
+\vspace{-1em}\vspace{-1em}
+\subsubsection{load\_slot(unsigned \#offset, R\_object object --- R\_object value)}
+\vspace{-1em}Load value from \texttt{object} at \texttt{offset}. Raise exception if slot is uninitialised. \vspace{-1em}
+\subsubsection{native\_call(int \#count, intptr\_t \#$\uparrow$func\_addr --- R\_object value)}
+\vspace{-1em}Call the native (GVMT) function at \texttt{func\_addr} with \texttt{count} parameters.  \vspace{-1em}
+\subsubsection{native\_call\_no\_prot(int \#count, intptr\_t \#$\uparrow$func\_addr --- R\_object value)}
+\vspace{-1em}As native\_call. The "no\_prot" is to inform the optimisers that this function will not raise an exception and does not need to be protected. \vspace{-1em}
+\subsubsection{native\_call\_protect(int \#count, intptr\_t \#$\uparrow$func\_addr, intptr\_t \#$\uparrow$on\_except --- R\_object value)}
+\vspace{-1em}Call the native (GVMT) function at \texttt{func\_addr} with \texttt{count} parameters. If an exception is raised, resume interpreter from \texttt{on\_except}. \vspace{-1em}
+\subsubsection{native\_setitem(intptr\_t \#$\uparrow$func\_addr, R\_object value, R\_object seq, R\_object index --- )}
+\vspace{-1em}Like native\_call, but takes same inputs as setitem and discards return value. \vspace{-1em}
+\subsubsection{store\_slot(unsigned \#offset, R\_object value, R\_object object --- )}
+\vspace{-1em}Store value into \texttt{object} at \texttt{offset}. \vspace{-1em}
+\subsubsection{unpack\_native\_params(intptr\_t \#$\uparrow$func\_addr, R\_object c, R\_tuple t, R\_dict d --- )}
+\vspace{-1em}Unpacks the parameters in \texttt{t} (\texttt{d} must be empty) onto the stack,  providing the number of parameters is the same as that required by the builtin (C) function  at \texttt{func\_addr}. If parameters do not match, raise an exception. \vspace{-1em}
+\section{D.O.C. Instructions}
+
+        These instructions are those required by the Deferred Object Creation pass.
+        They are either related to unboxing floating point operations, 
+        or to storing values in the (thread-local) cache, in order to avoid creating frames.
+        
+\subsubsection{check\_initialised(unsigned \#n --- )}
+\vspace{-1em}If local variable \texttt{n} is uninitialised then raise an exception. \vspace{-1em}
+\subsubsection{clear\_cache(uintptr\_t \#count --- )}
+\vspace{-1em}Clears (sets to NULL to allow the objects to be collected) the first \texttt{count} cache slots. \vspace{-1em}
+\subsubsection{d2f(double x --- R\_float result)}
+\vspace{-1em}Box a C double to produce a float. \vspace{-1em}
+\subsubsection{d\_add(double l, double r --- double out)}
+\vspace{-1em}\begin{verbatim}
+  out = l + r
+\end{verbatim}
+\vspace{-1em}Specialised form for unboxed floats (C doubles). \vspace{-1em}
+\subsubsection{d\_byte(int \#val --- double out)}
+\vspace{-1em}Pushes \texttt{val} (small integer) as a double. \vspace{-1em}
+\subsubsection{d\_div(double l, double r --- double out)}
+\vspace{-1em}Specialised form for unboxed floats (C doubles). \vspace{-1em}
+\subsubsection{d\_idiv(R\_int o1, R\_int o2 --- double out)}
+\vspace{-1em}\begin{verbatim}
+  out = o1/o2
+\end{verbatim}
+\vspace{-1em}Produce a double by dividing tagged integers. \vspace{-1em}
+\subsubsection{d\_mul(double l, double r --- double out)}
+\vspace{-1em}Specialised form for unboxed floats (C doubles). \vspace{-1em}
+\subsubsection{d\_neg(double f --- double out)}
+\vspace{-1em}Specialised form for unboxed float (C double). \vspace{-1em}
+\subsubsection{d\_sub(double l, double r --- double out)}
+\vspace{-1em}Specialised form for unboxed floats (C doubles). \vspace{-1em}
+\subsubsection{f2d(R\_float f --- double out)}
+\vspace{-1em}Unbox a float to produce a double. \vspace{-1em}
+\subsubsection{load\_from\_cache(uintptr\_t \#n --- R\_object value)}
+\vspace{-1em}Loads the n\textsuperscript{th} cached slot.  The cache is used to store values that would be stored in the frame,  but cannot as the frame is deferred. \vspace{-1em}
+\subsubsection{store\_to\_cache(uintptr\_t \#n, R\_object value --- )}
+\vspace{-1em}Stores \texttt{value} to n\textsuperscript{th} cached slot. \vspace{-1em}
+\section{Super Instructions}
+
+        Super-instructions are concatenations of other instructions.
+        For example, the instruction \verb|line_none| is the concatenation
+        of the instructions \verb|line| and \verb|none|.
+\subsubsection{drop\_under (R\_object nos, R\_object tos --- R\_object tos)}
+\vspace{-1em}Drops nos leaving TOS in place. \vspace{-1em}
+\subsubsection{i\_exit\_eq(R\_int i1, R\_int i2, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Exit trace if \texttt{i1} $=$ \texttt{i2}, for tagged integers. \vspace{-1em}
+\subsubsection{i\_exit\_ge(R\_int i1, R\_int i2, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Exit trace if \texttt{i1} $\geq$ \texttt{i2}, for tagged integers. \vspace{-1em}
+\subsubsection{i\_exit\_gt(R\_int i1, R\_int i2, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Exit trace if \texttt{i1} $>$ \texttt{i2}, for tagged integers. \vspace{-1em}
+\subsubsection{i\_exit\_le(R\_int i1, R\_int i2, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Exit trace if \texttt{i1} $\leq$ \texttt{i2}, for tagged integers. \vspace{-1em}
+\subsubsection{i\_exit\_lt(R\_int i1, R\_int i2, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Exit trace if \texttt{i1} $<$ \texttt{i2}, for tagged integers. \vspace{-1em}
+\subsubsection{i\_exit\_ne(R\_int i1, R\_int i2, intptr\_t \#$\uparrow$exit --- )}
+\vspace{-1em}Exit trace if \texttt{i1} $
+eq$ \texttt{i2}, for tagged integers. \vspace{-1em}
+\subsubsection{line\_byte( --- )}
+\vspace{-1em}Super instruction equal to \texttt{line} followed by \texttt{byte} \vspace{-1em}
+\subsubsection{line\_fast\_constant( --- )}
+\vspace{-1em}Super instruction equal to \texttt{line} followed by \texttt{fast\_constant} \vspace{-1em}
+\subsubsection{line\_fast\_load\_frame( --- )}
+\vspace{-1em}Super instruction equal to \texttt{line} followed by \texttt{fast\_load\_frame} \vspace{-1em}
+\subsubsection{line\_fast\_load\_global( --- )}
+\vspace{-1em}Super instruction equal to \texttt{line} followed by \texttt{fast\_load\_global} \vspace{-1em}
+\subsubsection{line\_load\_frame( --- )}
+\vspace{-1em}Super instruction equal to \texttt{line} followed by \texttt{load\_frame} \vspace{-1em}
+\subsubsection{line\_load\_global( --- )}
+\vspace{-1em}Super instruction equal to \texttt{line} followed by \texttt{load\_global} \vspace{-1em}
+\subsubsection{line\_none( --- )}
+\vspace{-1em}Super instruction equal to \texttt{line} followed by \texttt{none} 

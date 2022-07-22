@@ -1,0 +1,347 @@
+
+The HotPy instruction set is designed so that the translation from Python source code to bytecode should be reasonably straightforward, and that it should execute fairly efficiently. These are not the primary purpose behind the design of the instruction set. The primary purpose of the HotPy instruction design is to make an \emph{optimisable} instruction set. To be optimisable, means it must be easily traced and be amenable to specialisation.
+
+\section{Definitions}
+
+The expression $obj\rightarrow{}attr$ is taken to mean direct access to the field named $attr$ in the underlying representation of the object referred to by $obj$.The arrow in the expression  $obj\rightarrow{}attr$ is used as it reflects the C syntax for accessing a field of a structure through a pointer.
+
+The expression $d\langle{name}\rangle$ means to look up $name$ in the dictionary referred to by $d$. This will only be used for dictionaries where all the keys are strings and $name$ is a string.
+
+\subsection{Instruction Classification}
+
+Most instructions are classed as simple instructions. These instructions have no effect beyond the top item(s) of the stack upon which they operate.
+Examples of these are \verb|swap| which exchanges the top two stack items, and \verb|is| which takes the pops the top two items from the stack and pushes \verb|True| if they are the same object, \verb|False| otherwise.
+
+Instructions may also change the state of the current thread, these are called \emph{modifying} instructions. An example is the \verb|set_next_ip| instruction which sets the \verb|next_ip| field of the current frame to the address of the bytecode instruction following the one currently executing. 
+
+Finally, the \verb|execute| instruction continues execution from the bytecode at the address in the \verb|next_ip| field of the current frame.
+\verb|execute| is a \emph{transferring} instruction.
+
+Compound instructions are composed of a sequence of other instructions. A compound instructions that contains \verb|execute| or any other transferring instruction, must have the transferring instruction as its last instruction. 
+A compound instructions that contains a transferring instruction is itself a transferring instruction.
+
+Composing HotPy instructions (bytecodes) this way makes the execution flat, there are no calls and no stack involved; 
+calls at the Python level are performed by explicit manipulation of the frame stack.
+Unfortunately the simple execution model is not practical for two reasons. First, in order to support primitive operations the Python API, it must be possible to call into C\footnote{In fact, any function that is compiled to machine. These will mostly be written in C.} code, and for that C code to call back into the virtual machine. This means that the state of the virtual machine is no longer fully described by the frame stack and next-instruction pointer; it also depends on the state of any currently executing C functions.
+
+For this reason the \verb|call*| instruction is added which calls a C function. The \verb|call*| instruction is a stateful instruction, and any compound instruction that includes it is also a stateful instruction.
+
+It is possible to define a set of instructions for HotPy that only use the \verb|call*| instruction for numerical primitives, such as integer addition, and for calls to the underlying operating system.
+Unfortunately, this would make the translation of Python source code to bytecode rather awkward, resulting in calls at the bytecode level to perform almost any action, regardless of how trivial it is. For example the indexing operation, \verb|a[b]|, is represented in CPython as a single bytecode \verb|binary_subscr|. With the scheme suggested so far, it is necessary to implement the indexing operation as a call which would involve allocation of a frame, and the execution of five or six instructions rather than just one. This would be far too slow.
+
+Consequently, in practise, many Python-level operations are implemented in C, and accessed via the \verb|call*| instruction.
+
+This makes the execution of HotPy instructions more efficient in their unoptimised form, but complicates tracing and optimisation.
+
+\section{Sub Instructions}
+
+The following ``instructions'' are not executable bytecode instructions, but are used to compose actual instructions.
+
+\subsection{cls\_attribute\_or\_goto}
+
+This instruction expects a class object and a string object on top of the stack, both are popped from the stack. It consumes the next two bytes in the instruction stream as an offset. If the class attribute exists then it is pushed to the stack and the offset is ignored, if it does not exist then execution branches by the offset.
+
+The existence of a class attribute is determined as follows, where $mro$ is the `method resolution order' tuple which contains a list of classes starting with the class it belongs to and ending with \verb|object|.
+\begin{algorithmic}
+    \STATE $mro := cls\rightarrow{mro}$
+    \STATE $i := 0$
+    \REPEAT
+        \STATE $t = mro_i$
+	\STATE $result := t\rightarrow{dict}\langle{attr}\rangle$
+        \STATE $i := i + 1$
+    \UNTIL{$result \neq 0$ or $t \equiv object$}
+\end{algorithmic}
+
+% \subsection{Specialised forms of cls\_attribute\_or\_goto}
+% 
+% There are two specialised forms of cls\_attribute\_or\_goto.
+% \begin{itemize}
+% \item getter\_or\_goto. This is equivalent to pushing  `\_\_get\_\_' onto the stack then executing cls\_attribute\_or\_goto. 
+% \item setter\_or\_goto. This is equivalent to pushing  \_\_set\_\_' onto the stack then executing cls\_attribute\_or\_goto. 
+% \end{itemize}
+
+These specialised forms are used to shorten the sequences of code, and because the \_\_get\_\_ and \_\_set\_\_ attributes are allocated dedicated fields, allowing faster access.
+
+\section{Hidden Instructions}
+
+These are executable instructions, but they are not used by the front-end code generator. Their purpose is to implement parts of full instructions during tracing and optimisation.
+
+\subsection{load\_special\_or\_goto}
+
+The load\_special instructions is important for accessing `special' methods in Python. For example the \verb|next(obj)| function in Python is defined as \verb|obj.__next__()| where the sub-expression \verb|obj.__next__| is not determined by the normal attribute look up rules, but by a special shortcut method, see the Python object model \url{http://docs.python.org/py3k/reference/datamodel.html}.
+
+Load\_special expects an object  and a string object on top of the stack, both are popped from the stack. It consumes the next two bytes in the instruction stream as an offset. 
+
+Load\_special is defined by the following sequence of instructions:
+\begin{verbatim}
+copy type name cls\_attribute\_or\_goto getter\_or\_goto simple
+descriptor:
+	flip3 copy type call\_simple(3)
+simple:
+ 	swap drop
+\end{verbatim}
+
+\section{Expressions, Assignments and Deletion}
+
+For reasons of consistency and optimisation, assignment and deletion bytecodes all produce a value. The front-end must put an explicit \verb|drop| in the instruction stream following any \verb|del_xxx| or \verb|set_xxx| bytecode. For example the statement \verb|s[i] = o| translates as:
+\begin{verbatim}
+(Code to evaluate o)
+(Code to evaluate s)
+(Code to evaluate i)
+set_item
+drop
+\end{verbatim}
+
+\subsection{Attributes}
+
+There are three forms that relate to object attributes. These are fetching an attribute \verb|obj.attr|, setting an attribute \verb|obj.attr = value| and deleting an attribute \verb|del obj.attr|.
+
+\subsubsection{Load\_attr}
+
+Fetching an attribute is implemented with the \verb|load_attr| bytecode, which is defined as follows:
+\begin{verbatim}
+load_special '__getattribute__'
+name
+call_simple 1
+\end{verbatim}
+
+\subsubsection{Store\_attr}
+
+Storing an attribute is implemented with the \verb|store_attr| bytecode, which is defined as follows:
+\begin{verbatim}
+load_special '__setattr__'
+name
+rotate3
+call_simple 1
+\end{verbatim}
+
+\subsubsection{Del\_attr}
+
+Deleting an attribute is implemented with the \verb|del_attr| bytecode, which is defined as follows:
+\begin{verbatim}
+load_special '__delattr__'
+name
+call_simple 1
+\end{verbatim}
+
+\subsection{Indexing}
+
+There are three forms that relate to indexing. These are fetching an indexed item \verb|s[i]|, setting  an indexed item \verb|s[i] = o|, and deleting an item by index, \verb|del s[i]|.
+
+\subsubsection{get\_item}
+
+Fetching an item by index is implemented with the \verb|get_item| bytecode, which is defined as follows:
+\begin{verbatim}
+swap
+load_special '__getitem__'
+swap
+call_simple 1
+\end{verbatim}
+
+\subsubsection{set\_item}
+
+Storing an item by index is implemented with the \verb|get_item| bytecode, which is defined as follows:
+\begin{verbatim}
+swap
+load_special '__setitem__'
+swap3
+call_simple 2
+\end{verbatim}
+
+\subsubsection{del\_item}
+
+Deleting an item by index is implemented with the \verb|get_item| bytecode, which is defined as follows:
+\begin{verbatim}
+swap
+load_special '__delitem__'
+swap
+call_simple 1
+\end{verbatim}
+
+\section{Operators}
+
+\subsection{Unary Operators}
+
+The unary operators, \verb|+x|, \verb|-x|, \verb|~x| are implemented with the \verb|unary| bytecode, which is defined as follows:
+\begin{verbatim}
+op_name
+load_special
+call_simple 1
+\end{verbatim}
+
+Where \verb|op_name| pushes the operator `special' name to the stack. The special names are `\_\_pos\_\_' for \verb|+|,  
+`\_\_neg\_\_' for \verb|-| and  `\_\_invert\_\_' for \verb|~|, 
+
+\subsection{Binary}
+
+The binary operators, \verb|a+b|, \verb|a^b|, \verb|a<<b|, etc. are  implemented with the \verb|binary| bytecode, which is defined by the following pseudocode, where the operands are \verb|a| and \verb|b| and the operator name is \verb|op|.
+
+\begin{algorithmic}
+\IF {$type(b) \subset type(a)$}
+    \STATE {$return reverse\_binary(a, b, `\_\_op\_\_', `\_\_rop\_\_')$}
+\ELSE
+    \STATE {$return binary(a, b, `\_\_op\_\_', `\_\_rop\_\_')$}
+\ENDIF
+\end{algorithmic}
+
+Normal binary:
+
+\begin{algorithmic}
+
+\IF{$hasattr(type(a), op)$}
+    \STATE $result = getattr(type(a), op)(a, b)$
+    \IF {$result is NotImplemented$}
+        \IF {$hasattr(type(b), rop)$}
+            \STATE $result = getattr(type(b), rop)(b, a)$
+            \IF {$result \equiv NotImplemented$}
+                \STATE $error$
+            \ENDIF
+        \ENDIF
+    \ENDIF
+\ELSIF{$hasattr(type(b), rop)$}
+    \STATE $result = getattr(type(b), rop)(b, a)$
+    \IF {$result \equiv NotImplemented$}
+         \STATE $error$
+    \ENDIF
+\ELSE
+    \STATE $error$	
+\ENDIF
+\RETURN $result$
+\end{algorithmic}
+
+
+Reverse binary:
+\begin{algorithmic}
+\IF{$hasattr(type(b), rop)$}
+    \STATE $result := getattr(type(b), rop)(b, a)$
+    \IF {$result = NotImplemented$}
+         \IF{$hasattr(type(a), op)$}
+             \STATE $result := getattr(type(a), op)(a, b)$
+             \IF {$result = NotImplemented$}
+                 \STATE $error$
+             \ENDIF
+         \ENDIF
+    \ENDIF
+\ELSIF{$hasattr(type(a), op)$}
+    \STATE $result := getattr(type(a), op)(a, b)$
+    \IF {$result = NotImplemented$}
+        \STATE $error$
+    \ENDIF
+\ELSE
+    \STATE $error$
+\ENDIF
+\RETURN $result$
+\end{algorithmic}
+
+\section{Other bytecodes}
+
+\subsection{Iter}
+
+The \verb|iter| bytecode gets an iterator for a sequence, it is defined as follows:
+\begin{verbatim}
+load_special '__iter__'
+call_simple 0
+\end{verbatim}
+
+The fallback function for \verb|load_special '__iter__'| is more complex than most. 
+Rather than just raise an error, the fallback function checks to see if the type of the operand implements the `\_\_getitem\_\_' special method.
+If it does, an iterator than uses indexing is returned, otherwise an error is raised.
+
+\subsection{Next}
+
+The \verb|next| bytecode gets the next value from an iterator. It could be defined as follows:
+\begin{verbatim}
+load_special '__next__'
+call_simple 0
+\end{verbatim}
+
+However, it is not done this way in order to implement generators efficiently. Much in the same way that \verb|call| special cases functions, the \verb|next| bytecode special cases generators:
+\begin{verbatim}
+if (TOS is a generator):
+    set_next_ip
+    push_generator_frame
+    (Set ip to the ip saved in the generator)
+    execute
+else:
+    load_special '__next__'
+    call_simple 0
+\end{verbatim}
+
+\subsection{Contains}
+
+The \verb|contains| bytecode is used to implement the expression \verb|a in b|, it is defined as follows:
+\begin{verbatim}
+load_special '__contains__'
+call_simple 1
+\end{verbatim}
+
+\subsection{Truth}
+
+The \verb|truth| bytecode converts its operand to a boolean, it is  defined as follows:
+\begin{verbatim}
+copy
+isinstance boolean
+branch_on_true done:
+load_special '__bool__'
+call_simple 0
+copy
+isinstance boolean
+branch_on_true done:
+error
+done:
+\end{verbatim}
+
+\section{Calls, Returns and Yields}
+
+In order to implement calls and returns, it is necessary to be able to set the instruction pointer from the instruction pointer stored in the current frame and vice versa. The following two instructions do this:
+\subsubsection*{set\_next\_ip}
+current\_frame$\rightarrow$next\_ip = current\_ip
+\subsubsection*{set\_ip\_from\_frame}
+current\_ip = current\_frame$\rightarrow$next\_ip
+\subsection{Calls}
+
+HotPy provides one bytecode, used by the front-end, for calling; \verb|f_call|. F\_call expects three values on the top of the stack, the callable, a tuple and a dictionary. 
+
+\verb|f_call| is defined as the following sequence: \verb|set_next_ip call|.
+
+The behaviour of the \verb|call| instruction depends on the type of the callable, as follows:
+
+\subsection{call}
+\begin{algorithmic}
+\IF {type(callable) is Python-function}
+    \STATE Create new frame
+    \STATE Fill in frame from tuple, dictionary and defaults of callable; raise exception if mismatch
+    \STATE Push new frame to frame-stack, making it current frame.
+    \STATE \verb|execute|
+\ELSIF {type(callable) is C-function}
+    \STATE Unpack tuple to stack, pushing any required defaults and discard empty dictionary; raise exception if mismatch
+    \STATE \verb|call*| the C-level function of the C-function. 
+    \STATE \verb|execute|
+\ELSE
+    \STATE callable = load\_special(callable, '\_\_call\_\_')
+    \STATE recurse
+\ENDIF
+\end{algorithmic}
+
+Tail calls can be implemented with the sequence \verb|pop_frame call|.
+%Tail calls are important 
+
+\subsection{Return}
+
+The \verb|return| bytecode pops the current frame from the frame stack, then executes from the save instruction pointer:
+\begin{verbatim}
+pop_frame
+set_ip_from_frame
+execute
+\end{verbatim}
+
+\subsection{Yield}
+
+The \verb|yield| bytecode is similar to return, but saves the next instruction pointer first:
+\begin{verbatim}
+set_next_ip
+pop_frame
+set_ip_from_frame
+execute
+\end{verbatim}
+

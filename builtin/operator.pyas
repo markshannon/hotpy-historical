@@ -1,0 +1,6422 @@
+.filename "null"
+def make_binary_operator(name, func_name, rfunc_name, fallback):
+5       LOAD_CONST None
+        RETURN_VALUE
+        
+def make_comparison_operator(name, func_name, rfunc_name, fallback):
+9       LOAD_CONST None
+        RETURN_VALUE
+        
+def make_operator(name, func_name, fallback, arity):
+13      LOAD_CONST None
+        RETURN_VALUE
+        
+def is_(a, b):
+19      LOAD_CONST None
+        RETURN_VALUE
+        
+def is_not(a, b):
+25      LOAD_CONST None
+        RETURN_VALUE
+        
+def unorderable_types(x, y):
+29      LOAD_CONST None
+        RETURN_VALUE
+        
+def no_add(x, y):
+45      LOAD_CONST None
+        RETURN_VALUE
+        
+def add(x, y):
+50      LOAD_FAST x
+        LOAD_FAST y
+        BINARY_ADD
+        RETURN_VALUE
+        
+def iadd(x, y):
+53      LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_ADD
+        STORE_FAST x
+54      LOAD_FAST x
+        RETURN_VALUE
+        
+def no_sub(x, y):
+57      LOAD_CONST None
+        RETURN_VALUE
+        
+def sub(x, y):
+62      LOAD_FAST x
+        LOAD_FAST y
+        BINARY_SUBTRACT
+        RETURN_VALUE
+        
+def isub(x, y):
+65      LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_SUB
+        STORE_FAST x
+66      LOAD_FAST x
+        RETURN_VALUE
+        
+def no_mul(x, y):
+69      LOAD_CONST None
+        RETURN_VALUE
+        
+def mul(x, y):
+74      LOAD_FAST x
+        LOAD_FAST y
+        BINARY_MULTIPLY
+        RETURN_VALUE
+        
+def imul(x, y):
+77      LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_MUL
+        STORE_FAST x
+78      LOAD_FAST x
+        RETURN_VALUE
+        
+def no_pow(x, y):
+81      LOAD_CONST None
+        RETURN_VALUE
+        
+def pow(x, y):
+86      LOAD_FAST x
+        LOAD_FAST y
+        pow
+        RETURN_VALUE
+        
+def ipow(x, y):
+89      LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_POW
+        STORE_FAST x
+90      LOAD_FAST x
+        RETURN_VALUE
+        
+def no_mod(x, y):
+93      LOAD_CONST None
+        RETURN_VALUE
+        
+def mod(x, y):
+98      LOAD_FAST x
+        LOAD_FAST y
+        BINARY_MODULO
+        RETURN_VALUE
+        
+def imod(x, y):
+101     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_MOD
+        STORE_FAST x
+102     LOAD_FAST x
+        RETURN_VALUE
+        
+def no_floordiv(x, y):
+105     LOAD_CONST None
+        RETURN_VALUE
+        
+def floordiv(x, y):
+110     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_FLOOR_DIVIDE
+        RETURN_VALUE
+        
+def ifloordiv(x, y):
+113     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_FLOORDIV
+        STORE_FAST x
+114     LOAD_FAST x
+        RETURN_VALUE
+        
+def no_truediv(x, y):
+117     LOAD_CONST None
+        RETURN_VALUE
+        
+def truediv(x, y):
+122     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_TRUE_DIVIDE
+        RETURN_VALUE
+        
+def itruediv(x, y):
+125     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_TRUEDIV
+        STORE_FAST x
+126     LOAD_FAST x
+        RETURN_VALUE
+        
+def no_and_(x, y):
+129     LOAD_CONST None
+        RETURN_VALUE
+        
+def and_(x, y):
+134     LOAD_FAST x
+        LOAD_FAST y
+        BINARY_AND
+        RETURN_VALUE
+        
+def iand(x, y):
+137     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_AND
+        STORE_FAST x
+138     LOAD_FAST x
+        RETURN_VALUE
+        
+def no_or_(x, y):
+141     LOAD_CONST None
+        RETURN_VALUE
+        
+def or_(x, y):
+146     LOAD_FAST x
+        LOAD_FAST y
+        BINARY_OR
+        RETURN_VALUE
+        
+def ior(x, y):
+149     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_OR
+        STORE_FAST x
+150     LOAD_FAST x
+        RETURN_VALUE
+        
+def no_xor(x, y):
+153     LOAD_CONST None
+        RETURN_VALUE
+        
+def xor(x, y):
+158     LOAD_FAST x
+        LOAD_FAST y
+        BINARY_XOR
+        RETURN_VALUE
+        
+def ixor(x, y):
+161     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_XOR
+        STORE_FAST x
+162     LOAD_FAST x
+        RETURN_VALUE
+        
+def no_lshift(x, y):
+165     LOAD_CONST None
+        RETURN_VALUE
+        
+def lshift(x, y):
+170     LOAD_FAST x
+        LOAD_FAST y
+        BINARY_LSHIFT
+        RETURN_VALUE
+        
+def ilshift(x, y):
+173     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_LSHIFT
+        STORE_FAST x
+174     LOAD_FAST x
+        RETURN_VALUE
+        
+def no_rshift(x, y):
+177     LOAD_CONST None
+        RETURN_VALUE
+        
+def rshift(x, y):
+182     LOAD_FAST x
+        LOAD_FAST y
+        BINARY_RSHIFT
+        RETURN_VALUE
+        
+def irshift(x, y):
+185     LOAD_FAST x
+        LOAD_FAST y
+        INPLACE_RSHIFT
+        STORE_FAST x
+186     LOAD_FAST x
+        RETURN_VALUE
+        
+def no_getitem(x, y):
+188     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "'%s' object is unsubscriptable"
+        LOAD_FAST x
+        TYPE
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def no_setitem(x, y, z):
+194     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "'%s' object does not support item assignment"
+        LOAD_FAST x
+        TYPE
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def add_binary_behaviour(self, f, t):
+201     LOAD_CONST None
+        RETURN_VALUE
+        
+def behaviour(op):
+207     LOAD_FAST op
+        LOAD_ATTR addbehaviour
+        RETURN_VALUE
+        
+def eq_int_int(left, right):
+215     LOAD_CONST None
+        RETURN_VALUE
+        
+def eq_int_float(left, right):
+222     LOAD_CONST None
+        RETURN_VALUE
+        
+def eq_float_int(left, right):
+229     LOAD_CONST None
+        RETURN_VALUE
+        
+def eq_float_float(left, right):
+236     LOAD_CONST None
+        RETURN_VALUE
+        
+def eq_str_str(left, right):
+243     LOAD_CONST None
+        RETURN_VALUE
+        
+def ne_int_int(left, right):
+250     LOAD_CONST None
+        RETURN_VALUE
+        
+def ne_int_float(left, right):
+257     LOAD_CONST None
+        RETURN_VALUE
+        
+def ne_float_int(left, right):
+264     LOAD_CONST None
+        RETURN_VALUE
+        
+def ne_float_float(left, right):
+271     LOAD_CONST None
+        RETURN_VALUE
+        
+def ne_str_str(left, right):
+278     LOAD_CONST None
+        RETURN_VALUE
+        
+def lt_int_int(left, right):
+285     LOAD_CONST None
+        RETURN_VALUE
+        
+def lt_int_float(left, right):
+292     LOAD_CONST None
+        RETURN_VALUE
+        
+def lt_float_int(left, right):
+299     LOAD_CONST None
+        RETURN_VALUE
+        
+def lt_float_float(left, right):
+306     LOAD_CONST None
+        RETURN_VALUE
+        
+def lt_str_str(left, right):
+313     LOAD_CONST None
+        RETURN_VALUE
+        
+def gt_int_int(left, right):
+320     LOAD_CONST None
+        RETURN_VALUE
+        
+def gt_int_float(left, right):
+327     LOAD_CONST None
+        RETURN_VALUE
+        
+def gt_float_int(left, right):
+334     LOAD_CONST None
+        RETURN_VALUE
+        
+def gt_float_float(left, right):
+341     LOAD_CONST None
+        RETURN_VALUE
+        
+def gt_str_str(left, right):
+348     LOAD_CONST None
+        RETURN_VALUE
+        
+def le_int_int(left, right):
+355     LOAD_CONST None
+        RETURN_VALUE
+        
+def le_int_float(left, right):
+362     LOAD_CONST None
+        RETURN_VALUE
+        
+def le_float_int(left, right):
+369     LOAD_CONST None
+        RETURN_VALUE
+        
+def le_float_float(left, right):
+376     LOAD_CONST None
+        RETURN_VALUE
+        
+def le_str_str(left, right):
+383     LOAD_CONST None
+        RETURN_VALUE
+        
+def ge_int_int(left, right):
+390     LOAD_CONST None
+        RETURN_VALUE
+        
+def ge_int_float(left, right):
+397     LOAD_CONST None
+        RETURN_VALUE
+        
+def ge_float_int(left, right):
+404     LOAD_CONST None
+        RETURN_VALUE
+        
+def ge_float_float(left, right):
+411     LOAD_CONST None
+        RETURN_VALUE
+        
+def ge_str_str(left, right):
+418     LOAD_CONST None
+        RETURN_VALUE
+        
+def tracing_function(op, f):
+423     LOAD_CONST None
+        RETURN_VALUE
+        
+def dict_contains(d, i):
+431     LOAD_CONST None
+        RETURN_VALUE
+        
+def dict_proxy_contains(d, o):
+436     LOAD_CONST None
+        RETURN_VALUE
+        
+def no_delitem(x, y, z):
+442     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "'%s' object does not support item deletion"
+        LOAD_FAST x
+        TYPE
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def delitem_list(self, i):
+451     LOAD_CONST None
+        RETURN_VALUE
+        
+def getitem_str(self, other):
+458     LOAD_CONST None
+        RETURN_VALUE
+        
+def iadd_list_list(self, other):
+464     LOAD_CONST None
+        RETURN_VALUE
+        
+def iadd_list(self, other):
+468     LOAD_GLOBAL type
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        LOAD_GLOBAL list
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l0
+469     LOAD_GLOBAL iadd_list_list
+        LOAD_FAST self
+        LOAD_FAST other
+        CALL_FUNCTION 2
+        DROP
+        JUMP_FORWARD l1
+l0:
+471     LOAD_FAST other
+        GET_ITER
+        FOR_ITER l3
+        STORE_FAST x
+472     LOAD_FAST self
+        LOAD_ATTR append
+        LOAD_FAST x
+        CALL_FUNCTION 1
+        DROP
+        JUMP_ABSOLUTE l2
+l3:
+l1:
+473     LOAD_FAST self
+        RETURN_VALUE
+        
+def tuple_add(self, other):
+479     LOAD_CONST None
+        RETURN_VALUE
+        
+def mul_list_int(self, n):
+489     LOAD_CONST None
+        RETURN_VALUE
+        
+def mul_str_int(self, n):
+495     LOAD_CONST None
+        RETURN_VALUE
+        
+def add_list_list(self, other):
+501     LOAD_CONST None
+        RETURN_VALUE
+        
+def getitem_dict(self, i):
+507     LOAD_CONST None
+        RETURN_VALUE
+        
+def setitem_dict(self, key, value):
+514     LOAD_CONST None
+        RETURN_VALUE
+        
+def getitem_dict_proxy(self, key):
+521     LOAD_CONST None
+        RETURN_VALUE
+        
+def setitem_dict_proxy(self, key, value):
+527     LOAD_CONST None
+        RETURN_VALUE
+        
+def NoneType_bool(x):
+532     LOAD_CONST False
+        RETURN_VALUE
+        
+def seq_bool(x):
+544     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_bool(l):
+554     LOAD_CONST None
+        RETURN_VALUE
+        
+def add_str_str(self, other):
+561     LOAD_CONST None
+        RETURN_VALUE
+        
+def tuple_getitem_int(self, index):
+567     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_getitem_int(self, index):
+572     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_getitem_slice(self, index):
+577     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_left_slice(self, index):
+582     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_right_slice(self, index):
+587     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_reversed(self):
+592     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_copy(self):
+597     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_getitem(self, index):
+604     LOAD_CONST None
+        RETURN_VALUE
+        
+def tuple_getitem(self, index):
+609     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_getitem(self, index):
+617     LOAD_FAST index
+        TYPE
+        LOAD_GLOBAL int
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l4
+618     LOAD_GLOBAL list_getitem_int
+        LOAD_FAST self
+        LOAD_FAST index
+        CALL_FUNCTION 2
+        RETURN_VALUE
+        JUMP_FORWARD l5
+l4:
+619     LOAD_FAST index
+        TYPE
+        LOAD_GLOBAL slice
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l6
+620     LOAD_FAST index
+        LOAD_ATTR step
+        LOAD_CONST None
+        COMPARE_OP is
+        JUMP_IF_TRUE_OR_POP l8
+        LOAD_FAST index
+        LOAD_ATTR step
+        LOAD_CONSTANT 1
+        COMPARE_OP eq
+l8:
+        POP_JUMP_IF_FALSE l7
+621     LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l9
+622     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l10
+623     LOAD_GLOBAL list_copy
+        LOAD_FAST self
+        CALL_FUNCTION 1
+        RETURN_VALUE
+        JUMP_FORWARD l11
+l10:
+625     LOAD_GLOBAL list_left_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR stop
+        CALL_FUNCTION 2
+        RETURN_VALUE
+l11:
+        JUMP_FORWARD l12
+l9:
+626     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l13
+627     LOAD_GLOBAL list_right_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR start
+        CALL_FUNCTION 2
+        RETURN_VALUE
+l13:
+l12:
+        JUMP_FORWARD l14
+l7:
+628     LOAD_FAST index
+        LOAD_ATTR step
+        LOAD_CONSTANT 1
+        neg
+        COMPARE_OP eq
+        POP_JUMP_IF_FALSE l15
+629     LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l16
+630     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l17
+631     LOAD_GLOBAL list_reversed
+        LOAD_FAST self
+        CALL_FUNCTION 1
+        RETURN_VALUE
+        JUMP_FORWARD l18
+l17:
+633     LOAD_GLOBAL list_right_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_CONSTANT 1
+        BINARY_ADD
+        CALL_FUNCTION 2
+        STORE_FAST l
+634     LOAD_GLOBAL list_reverse
+        LOAD_FAST l
+        CALL_FUNCTION 1
+        DROP
+635     LOAD_FAST l
+        RETURN_VALUE
+l18:
+        JUMP_FORWARD l19
+l16:
+636     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l20
+637     LOAD_GLOBAL list_left_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_CONSTANT 1
+        BINARY_ADD
+        CALL_FUNCTION 2
+        STORE_FAST l
+638     LOAD_GLOBAL list_reverse
+        LOAD_FAST l
+        CALL_FUNCTION 1
+        DROP
+639     LOAD_FAST l
+        RETURN_VALUE
+l20:
+l19:
+l15:
+l14:
+640     LOAD_GLOBAL list_getitem_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        CALL_FUNCTION 2
+        RETURN_VALUE
+        JUMP_FORWARD l21
+l6:
+641     LOAD_FAST index
+        HAS_SPECIAL __index__
+        POP_JUMP_IF_FALSE l22
+642     LOAD_FAST index
+        LOAD_SPECIAL __index__
+        CALL_FUNCTION 0
+        STORE_FAST res
+643     LOAD_FAST res
+        TYPE
+        LOAD_GLOBAL int
+        COMPARE_OP subtype
+        POP_JUMP_IF_TRUE l23
+645     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "__index__ returned non-int type %s)"
+        LOAD_GLOBAL type
+        LOAD_FAST res
+        CALL_FUNCTION 1
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1l23:
+646     LOAD_GLOBAL list_getitem_int
+        LOAD_FAST self
+        LOAD_FAST res
+        CALL_FUNCTION 2
+        RETURN_VALUE
+        JUMP_FORWARD l24
+l22:
+649     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "list indices must be integers, not %s"
+        LOAD_FAST index
+        TYPE
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1l5:
+l21:
+l24:
+        LOAD_CONST None
+        RETURN_VALUE
+        
+def tuple_getitem(self, index):
+655     LOAD_FAST index
+        TYPE
+        LOAD_GLOBAL int
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l25
+656     LOAD_GLOBAL tuple_getitem_int
+        LOAD_FAST self
+        LOAD_FAST index
+        CALL_FUNCTION 2
+        RETURN_VALUE
+        JUMP_FORWARD l26
+l25:
+657     LOAD_FAST index
+        TYPE
+        LOAD_GLOBAL slice
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l27
+658     LOAD_FAST index
+        LOAD_ATTR step
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l28
+659     LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l29
+660     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l30
+661     LOAD_FAST self
+        RETURN_VALUE
+        JUMP_FORWARD l31
+l30:
+663     LOAD_GLOBAL tuple_left_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR stop
+        CALL_FUNCTION 2
+        RETURN_VALUE
+l31:
+        JUMP_FORWARD l32
+l29:
+664     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l33
+665     LOAD_GLOBAL tuple_right_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR start
+        CALL_FUNCTION 2
+        RETURN_VALUE
+l33:
+l32:
+        JUMP_FORWARD l34
+l28:
+666     LOAD_FAST index
+        LOAD_ATTR step
+        LOAD_CONSTANT 1
+        neg
+        COMPARE_OP eq
+        POP_JUMP_IF_FALSE l35
+667     LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l36
+668     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l37
+669     LOAD_GLOBAL tuple_reversed
+        LOAD_FAST self
+        CALL_FUNCTION 1
+        RETURN_VALUE
+        JUMP_FORWARD l38
+l37:
+671     LOAD_GLOBAL tuple_right_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_CONSTANT 1
+        BINARY_ADD
+        CALL_FUNCTION 2
+        STORE_FAST l
+672     LOAD_GLOBAL tuple_reverse
+        LOAD_FAST l
+        CALL_FUNCTION 1
+        DROP
+673     LOAD_FAST l
+        RETURN_VALUE
+l38:
+        JUMP_FORWARD l39
+l36:
+674     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l40
+675     LOAD_GLOBAL tuple_left_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_CONSTANT 1
+        BINARY_ADD
+        CALL_FUNCTION 2
+        STORE_FAST l
+676     LOAD_GLOBAL tuple_reverse
+        LOAD_FAST l
+        CALL_FUNCTION 1
+        DROP
+677     LOAD_FAST l
+        RETURN_VALUE
+l40:
+l39:
+l35:
+l34:
+678     LOAD_GLOBAL tuple_getitem_slice
+        LOAD_FAST self
+        LOAD_FAST index
+        CALL_FUNCTION 2
+        RETURN_VALUE
+        JUMP_FORWARD l41
+l27:
+680     LOAD_GLOBAL tuple_getitem_index
+        LOAD_FAST self
+        LOAD_FAST index
+        CALL_FUNCTION 2
+        RETURN_VALUE
+l26:
+l41:
+        LOAD_CONST None
+        RETURN_VALUE
+        
+def list_update(self, value):
+687     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_setitem_slice_list_(self, index, value):
+691     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_left_assign(self, index, value):
+696     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_right_assign(self, index, value):
+701     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_setitem_int(self, index, value):
+706     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_setitem_slice_list(self, index, value):
+711     LOAD_FAST index
+        LOAD_ATTR step
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l42
+712     LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l43
+713     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l44
+714     LOAD_GLOBAL list_update
+        LOAD_FAST self
+        LOAD_FAST value
+        CALL_FUNCTION 2
+        RETURN_VALUE
+        JUMP_FORWARD l45
+l44:
+716     LOAD_GLOBAL list_left_assign
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_FAST value
+        CALL_FUNCTION 3
+        RETURN_VALUE
+l45:
+        JUMP_FORWARD l46
+l43:
+717     LOAD_FAST index
+        LOAD_ATTR stop
+        LOAD_CONST None
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l47
+718     LOAD_GLOBAL list_right_assign
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_ATTR start
+        LOAD_FAST value
+        CALL_FUNCTION 3
+        RETURN_VALUE
+l47:
+l46:
+l42:
+719     LOAD_GLOBAL list_setitem_slice_list_
+        LOAD_FAST self
+        LOAD_FAST index
+        LOAD_FAST value
+        CALL_FUNCTION 3
+        RETURN_VALUE
+        
+def list_setitem_slice(self, index, value):
+723     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_setitem(self, index, value):
+730     LOAD_CONST None
+        RETURN_VALUE
+        
+def list_setitem(self, item, value):
+738     LOAD_FAST item
+        TYPE
+        LOAD_GLOBAL int
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l48
+739     LOAD_GLOBAL list_setitem_int
+        LOAD_FAST self
+        LOAD_FAST item
+        LOAD_FAST value
+        CALL_FUNCTION 3
+        RETURN_VALUE
+        JUMP_FORWARD l49
+l48:
+740     LOAD_FAST item
+        TYPE
+        LOAD_GLOBAL slice
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l50
+741     LOAD_GLOBAL type
+        LOAD_FAST value
+        CALL_FUNCTION 1
+        LOAD_GLOBAL list
+        COMPARE_OP is
+        POP_JUMP_IF_FALSE l51
+742     LOAD_GLOBAL list_setitem_slice_list
+        LOAD_FAST self
+        LOAD_FAST item
+        LOAD_FAST value
+        CALL_FUNCTION 3
+        RETURN_VALUE
+l51:
+743     LOAD_GLOBAL list_setitem_slice
+        LOAD_FAST self
+        LOAD_FAST item
+        LOAD_FAST value
+        CALL_FUNCTION 3
+        RETURN_VALUE
+        JUMP_FORWARD l52
+l50:
+745     LOAD_GLOBAL hasattr
+        LOAD_FAST item
+        TYPE
+        LOAD_CONSTANT "__index__"
+        CALL_FUNCTION 2
+        POP_JUMP_IF_FALSE l53
+746     LOAD_FAST item
+        LOAD_SPECIAL __index__
+        CALL_FUNCTION 0
+        STORE_FAST item
+747     LOAD_FAST item
+        TYPE
+        LOAD_GLOBAL int
+        COMPARE_OP subtype
+        POP_JUMP_IF_TRUE l54
+749     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "__index__ returned non-int type %s)"
+        LOAD_GLOBAL type
+        LOAD_FAST item
+        CALL_FUNCTION 1
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1l54:
+750     LOAD_GLOBAL list_setitem_int
+        LOAD_FAST self
+        LOAD_FAST item
+        LOAD_FAST value
+        CALL_FUNCTION 3
+        RETURN_VALUE
+        JUMP_FORWARD l55
+l53:
+753     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "list indices must be integers, not %s"
+        LOAD_GLOBAL type
+        LOAD_FAST item
+        CALL_FUNCTION 1
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1l55:
+l49:
+l52:
+        LOAD_CONST None
+        RETURN_VALUE
+        
+def mod_str_tuple(s, t):
+760     LOAD_CONST None
+        RETURN_VALUE
+        
+def mod(s, right):
+765     LOAD_FAST s
+        LOAD_FAST right
+        BUILD_TUPLE 1
+        BINARY_MODULO
+        RETURN_VALUE
+        
+def mod(s, b):
+769     LOAD_FAST s
+        LOAD_FAST b
+        BUILD_TUPLE 1
+        BINARY_MODULO
+        RETURN_VALUE
+        
+def mod(s, i):
+773     LOAD_FAST s
+        LOAD_FAST i
+        BUILD_TUPLE 1
+        BINARY_MODULO
+        RETURN_VALUE
+        
+def mod(s, f):
+777     LOAD_FAST s
+        LOAD_FAST f
+        BUILD_TUPLE 1
+        BINARY_MODULO
+        RETURN_VALUE
+        
+def not_(x):
+780     LOAD_FAST x
+UNARY_NOT        RETURN_VALUE
+        
+def make_unary_operator(name, func_name, fallback):
+784     LOAD_CONST None
+        RETURN_VALUE
+        
+def no_pos(x):
+787     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "bad operand type for unary +: '%s'"
+        LOAD_FAST x
+        TYPE
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_pos(x):
+794     LOAD_FAST x
+        HAS_SPECIAL __pos__
+        POP_JUMP_IF_FALSE l56
+795     LOAD_FAST x
+        LOAD_SPECIAL __pos__
+        CALL_FUNCTION 0
+        RETURN_VALUE
+        JUMP_FORWARD l57
+l56:
+797     LOAD_GLOBAL no_pos
+        LOAD_FAST x
+        CALL_FUNCTION 1
+        DROP
+l57:
+        LOAD_CONST None
+        RETURN_VALUE
+        
+def pos(x):
+802     LOAD_FAST x
+        UNARY_POSITIVE
+        RETURN_VALUE
+        
+def no_neg(x):
+805     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "bad operand type for unary -: '%s'"
+        LOAD_FAST x
+        TYPE
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_neg(x):
+812     LOAD_FAST x
+        HAS_SPECIAL __neg__
+        POP_JUMP_IF_FALSE l58
+813     LOAD_FAST x
+        LOAD_SPECIAL __neg__
+        CALL_FUNCTION 0
+        RETURN_VALUE
+        JUMP_FORWARD l59
+l58:
+815     LOAD_GLOBAL no_neg
+        LOAD_FAST x
+        CALL_FUNCTION 1
+        DROP
+l59:
+        LOAD_CONST None
+        RETURN_VALUE
+        
+def neg(x):
+820     LOAD_FAST x
+        neg
+        RETURN_VALUE
+        
+def no_invert(x):
+823     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "bad operand type for unary ~: '%s'"
+        LOAD_FAST x
+        TYPE
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_invert(x):
+830     LOAD_FAST x
+        HAS_SPECIAL __invert__
+        POP_JUMP_IF_FALSE l60
+831     LOAD_FAST x
+        LOAD_SPECIAL __invert__
+        CALL_FUNCTION 0
+        RETURN_VALUE
+        JUMP_FORWARD l61
+l60:
+833     LOAD_GLOBAL no_invert
+        LOAD_FAST x
+        CALL_FUNCTION 1
+        DROP
+l61:
+        LOAD_CONST None
+        RETURN_VALUE
+        
+def invert(x):
+838     LOAD_FAST x
+        UNARY_INVERT
+        RETURN_VALUE
+        
+def contains(seq, item):
+843     LOAD_FAST item
+        LOAD_FAST seq
+        COMPARE_OP in
+        RETURN_VALUE
+        
+def list_extend(self, other):
+847     LOAD_FAST other
+        GET_ITER
+        FOR_ITER l63
+        STORE_FAST i
+848     LOAD_FAST self
+        LOAD_ATTR append
+        LOAD_FAST i
+        CALL_FUNCTION 1
+        DROP
+        JUMP_ABSOLUTE l62
+l63:
+849     LOAD_FAST self
+        RETURN_VALUE
+        
+def int_index(self):
+853     LOAD_FAST self
+        RETURN_VALUE
+        
+def index(item):
+857     LOAD_FAST item
+        LOAD_SPECIAL __index__
+        CALL_FUNCTION 0
+        STORE_FAST res
+858     LOAD_FAST res
+        TYPE
+        LOAD_GLOBAL int
+        COMPARE_OP subtype
+        POP_JUMP_IF_TRUE l64
+860     LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "__index__ returned non-int type %s)"
+        LOAD_GLOBAL type
+        LOAD_FAST res
+        CALL_FUNCTION 1
+        LOAD_ATTR __name__
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1l64:
+861     LOAD_FAST res
+        RETURN_VALUE
+        
+def hex(i):
+864     LOAD_GLOBAL index
+        LOAD_FAST i
+        CALL_FUNCTION 1
+        LOAD_ATTR _format
+        LOAD_CONSTANT 16
+        CALL_FUNCTION 1
+        RETURN_VALUE
+        
+def oct(i):
+867     LOAD_GLOBAL index
+        LOAD_FAST i
+        CALL_FUNCTION 1
+        LOAD_ATTR _format
+        LOAD_CONSTANT 8
+        CALL_FUNCTION 1
+        RETURN_VALUE
+        
+def bin(i):
+870     LOAD_GLOBAL index
+        LOAD_FAST i
+        CALL_FUNCTION 1
+        LOAD_ATTR _format
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 1
+        RETURN_VALUE
+        
+def add_int_int(left, right):
+879     LOAD_CONST None
+        RETURN_VALUE
+        
+def add_int_float(left, right):
+886     LOAD_CONST None
+        RETURN_VALUE
+        
+def add_float_int(left, right):
+893     LOAD_CONST None
+        RETURN_VALUE
+        
+def add_float_float(left, right):
+900     LOAD_CONST None
+        RETURN_VALUE
+        
+def sub_int_int(left, right):
+907     LOAD_CONST None
+        RETURN_VALUE
+        
+def sub_int_float(left, right):
+914     LOAD_CONST None
+        RETURN_VALUE
+        
+def sub_float_int(left, right):
+921     LOAD_CONST None
+        RETURN_VALUE
+        
+def sub_float_float(left, right):
+928     LOAD_CONST None
+        RETURN_VALUE
+        
+def mul_int_int(left, right):
+935     LOAD_CONST None
+        RETURN_VALUE
+        
+def mul_int_float(left, right):
+942     LOAD_CONST None
+        RETURN_VALUE
+        
+def mul_float_int(left, right):
+949     LOAD_CONST None
+        RETURN_VALUE
+        
+def mul_float_float(left, right):
+956     LOAD_CONST None
+        RETURN_VALUE
+        
+def pow_int_int(left, right):
+962     LOAD_CONST None
+        RETURN_VALUE
+        
+def pow_int_float(left, right):
+968     LOAD_CONST None
+        RETURN_VALUE
+        
+def pow_float_int(left, right):
+974     LOAD_CONST None
+        RETURN_VALUE
+        
+def pow_float_float(left, right):
+980     LOAD_CONST None
+        RETURN_VALUE
+        
+def mod_int_int(left, right):
+986     LOAD_CONST None
+        RETURN_VALUE
+        
+def mod_int_float(left, right):
+992     LOAD_CONST None
+        RETURN_VALUE
+        
+def mod_float_int(left, right):
+998     LOAD_CONST None
+        RETURN_VALUE
+        
+def mod_float_float(left, right):
+1004    LOAD_CONST None
+        RETURN_VALUE
+        
+def floordiv_int_int(left, right):
+1010    LOAD_CONST None
+        RETURN_VALUE
+        
+def floordiv_int_float(left, right):
+1016    LOAD_CONST None
+        RETURN_VALUE
+        
+def floordiv_float_int(left, right):
+1022    LOAD_CONST None
+        RETURN_VALUE
+        
+def floordiv_float_float(left, right):
+1028    LOAD_CONST None
+        RETURN_VALUE
+        
+def truediv_int_int(left, right):
+1034    LOAD_CONST None
+        RETURN_VALUE
+        
+def truediv_int_float(left, right):
+1040    LOAD_CONST None
+        RETURN_VALUE
+        
+def truediv_float_int(left, right):
+1046    LOAD_CONST None
+        RETURN_VALUE
+        
+def truediv_float_float(left, right):
+1052    LOAD_CONST None
+        RETURN_VALUE
+        
+def and__bool_bool(left, right):
+1059    LOAD_CONST None
+        RETURN_VALUE
+        
+def and__int_int(left, right):
+1066    LOAD_CONST None
+        RETURN_VALUE
+        
+def or__bool_bool(left, right):
+1073    LOAD_CONST None
+        RETURN_VALUE
+        
+def or__int_int(left, right):
+1080    LOAD_CONST None
+        RETURN_VALUE
+        
+def xor_bool_bool(left, right):
+1087    LOAD_CONST None
+        RETURN_VALUE
+        
+def xor_int_int(left, right):
+1094    LOAD_CONST None
+        RETURN_VALUE
+        
+def lshift_int_int(left, right):
+1100    LOAD_CONST None
+        RETURN_VALUE
+        
+def rshift_int_int(left, right):
+1106    LOAD_CONST None
+        RETURN_VALUE
+        
+def invert_int(left):
+1112    LOAD_CONST None
+        RETURN_VALUE
+        
+def invert_bool(left):
+1119    LOAD_CONST None
+        RETURN_VALUE
+        
+def pos_int(left):
+1126    LOAD_CONST None
+        RETURN_VALUE
+        
+def neg_int(left):
+1133    LOAD_CONST None
+        RETURN_VALUE
+        
+def pos_float(left):
+1140    LOAD_CONST None
+        RETURN_VALUE
+        
+def neg_float(left):
+1147    LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_add(self, other):
+1154    LOAD_FAST self
+        HAS_SPECIAL __iadd__
+        POP_JUMP_IF_FALSE l65
+1155    LOAD_FAST self
+        LOAD_SPECIAL __iadd__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1156    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l66
+1157    LOAD_FAST result
+        RETURN_VALUE
+l66:
+l65:
+1158    LOAD_FAST self
+        LOAD_FAST other
+        BINARY_ADD
+        RETURN_VALUE
+        
+def surrogate_add(op1, op2):
+1167    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1168    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1169    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l67
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l67
+1170    LOAD_FAST op2
+        HAS_SPECIAL __radd__
+        POP_JUMP_IF_FALSE l68
+1171    LOAD_FAST op2
+        LOAD_SPECIAL __radd__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1172    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l69
+1173    LOAD_FAST result
+        RETURN_VALUE
+l69:
+l68:
+1174    LOAD_FAST op1
+        HAS_SPECIAL __add__
+        POP_JUMP_IF_FALSE l70
+1175    LOAD_FAST op1
+        LOAD_SPECIAL __add__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1176    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l71
+1177    LOAD_FAST result
+        RETURN_VALUE
+l71:
+l70:
+        JUMP_FORWARD l72
+l67:
+1179    LOAD_FAST op1
+        HAS_SPECIAL __add__
+        POP_JUMP_IF_FALSE l73
+1180    LOAD_FAST op1
+        LOAD_SPECIAL __add__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1181    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l74
+1182    LOAD_FAST result
+        RETURN_VALUE
+l74:
+l73:
+1183    LOAD_FAST op2
+        HAS_SPECIAL __radd__
+        POP_JUMP_IF_FALSE l75
+1184    LOAD_FAST op2
+        LOAD_SPECIAL __radd__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1185    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l76
+1186    LOAD_FAST result
+        RETURN_VALUE
+l76:
+l75:
+l72:
+1188    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for +: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_sub(self, other):
+1198    LOAD_FAST self
+        HAS_SPECIAL __isub__
+        POP_JUMP_IF_FALSE l77
+1199    LOAD_FAST self
+        LOAD_SPECIAL __isub__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1200    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l78
+1201    LOAD_FAST result
+        RETURN_VALUE
+l78:
+l77:
+1202    LOAD_FAST self
+        LOAD_FAST other
+        BINARY_SUBTRACT
+        RETURN_VALUE
+        
+def surrogate_sub(op1, op2):
+1211    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1212    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1213    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l79
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l79
+1214    LOAD_FAST op2
+        HAS_SPECIAL __rsub__
+        POP_JUMP_IF_FALSE l80
+1215    LOAD_FAST op2
+        LOAD_SPECIAL __rsub__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1216    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l81
+1217    LOAD_FAST result
+        RETURN_VALUE
+l81:
+l80:
+1218    LOAD_FAST op1
+        HAS_SPECIAL __sub__
+        POP_JUMP_IF_FALSE l82
+1219    LOAD_FAST op1
+        LOAD_SPECIAL __sub__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1220    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l83
+1221    LOAD_FAST result
+        RETURN_VALUE
+l83:
+l82:
+        JUMP_FORWARD l84
+l79:
+1223    LOAD_FAST op1
+        HAS_SPECIAL __sub__
+        POP_JUMP_IF_FALSE l85
+1224    LOAD_FAST op1
+        LOAD_SPECIAL __sub__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1225    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l86
+1226    LOAD_FAST result
+        RETURN_VALUE
+l86:
+l85:
+1227    LOAD_FAST op2
+        HAS_SPECIAL __rsub__
+        POP_JUMP_IF_FALSE l87
+1228    LOAD_FAST op2
+        LOAD_SPECIAL __rsub__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1229    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l88
+1230    LOAD_FAST result
+        RETURN_VALUE
+l88:
+l87:
+l84:
+1232    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for -: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_mod(self, other):
+1242    LOAD_FAST self
+        HAS_SPECIAL __imod__
+        POP_JUMP_IF_FALSE l89
+1243    LOAD_FAST self
+        LOAD_SPECIAL __imod__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1244    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l90
+1245    LOAD_FAST result
+        RETURN_VALUE
+l90:
+l89:
+1246    LOAD_FAST self
+        LOAD_FAST other
+        BINARY_MODULO
+        RETURN_VALUE
+        
+def surrogate_mod(op1, op2):
+1255    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1256    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1257    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l91
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l91
+1258    LOAD_FAST op2
+        HAS_SPECIAL __rmod__
+        POP_JUMP_IF_FALSE l92
+1259    LOAD_FAST op2
+        LOAD_SPECIAL __rmod__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1260    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l93
+1261    LOAD_FAST result
+        RETURN_VALUE
+l93:
+l92:
+1262    LOAD_FAST op1
+        HAS_SPECIAL __mod__
+        POP_JUMP_IF_FALSE l94
+1263    LOAD_FAST op1
+        LOAD_SPECIAL __mod__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1264    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l95
+1265    LOAD_FAST result
+        RETURN_VALUE
+l95:
+l94:
+        JUMP_FORWARD l96
+l91:
+1267    LOAD_FAST op1
+        HAS_SPECIAL __mod__
+        POP_JUMP_IF_FALSE l97
+1268    LOAD_FAST op1
+        LOAD_SPECIAL __mod__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1269    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l98
+1270    LOAD_FAST result
+        RETURN_VALUE
+l98:
+l97:
+1271    LOAD_FAST op2
+        HAS_SPECIAL __rmod__
+        POP_JUMP_IF_FALSE l99
+1272    LOAD_FAST op2
+        LOAD_SPECIAL __rmod__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1273    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l100
+1274    LOAD_FAST result
+        RETURN_VALUE
+l100:
+l99:
+l96:
+1276    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for %%: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_mul(self, other):
+1286    LOAD_FAST self
+        HAS_SPECIAL __imul__
+        POP_JUMP_IF_FALSE l101
+1287    LOAD_FAST self
+        LOAD_SPECIAL __imul__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1288    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l102
+1289    LOAD_FAST result
+        RETURN_VALUE
+l102:
+l101:
+1290    LOAD_FAST self
+        LOAD_FAST other
+        BINARY_MULTIPLY
+        RETURN_VALUE
+        
+def surrogate_mul(op1, op2):
+1299    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1300    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1301    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l103
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l103
+1302    LOAD_FAST op2
+        HAS_SPECIAL __rmul__
+        POP_JUMP_IF_FALSE l104
+1303    LOAD_FAST op2
+        LOAD_SPECIAL __rmul__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1304    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l105
+1305    LOAD_FAST result
+        RETURN_VALUE
+l105:
+l104:
+1306    LOAD_FAST op1
+        HAS_SPECIAL __mul__
+        POP_JUMP_IF_FALSE l106
+1307    LOAD_FAST op1
+        LOAD_SPECIAL __mul__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1308    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l107
+1309    LOAD_FAST result
+        RETURN_VALUE
+l107:
+l106:
+        JUMP_FORWARD l108
+l103:
+1311    LOAD_FAST op1
+        HAS_SPECIAL __mul__
+        POP_JUMP_IF_FALSE l109
+1312    LOAD_FAST op1
+        LOAD_SPECIAL __mul__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1313    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l110
+1314    LOAD_FAST result
+        RETURN_VALUE
+l110:
+l109:
+1315    LOAD_FAST op2
+        HAS_SPECIAL __rmul__
+        POP_JUMP_IF_FALSE l111
+1316    LOAD_FAST op2
+        LOAD_SPECIAL __rmul__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1317    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l112
+1318    LOAD_FAST result
+        RETURN_VALUE
+l112:
+l111:
+l108:
+1320    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for *: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_truediv(self, other):
+1330    LOAD_FAST self
+        HAS_SPECIAL __itruediv__
+        POP_JUMP_IF_FALSE l113
+1331    LOAD_FAST self
+        LOAD_SPECIAL __itruediv__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1332    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l114
+1333    LOAD_FAST result
+        RETURN_VALUE
+l114:
+l113:
+1334    LOAD_FAST self
+        LOAD_FAST other
+        INPLACE_TRUE_DIVIDE
+        RETURN_VALUE
+        
+def surrogate_truediv(op1, op2):
+1343    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1344    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1345    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l115
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l115
+1346    LOAD_FAST op2
+        HAS_SPECIAL __rtruediv__
+        POP_JUMP_IF_FALSE l116
+1347    LOAD_FAST op2
+        LOAD_SPECIAL __rtruediv__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1348    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l117
+1349    LOAD_FAST result
+        RETURN_VALUE
+l117:
+l116:
+1350    LOAD_FAST op1
+        HAS_SPECIAL __truediv__
+        POP_JUMP_IF_FALSE l118
+1351    LOAD_FAST op1
+        LOAD_SPECIAL __truediv__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1352    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l119
+1353    LOAD_FAST result
+        RETURN_VALUE
+l119:
+l118:
+        JUMP_FORWARD l120
+l115:
+1355    LOAD_FAST op1
+        HAS_SPECIAL __truediv__
+        POP_JUMP_IF_FALSE l121
+1356    LOAD_FAST op1
+        LOAD_SPECIAL __truediv__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1357    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l122
+1358    LOAD_FAST result
+        RETURN_VALUE
+l122:
+l121:
+1359    LOAD_FAST op2
+        HAS_SPECIAL __rtruediv__
+        POP_JUMP_IF_FALSE l123
+1360    LOAD_FAST op2
+        LOAD_SPECIAL __rtruediv__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1361    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l124
+1362    LOAD_FAST result
+        RETURN_VALUE
+l124:
+l123:
+l120:
+1364    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for /: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_floordiv(self, other):
+1374    LOAD_FAST self
+        HAS_SPECIAL __ifloordiv__
+        POP_JUMP_IF_FALSE l125
+1375    LOAD_FAST self
+        LOAD_SPECIAL __ifloordiv__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1376    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l126
+1377    LOAD_FAST result
+        RETURN_VALUE
+l126:
+l125:
+1378    LOAD_FAST self
+        LOAD_FAST other
+        INPLACE_FLOOR_DIVIDE
+        RETURN_VALUE
+        
+def surrogate_floordiv(op1, op2):
+1387    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1388    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1389    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l127
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l127
+1390    LOAD_FAST op2
+        HAS_SPECIAL __rfloordiv__
+        POP_JUMP_IF_FALSE l128
+1391    LOAD_FAST op2
+        LOAD_SPECIAL __rfloordiv__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1392    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l129
+1393    LOAD_FAST result
+        RETURN_VALUE
+l129:
+l128:
+1394    LOAD_FAST op1
+        HAS_SPECIAL __floordiv__
+        POP_JUMP_IF_FALSE l130
+1395    LOAD_FAST op1
+        LOAD_SPECIAL __floordiv__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1396    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l131
+1397    LOAD_FAST result
+        RETURN_VALUE
+l131:
+l130:
+        JUMP_FORWARD l132
+l127:
+1399    LOAD_FAST op1
+        HAS_SPECIAL __floordiv__
+        POP_JUMP_IF_FALSE l133
+1400    LOAD_FAST op1
+        LOAD_SPECIAL __floordiv__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1401    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l134
+1402    LOAD_FAST result
+        RETURN_VALUE
+l134:
+l133:
+1403    LOAD_FAST op2
+        HAS_SPECIAL __rfloordiv__
+        POP_JUMP_IF_FALSE l135
+1404    LOAD_FAST op2
+        LOAD_SPECIAL __rfloordiv__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1405    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l136
+1406    LOAD_FAST result
+        RETURN_VALUE
+l136:
+l135:
+l132:
+1408    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for //: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_lshift(self, other):
+1418    LOAD_FAST self
+        HAS_SPECIAL __ilshift__
+        POP_JUMP_IF_FALSE l137
+1419    LOAD_FAST self
+        LOAD_SPECIAL __ilshift__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1420    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l138
+1421    LOAD_FAST result
+        RETURN_VALUE
+l138:
+l137:
+1422    LOAD_FAST self
+        LOAD_FAST other
+        BINARY_LSHIFT
+        RETURN_VALUE
+        
+def surrogate_lshift(op1, op2):
+1431    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1432    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1433    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l139
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l139
+1434    LOAD_FAST op2
+        HAS_SPECIAL __rlshift__
+        POP_JUMP_IF_FALSE l140
+1435    LOAD_FAST op2
+        LOAD_SPECIAL __rlshift__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1436    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l141
+1437    LOAD_FAST result
+        RETURN_VALUE
+l141:
+l140:
+1438    LOAD_FAST op1
+        HAS_SPECIAL __lshift__
+        POP_JUMP_IF_FALSE l142
+1439    LOAD_FAST op1
+        LOAD_SPECIAL __lshift__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1440    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l143
+1441    LOAD_FAST result
+        RETURN_VALUE
+l143:
+l142:
+        JUMP_FORWARD l144
+l139:
+1443    LOAD_FAST op1
+        HAS_SPECIAL __lshift__
+        POP_JUMP_IF_FALSE l145
+1444    LOAD_FAST op1
+        LOAD_SPECIAL __lshift__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1445    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l146
+1446    LOAD_FAST result
+        RETURN_VALUE
+l146:
+l145:
+1447    LOAD_FAST op2
+        HAS_SPECIAL __rlshift__
+        POP_JUMP_IF_FALSE l147
+1448    LOAD_FAST op2
+        LOAD_SPECIAL __rlshift__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1449    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l148
+1450    LOAD_FAST result
+        RETURN_VALUE
+l148:
+l147:
+l144:
+1452    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for <<: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_rshift(self, other):
+1462    LOAD_FAST self
+        HAS_SPECIAL __irshift__
+        POP_JUMP_IF_FALSE l149
+1463    LOAD_FAST self
+        LOAD_SPECIAL __irshift__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1464    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l150
+1465    LOAD_FAST result
+        RETURN_VALUE
+l150:
+l149:
+1466    LOAD_FAST self
+        LOAD_FAST other
+        BINARY_RSHIFT
+        RETURN_VALUE
+        
+def surrogate_rshift(op1, op2):
+1475    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1476    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1477    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l151
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l151
+1478    LOAD_FAST op2
+        HAS_SPECIAL __rrshift__
+        POP_JUMP_IF_FALSE l152
+1479    LOAD_FAST op2
+        LOAD_SPECIAL __rrshift__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1480    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l153
+1481    LOAD_FAST result
+        RETURN_VALUE
+l153:
+l152:
+1482    LOAD_FAST op1
+        HAS_SPECIAL __rshift__
+        POP_JUMP_IF_FALSE l154
+1483    LOAD_FAST op1
+        LOAD_SPECIAL __rshift__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1484    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l155
+1485    LOAD_FAST result
+        RETURN_VALUE
+l155:
+l154:
+        JUMP_FORWARD l156
+l151:
+1487    LOAD_FAST op1
+        HAS_SPECIAL __rshift__
+        POP_JUMP_IF_FALSE l157
+1488    LOAD_FAST op1
+        LOAD_SPECIAL __rshift__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1489    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l158
+1490    LOAD_FAST result
+        RETURN_VALUE
+l158:
+l157:
+1491    LOAD_FAST op2
+        HAS_SPECIAL __rrshift__
+        POP_JUMP_IF_FALSE l159
+1492    LOAD_FAST op2
+        LOAD_SPECIAL __rrshift__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1493    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l160
+1494    LOAD_FAST result
+        RETURN_VALUE
+l160:
+l159:
+l156:
+1496    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for >>: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_pow(self, other):
+1506    LOAD_FAST self
+        HAS_SPECIAL __ipow__
+        POP_JUMP_IF_FALSE l161
+1507    LOAD_FAST self
+        LOAD_SPECIAL __ipow__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1508    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l162
+1509    LOAD_FAST result
+        RETURN_VALUE
+l162:
+l161:
+1510    LOAD_FAST self
+        LOAD_FAST other
+        pow
+        RETURN_VALUE
+        
+def surrogate_pow(op1, op2):
+1519    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1520    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1521    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l163
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l163
+1522    LOAD_FAST op2
+        HAS_SPECIAL __rpow__
+        POP_JUMP_IF_FALSE l164
+1523    LOAD_FAST op2
+        LOAD_SPECIAL __rpow__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1524    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l165
+1525    LOAD_FAST result
+        RETURN_VALUE
+l165:
+l164:
+1526    LOAD_FAST op1
+        HAS_SPECIAL __pow__
+        POP_JUMP_IF_FALSE l166
+1527    LOAD_FAST op1
+        LOAD_SPECIAL __pow__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1528    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l167
+1529    LOAD_FAST result
+        RETURN_VALUE
+l167:
+l166:
+        JUMP_FORWARD l168
+l163:
+1531    LOAD_FAST op1
+        HAS_SPECIAL __pow__
+        POP_JUMP_IF_FALSE l169
+1532    LOAD_FAST op1
+        LOAD_SPECIAL __pow__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1533    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l170
+1534    LOAD_FAST result
+        RETURN_VALUE
+l170:
+l169:
+1535    LOAD_FAST op2
+        HAS_SPECIAL __rpow__
+        POP_JUMP_IF_FALSE l171
+1536    LOAD_FAST op2
+        LOAD_SPECIAL __rpow__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1537    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l172
+1538    LOAD_FAST result
+        RETURN_VALUE
+l172:
+l171:
+l168:
+1540    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for **: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_and(self, other):
+1550    LOAD_FAST self
+        HAS_SPECIAL __iand__
+        POP_JUMP_IF_FALSE l173
+1551    LOAD_FAST self
+        LOAD_SPECIAL __iand__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1552    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l174
+1553    LOAD_FAST result
+        RETURN_VALUE
+l174:
+l173:
+1554    LOAD_FAST self
+        LOAD_FAST other
+        BINARY_AND
+        RETURN_VALUE
+        
+def surrogate_and(op1, op2):
+1563    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1564    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1565    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l175
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l175
+1566    LOAD_FAST op2
+        HAS_SPECIAL __rand__
+        POP_JUMP_IF_FALSE l176
+1567    LOAD_FAST op2
+        LOAD_SPECIAL __rand__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1568    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l177
+1569    LOAD_FAST result
+        RETURN_VALUE
+l177:
+l176:
+1570    LOAD_FAST op1
+        HAS_SPECIAL __and__
+        POP_JUMP_IF_FALSE l178
+1571    LOAD_FAST op1
+        LOAD_SPECIAL __and__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1572    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l179
+1573    LOAD_FAST result
+        RETURN_VALUE
+l179:
+l178:
+        JUMP_FORWARD l180
+l175:
+1575    LOAD_FAST op1
+        HAS_SPECIAL __and__
+        POP_JUMP_IF_FALSE l181
+1576    LOAD_FAST op1
+        LOAD_SPECIAL __and__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1577    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l182
+1578    LOAD_FAST result
+        RETURN_VALUE
+l182:
+l181:
+1579    LOAD_FAST op2
+        HAS_SPECIAL __rand__
+        POP_JUMP_IF_FALSE l183
+1580    LOAD_FAST op2
+        LOAD_SPECIAL __rand__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1581    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l184
+1582    LOAD_FAST result
+        RETURN_VALUE
+l184:
+l183:
+l180:
+1584    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for &: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_or(self, other):
+1594    LOAD_FAST self
+        HAS_SPECIAL __ior__
+        POP_JUMP_IF_FALSE l185
+1595    LOAD_FAST self
+        LOAD_SPECIAL __ior__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1596    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l186
+1597    LOAD_FAST result
+        RETURN_VALUE
+l186:
+l185:
+1598    LOAD_FAST self
+        LOAD_FAST other
+        BINARY_OR
+        RETURN_VALUE
+        
+def surrogate_or(op1, op2):
+1607    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1608    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1609    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l187
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l187
+1610    LOAD_FAST op2
+        HAS_SPECIAL __ror__
+        POP_JUMP_IF_FALSE l188
+1611    LOAD_FAST op2
+        LOAD_SPECIAL __ror__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1612    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l189
+1613    LOAD_FAST result
+        RETURN_VALUE
+l189:
+l188:
+1614    LOAD_FAST op1
+        HAS_SPECIAL __or__
+        POP_JUMP_IF_FALSE l190
+1615    LOAD_FAST op1
+        LOAD_SPECIAL __or__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1616    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l191
+1617    LOAD_FAST result
+        RETURN_VALUE
+l191:
+l190:
+        JUMP_FORWARD l192
+l187:
+1619    LOAD_FAST op1
+        HAS_SPECIAL __or__
+        POP_JUMP_IF_FALSE l193
+1620    LOAD_FAST op1
+        LOAD_SPECIAL __or__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1621    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l194
+1622    LOAD_FAST result
+        RETURN_VALUE
+l194:
+l193:
+1623    LOAD_FAST op2
+        HAS_SPECIAL __ror__
+        POP_JUMP_IF_FALSE l195
+1624    LOAD_FAST op2
+        LOAD_SPECIAL __ror__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1625    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l196
+1626    LOAD_FAST result
+        RETURN_VALUE
+l196:
+l195:
+l192:
+1628    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for |: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_inplace_xor(self, other):
+1638    LOAD_FAST self
+        HAS_SPECIAL __ixor__
+        POP_JUMP_IF_FALSE l197
+1639    LOAD_FAST self
+        LOAD_SPECIAL __ixor__
+        LOAD_FAST other
+        CALL_FUNCTION 1
+        STORE_FAST result
+1640    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l198
+1641    LOAD_FAST result
+        RETURN_VALUE
+l198:
+l197:
+1642    LOAD_FAST self
+        LOAD_FAST other
+        BINARY_XOR
+        RETURN_VALUE
+        
+def surrogate_xor(op1, op2):
+1651    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1652    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1653    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l199
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l199
+1654    LOAD_FAST op2
+        HAS_SPECIAL __rxor__
+        POP_JUMP_IF_FALSE l200
+1655    LOAD_FAST op2
+        LOAD_SPECIAL __rxor__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1656    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l201
+1657    LOAD_FAST result
+        RETURN_VALUE
+l201:
+l200:
+1658    LOAD_FAST op1
+        HAS_SPECIAL __xor__
+        POP_JUMP_IF_FALSE l202
+1659    LOAD_FAST op1
+        LOAD_SPECIAL __xor__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1660    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l203
+1661    LOAD_FAST result
+        RETURN_VALUE
+l203:
+l202:
+        JUMP_FORWARD l204
+l199:
+1663    LOAD_FAST op1
+        HAS_SPECIAL __xor__
+        POP_JUMP_IF_FALSE l205
+1664    LOAD_FAST op1
+        LOAD_SPECIAL __xor__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1665    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l206
+1666    LOAD_FAST result
+        RETURN_VALUE
+l206:
+l205:
+1667    LOAD_FAST op2
+        HAS_SPECIAL __rxor__
+        POP_JUMP_IF_FALSE l207
+1668    LOAD_FAST op2
+        LOAD_SPECIAL __rxor__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1669    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l208
+1670    LOAD_FAST result
+        RETURN_VALUE
+l208:
+l207:
+l204:
+1672    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unsupported operand type(s) for ^: '%s' and '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_eq(op1, op2):
+1682    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1683    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1684    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l209
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l209
+1685    LOAD_FAST op2
+        HAS_SPECIAL __eq__
+        POP_JUMP_IF_FALSE l210
+1686    LOAD_FAST op2
+        LOAD_SPECIAL __eq__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1687    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l211
+1688    LOAD_FAST result
+        RETURN_VALUE
+l211:
+l210:
+1689    LOAD_FAST op1
+        HAS_SPECIAL __eq__
+        POP_JUMP_IF_FALSE l212
+1690    LOAD_FAST op1
+        LOAD_SPECIAL __eq__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1691    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l213
+1692    LOAD_FAST result
+        RETURN_VALUE
+l213:
+l212:
+        JUMP_FORWARD l214
+l209:
+1694    LOAD_FAST op1
+        HAS_SPECIAL __eq__
+        POP_JUMP_IF_FALSE l215
+1695    LOAD_FAST op1
+        LOAD_SPECIAL __eq__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1696    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l216
+1697    LOAD_FAST result
+        RETURN_VALUE
+l216:
+l215:
+1698    LOAD_FAST op2
+        HAS_SPECIAL __eq__
+        POP_JUMP_IF_FALSE l217
+1699    LOAD_FAST op2
+        LOAD_SPECIAL __eq__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1700    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l218
+1701    LOAD_FAST result
+        RETURN_VALUE
+l218:
+l217:
+l214:
+1702    LOAD_FAST op1
+        LOAD_FAST op2
+        COMPARE_OP is
+        RETURN_VALUE
+        
+def surrogate_ne(op1, op2):
+1712    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1713    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1714    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l219
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l219
+1715    LOAD_FAST op2
+        HAS_SPECIAL __ne__
+        POP_JUMP_IF_FALSE l220
+1716    LOAD_FAST op2
+        LOAD_SPECIAL __ne__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1717    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l221
+1718    LOAD_FAST result
+        RETURN_VALUE
+l221:
+l220:
+1719    LOAD_FAST op1
+        HAS_SPECIAL __ne__
+        POP_JUMP_IF_FALSE l222
+1720    LOAD_FAST op1
+        LOAD_SPECIAL __ne__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1721    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l223
+1722    LOAD_FAST result
+        RETURN_VALUE
+l223:
+l222:
+        JUMP_FORWARD l224
+l219:
+1724    LOAD_FAST op1
+        HAS_SPECIAL __ne__
+        POP_JUMP_IF_FALSE l225
+1725    LOAD_FAST op1
+        LOAD_SPECIAL __ne__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1726    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l226
+1727    LOAD_FAST result
+        RETURN_VALUE
+l226:
+l225:
+1728    LOAD_FAST op2
+        HAS_SPECIAL __ne__
+        POP_JUMP_IF_FALSE l227
+1729    LOAD_FAST op2
+        LOAD_SPECIAL __ne__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1730    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l228
+1731    LOAD_FAST result
+        RETURN_VALUE
+l228:
+l227:
+l224:
+1732    LOAD_FAST op1
+        LOAD_FAST op2
+        COMPARE_OP is
+UNARY_NOT        RETURN_VALUE
+        
+def surrogate_lt(op1, op2):
+1742    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1743    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1744    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l229
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l229
+1745    LOAD_FAST op2
+        HAS_SPECIAL __gt__
+        POP_JUMP_IF_FALSE l230
+1746    LOAD_FAST op2
+        LOAD_SPECIAL __gt__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1747    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l231
+1748    LOAD_FAST result
+        RETURN_VALUE
+l231:
+l230:
+1749    LOAD_FAST op1
+        HAS_SPECIAL __lt__
+        POP_JUMP_IF_FALSE l232
+1750    LOAD_FAST op1
+        LOAD_SPECIAL __lt__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1751    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l233
+1752    LOAD_FAST result
+        RETURN_VALUE
+l233:
+l232:
+        JUMP_FORWARD l234
+l229:
+1754    LOAD_FAST op1
+        HAS_SPECIAL __lt__
+        POP_JUMP_IF_FALSE l235
+1755    LOAD_FAST op1
+        LOAD_SPECIAL __lt__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1756    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l236
+1757    LOAD_FAST result
+        RETURN_VALUE
+l236:
+l235:
+1758    LOAD_FAST op2
+        HAS_SPECIAL __gt__
+        POP_JUMP_IF_FALSE l237
+1759    LOAD_FAST op2
+        LOAD_SPECIAL __gt__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1760    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l238
+1761    LOAD_FAST result
+        RETURN_VALUE
+l238:
+l237:
+l234:
+1763    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unorderable type(s): '%s' < '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_gt(op1, op2):
+1773    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1774    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1775    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l239
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l239
+1776    LOAD_FAST op2
+        HAS_SPECIAL __lt__
+        POP_JUMP_IF_FALSE l240
+1777    LOAD_FAST op2
+        LOAD_SPECIAL __lt__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1778    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l241
+1779    LOAD_FAST result
+        RETURN_VALUE
+l241:
+l240:
+1780    LOAD_FAST op1
+        HAS_SPECIAL __gt__
+        POP_JUMP_IF_FALSE l242
+1781    LOAD_FAST op1
+        LOAD_SPECIAL __gt__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1782    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l243
+1783    LOAD_FAST result
+        RETURN_VALUE
+l243:
+l242:
+        JUMP_FORWARD l244
+l239:
+1785    LOAD_FAST op1
+        HAS_SPECIAL __gt__
+        POP_JUMP_IF_FALSE l245
+1786    LOAD_FAST op1
+        LOAD_SPECIAL __gt__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1787    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l246
+1788    LOAD_FAST result
+        RETURN_VALUE
+l246:
+l245:
+1789    LOAD_FAST op2
+        HAS_SPECIAL __lt__
+        POP_JUMP_IF_FALSE l247
+1790    LOAD_FAST op2
+        LOAD_SPECIAL __lt__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1791    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l248
+1792    LOAD_FAST result
+        RETURN_VALUE
+l248:
+l247:
+l244:
+1794    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unorderable type(s): '%s' > '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_le(op1, op2):
+1804    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1805    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1806    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l249
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l249
+1807    LOAD_FAST op2
+        HAS_SPECIAL __ge__
+        POP_JUMP_IF_FALSE l250
+1808    LOAD_FAST op2
+        LOAD_SPECIAL __ge__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1809    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l251
+1810    LOAD_FAST result
+        RETURN_VALUE
+l251:
+l250:
+1811    LOAD_FAST op1
+        HAS_SPECIAL __le__
+        POP_JUMP_IF_FALSE l252
+1812    LOAD_FAST op1
+        LOAD_SPECIAL __le__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1813    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l253
+1814    LOAD_FAST result
+        RETURN_VALUE
+l253:
+l252:
+        JUMP_FORWARD l254
+l249:
+1816    LOAD_FAST op1
+        HAS_SPECIAL __le__
+        POP_JUMP_IF_FALSE l255
+1817    LOAD_FAST op1
+        LOAD_SPECIAL __le__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1818    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l256
+1819    LOAD_FAST result
+        RETURN_VALUE
+l256:
+l255:
+1820    LOAD_FAST op2
+        HAS_SPECIAL __ge__
+        POP_JUMP_IF_FALSE l257
+1821    LOAD_FAST op2
+        LOAD_SPECIAL __ge__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1822    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l258
+1823    LOAD_FAST result
+        RETURN_VALUE
+l258:
+l257:
+l254:
+1825    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unorderable type(s): '%s' <= '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+def surrogate_ge(op1, op2):
+1835    LOAD_FAST op1
+        TYPE
+        STORE_FAST t1
+1836    LOAD_FAST op2
+        TYPE
+        STORE_FAST t2
+1837    LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l259
+        LOAD_FAST t1
+        LOAD_FAST t2
+        COMPARE_OP subtype
+        POP_JUMP_IF_FALSE l259
+1838    LOAD_FAST op2
+        HAS_SPECIAL __le__
+        POP_JUMP_IF_FALSE l260
+1839    LOAD_FAST op2
+        LOAD_SPECIAL __le__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1840    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l261
+1841    LOAD_FAST result
+        RETURN_VALUE
+l261:
+l260:
+1842    LOAD_FAST op1
+        HAS_SPECIAL __ge__
+        POP_JUMP_IF_FALSE l262
+1843    LOAD_FAST op1
+        LOAD_SPECIAL __ge__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1844    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l263
+1845    LOAD_FAST result
+        RETURN_VALUE
+l263:
+l262:
+        JUMP_FORWARD l264
+l259:
+1847    LOAD_FAST op1
+        HAS_SPECIAL __ge__
+        POP_JUMP_IF_FALSE l265
+1848    LOAD_FAST op1
+        LOAD_SPECIAL __ge__
+        LOAD_FAST op2
+        CALL_FUNCTION 1
+        STORE_FAST result
+1849    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l266
+1850    LOAD_FAST result
+        RETURN_VALUE
+l266:
+l265:
+1851    LOAD_FAST op2
+        HAS_SPECIAL __le__
+        POP_JUMP_IF_FALSE l267
+1852    LOAD_FAST op2
+        LOAD_SPECIAL __le__
+        LOAD_FAST op1
+        CALL_FUNCTION 1
+        STORE_FAST result
+1853    LOAD_FAST result
+        LOAD_GLOBAL NotImplemented
+        COMPARE_OP is
+        POP_JUMP_IF_TRUE l268
+1854    LOAD_FAST result
+        RETURN_VALUE
+l268:
+l267:
+l264:
+1856    LOAD_GLOBAL TypeError
+        LOAD_CONSTANT "unorderable type(s): '%s' >= '%s'"
+        LOAD_FAST t1
+        LOAD_SPECIAL __name__
+        LOAD_FAST t2
+        LOAD_SPECIAL __name__
+        BUILD_TUPLE 2
+        BINARY_MODULO
+        CALL_FUNCTION 1
+RAISE_VARARGS 1        LOAD_CONST None
+        RETURN_VALUE
+        
+.init
+4       LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "name"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "func_name"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "rfunc_name"
+        STORE_MAP
+        MAKE_FUNCTION0
+        CALL_FUNCTION 1
+        STORE_GLOBAL make_binary_operator
+8       LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "name"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "func_name"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "rfunc_name"
+        STORE_MAP
+        MAKE_FUNCTION1
+        CALL_FUNCTION 1
+        STORE_GLOBAL make_comparison_operator
+12      LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "name"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "func_name"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "arity"
+        STORE_MAP
+        MAKE_FUNCTION2
+        CALL_FUNCTION 1
+        STORE_GLOBAL make_operator
+18      LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION3
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL is_
+24      LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION4
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL is_not
+28      LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION5
+        CALL_FUNCTION 1
+        STORE_GLOBAL unorderable_types
+31      LOAD_GLOBAL make_comparison_operator
+        LOAD_CONSTANT "eq"
+        LOAD_CONSTANT "__eq__"
+        LOAD_CONSTANT "__eq__"
+        LOAD_GLOBAL is_
+        CALL_FUNCTION 4
+        STORE_GLOBAL _eq
+33      LOAD_GLOBAL make_comparison_operator
+        LOAD_CONSTANT "ne"
+        LOAD_CONSTANT "__ne__"
+        LOAD_CONSTANT "__ne__"
+        LOAD_GLOBAL is_not
+        CALL_FUNCTION 4
+        STORE_GLOBAL _ne
+35      LOAD_GLOBAL make_comparison_operator
+        LOAD_CONSTANT "lt"
+        LOAD_CONSTANT "__lt__"
+        LOAD_CONSTANT "__gt__"
+        LOAD_GLOBAL unorderable_types
+        CALL_FUNCTION 4
+        STORE_GLOBAL _lt
+37      LOAD_GLOBAL make_comparison_operator
+        LOAD_CONSTANT "le"
+        LOAD_CONSTANT "__le__"
+        LOAD_CONSTANT "__ge__"
+        LOAD_GLOBAL unorderable_types
+        CALL_FUNCTION 4
+        STORE_GLOBAL _le
+39      LOAD_GLOBAL make_comparison_operator
+        LOAD_CONSTANT "gt"
+        LOAD_CONSTANT "__gt__"
+        LOAD_CONSTANT "__lt__"
+        LOAD_GLOBAL unorderable_types
+        CALL_FUNCTION 4
+        STORE_GLOBAL _gt
+41      LOAD_GLOBAL make_comparison_operator
+        LOAD_CONSTANT "ge"
+        LOAD_CONSTANT "__ge__"
+        LOAD_CONSTANT "__le__"
+        LOAD_GLOBAL unorderable_types
+        CALL_FUNCTION 4
+        STORE_GLOBAL _ge
+44      LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION6
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_add
+47      LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "add"
+        LOAD_CONSTANT "__add__"
+        LOAD_CONSTANT "__radd__"
+        LOAD_GLOBAL no_add
+        CALL_FUNCTION 4
+        STORE_GLOBAL _add
+48      DELETE_GLOBAL no_add
+49      LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION7
+        STORE_GLOBAL add
+51      LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "iadd"
+        LOAD_CONSTANT "__iadd__"
+        LOAD_GLOBAL _add
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _iadd
+52      LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION8
+        STORE_GLOBAL iadd
+56      LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION9
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_sub
+59      LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "sub"
+        LOAD_CONSTANT "__sub__"
+        LOAD_CONSTANT "__rsub__"
+        LOAD_GLOBAL no_sub
+        CALL_FUNCTION 4
+        STORE_GLOBAL _sub
+60      DELETE_GLOBAL no_sub
+61      LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION10
+        STORE_GLOBAL sub
+63      LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "isub"
+        LOAD_CONSTANT "__isub__"
+        LOAD_GLOBAL _sub
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _isub
+64      LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION11
+        STORE_GLOBAL isub
+68      LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION12
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_mul
+71      LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "mul"
+        LOAD_CONSTANT "__mul__"
+        LOAD_CONSTANT "__rmul__"
+        LOAD_GLOBAL no_mul
+        CALL_FUNCTION 4
+        STORE_GLOBAL _mul
+72      DELETE_GLOBAL no_mul
+73      LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION13
+        STORE_GLOBAL mul
+75      LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "imul"
+        LOAD_CONSTANT "__imul__"
+        LOAD_GLOBAL _mul
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _imul
+76      LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION14
+        STORE_GLOBAL imul
+80      LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION15
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_pow
+83      LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "pow"
+        LOAD_CONSTANT "__pow__"
+        LOAD_CONSTANT "__rpow__"
+        LOAD_GLOBAL no_pow
+        CALL_FUNCTION 4
+        STORE_GLOBAL _pow
+84      DELETE_GLOBAL no_pow
+85      LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION16
+        STORE_GLOBAL pow
+87      LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "ipow"
+        LOAD_CONSTANT "__ipow__"
+        LOAD_GLOBAL _pow
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _ipow
+88      LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION17
+        STORE_GLOBAL ipow
+92      LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION18
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_mod
+95      LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "mod"
+        LOAD_CONSTANT "__mod__"
+        LOAD_CONSTANT "__rmod__"
+        LOAD_GLOBAL no_mod
+        CALL_FUNCTION 4
+        STORE_GLOBAL _mod
+96      DELETE_GLOBAL no_mod
+97      LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION19
+        STORE_GLOBAL mod
+99      LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "imod"
+        LOAD_CONSTANT "__imod__"
+        LOAD_GLOBAL _mod
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _imod
+100     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION20
+        STORE_GLOBAL imod
+104     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION21
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_floordiv
+107     LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "floordiv"
+        LOAD_CONSTANT "__floordiv__"
+        LOAD_CONSTANT "__rfloordiv__"
+        LOAD_GLOBAL no_floordiv
+        CALL_FUNCTION 4
+        STORE_GLOBAL _floordiv
+108     DELETE_GLOBAL no_floordiv
+109     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION22
+        STORE_GLOBAL floordiv
+111     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "ifloordiv"
+        LOAD_CONSTANT "__ifloordiv__"
+        LOAD_GLOBAL _floordiv
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _ifloordiv
+112     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION23
+        STORE_GLOBAL ifloordiv
+116     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION24
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_truediv
+119     LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "truediv"
+        LOAD_CONSTANT "__truediv__"
+        LOAD_CONSTANT "__rtruediv__"
+        LOAD_GLOBAL no_truediv
+        CALL_FUNCTION 4
+        STORE_GLOBAL _truediv
+120     DELETE_GLOBAL no_truediv
+121     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION25
+        STORE_GLOBAL truediv
+123     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "itruediv"
+        LOAD_CONSTANT "__itruediv__"
+        LOAD_GLOBAL _truediv
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _itruediv
+124     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION26
+        STORE_GLOBAL itruediv
+128     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION27
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_and_
+131     LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "and_"
+        LOAD_CONSTANT "__and__"
+        LOAD_CONSTANT "__rand__"
+        LOAD_GLOBAL no_and_
+        CALL_FUNCTION 4
+        STORE_GLOBAL _and_
+132     DELETE_GLOBAL no_and_
+133     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION28
+        STORE_GLOBAL and_
+135     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "iand"
+        LOAD_CONSTANT "__iand__"
+        LOAD_GLOBAL _and_
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _iand
+136     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION29
+        STORE_GLOBAL iand
+140     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION30
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_or_
+143     LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "or_"
+        LOAD_CONSTANT "__or__"
+        LOAD_CONSTANT "__ror__"
+        LOAD_GLOBAL no_or_
+        CALL_FUNCTION 4
+        STORE_GLOBAL _or_
+144     DELETE_GLOBAL no_or_
+145     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION31
+        STORE_GLOBAL or_
+147     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "ior"
+        LOAD_CONSTANT "__ior__"
+        LOAD_GLOBAL _or_
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _ior
+148     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION32
+        STORE_GLOBAL ior
+152     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION33
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_xor
+155     LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "xor"
+        LOAD_CONSTANT "__xor__"
+        LOAD_CONSTANT "__rxor__"
+        LOAD_GLOBAL no_xor
+        CALL_FUNCTION 4
+        STORE_GLOBAL _xor
+156     DELETE_GLOBAL no_xor
+157     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION34
+        STORE_GLOBAL xor
+159     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "ixor"
+        LOAD_CONSTANT "__ixor__"
+        LOAD_GLOBAL _xor
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _ixor
+160     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION35
+        STORE_GLOBAL ixor
+164     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION36
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_lshift
+167     LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "lshift"
+        LOAD_CONSTANT "__lshift__"
+        LOAD_CONSTANT "__rlshift__"
+        LOAD_GLOBAL no_lshift
+        CALL_FUNCTION 4
+        STORE_GLOBAL _lshift
+168     DELETE_GLOBAL no_lshift
+169     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION37
+        STORE_GLOBAL lshift
+171     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "ilshift"
+        LOAD_CONSTANT "__ilshift__"
+        LOAD_GLOBAL _lshift
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _ilshift
+172     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION38
+        STORE_GLOBAL ilshift
+176     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION39
+        CALL_FUNCTION 1
+        STORE_GLOBAL no_rshift
+179     LOAD_GLOBAL make_binary_operator
+        LOAD_CONSTANT "rshift"
+        LOAD_CONSTANT "__rshift__"
+        LOAD_CONSTANT "__rrshift__"
+        LOAD_GLOBAL no_rshift
+        CALL_FUNCTION 4
+        STORE_GLOBAL _rshift
+180     DELETE_GLOBAL no_rshift
+181     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION40
+        STORE_GLOBAL rshift
+183     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "irshift"
+        LOAD_CONSTANT "__irshift__"
+        LOAD_GLOBAL _rshift
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL _irshift
+184     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION41
+        STORE_GLOBAL irshift
+187     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION42
+        STORE_GLOBAL no_getitem
+190     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "getitem"
+        LOAD_CONSTANT "__getitem__"
+        LOAD_GLOBAL no_getitem
+        LOAD_CONSTANT 2
+        CALL_FUNCTION 4
+        STORE_GLOBAL getitem
+191     DELETE_GLOBAL no_getitem
+193     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION43
+        STORE_GLOBAL no_setitem
+196     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "setitem"
+        LOAD_CONSTANT "__setitem__"
+        LOAD_GLOBAL no_setitem
+        LOAD_CONSTANT 3
+        CALL_FUNCTION 4
+        STORE_GLOBAL setitem
+197     DELETE_GLOBAL no_setitem
+200     LOAD_GLOBAL c_function
+        LOAD_CONST None
+BUILD_TUPLE 1        BUILD_MAP 2
+        LOAD_GLOBAL _add
+        TYPE
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION44
+        CALL_FUNCTION 1
+        STORE_GLOBAL add_binary_behaviour
+203     LOAD_GLOBAL add_binary_behaviour
+        LOAD_GLOBAL _add
+        TYPE
+        STORE_ATTR addbehaviour
+204     DELETE_GLOBAL add_binary_behaviour
+206     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION45
+        STORE_GLOBAL behaviour
+214     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _eq
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION46
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL eq_int_int
+221     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _eq
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION47
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL eq_int_float
+228     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _eq
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION48
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL eq_float_int
+235     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _eq
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION49
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL eq_float_float
+242     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _eq
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION50
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL eq_str_str
+249     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ne
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION51
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ne_int_int
+256     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ne
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION52
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ne_int_float
+263     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ne
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION53
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ne_float_int
+270     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ne
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION54
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ne_float_float
+277     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ne
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION55
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ne_str_str
+284     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _lt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION56
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL lt_int_int
+291     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _lt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION57
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL lt_int_float
+298     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _lt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION58
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL lt_float_int
+305     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _lt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION59
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL lt_float_float
+312     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _lt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION60
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL lt_str_str
+319     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _gt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION61
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL gt_int_int
+326     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _gt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION62
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL gt_int_float
+333     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _gt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION63
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL gt_float_int
+340     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _gt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION64
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL gt_float_float
+347     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _gt
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION65
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL gt_str_str
+354     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _le
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION66
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL le_int_int
+361     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _le
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION67
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL le_int_float
+368     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _le
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION68
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL le_float_int
+375     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _le
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION69
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL le_float_float
+382     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _le
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION70
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL le_str_str
+389     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ge
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION71
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ge_int_int
+396     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ge
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION72
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ge_int_float
+403     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ge
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION73
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ge_float_int
+410     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ge
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION74
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ge_float_float
+417     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _ge
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION75
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL ge_str_str
+422     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION76
+        CALL_FUNCTION 1
+        STORE_GLOBAL tracing_function
+426     LOAD_CONST False
+        STORE_GLOBAL _getitem_in_c
+430     LOAD_GLOBAL method
+        LOAD_GLOBAL dict
+        LOAD_CONSTANT "__contains__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL dict
+        LOAD_CONSTANT "d"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION77
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL dict_contains
+435     LOAD_GLOBAL method
+        LOAD_GLOBAL dict_proxy
+        LOAD_CONSTANT "__contains__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL dict_proxy
+        LOAD_CONSTANT "d"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION78
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL dict_proxy_contains
+438     DELETE_GLOBAL dict_proxy_contains
+439     DELETE_GLOBAL dict_contains
+441     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION79
+        STORE_GLOBAL no_delitem
+444     LOAD_GLOBAL make_operator
+        LOAD_CONSTANT "delitem"
+        LOAD_CONSTANT "__delitem__"
+        LOAD_GLOBAL no_delitem
+        LOAD_CONSTANT 3
+        CALL_FUNCTION 4
+        STORE_GLOBAL delitem
+445     DELETE_GLOBAL no_delitem
+450     LOAD_GLOBAL method
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "__delitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "i"
+        STORE_MAP
+        MAKE_FUNCTION80
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL delitem_list
+452     DELETE_GLOBAL delitem_list
+457     LOAD_GLOBAL method
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "__getitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION81
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL getitem_str
+459     DELETE_GLOBAL getitem_str
+463     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "other"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION82
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL iadd_list_list
+467     LOAD_GLOBAL method
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "__iadd__"
+        CALL_FUNCTION 2
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION83
+        CALL_FUNCTION 1
+        STORE_GLOBAL iadd_list
+474     DELETE_GLOBAL iadd_list
+478     LOAD_GLOBAL method
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "__add__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "other"
+        STORE_MAP
+        MAKE_FUNCTION84
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL tuple_add
+481     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _add
+        CALL_FUNCTION 1
+        LOAD_GLOBAL tuple_add
+        CALL_FUNCTION 1
+        DROP
+483     DELETE_GLOBAL tuple_add
+488     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mul
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "n"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION85
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mul_list_int
+494     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mul
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "n"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION86
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mul_str_int
+500     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _add
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "other"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION87
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL add_list_list
+506     LOAD_GLOBAL method
+        LOAD_GLOBAL dict
+        LOAD_CONSTANT "__getitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL dict
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION88
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL getitem_dict
+508     DELETE_GLOBAL getitem_dict
+513     LOAD_GLOBAL method
+        LOAD_GLOBAL dict
+        LOAD_CONSTANT "__setitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL dict
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION89
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL setitem_dict
+515     DELETE_GLOBAL setitem_dict
+520     LOAD_GLOBAL method
+        LOAD_GLOBAL dict_proxy
+        LOAD_CONSTANT "__getitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL dict_proxy
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION90
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL getitem_dict_proxy
+522     DELETE_GLOBAL getitem_dict_proxy
+526     LOAD_GLOBAL method
+        LOAD_GLOBAL dict_proxy
+        LOAD_CONSTANT "__setitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL dict_proxy
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION91
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL setitem_dict_proxy
+528     DELETE_GLOBAL setitem_dict_proxy
+531     LOAD_GLOBAL method
+        LOAD_GLOBAL NoneType
+        LOAD_CONSTANT "__bool__"
+        CALL_FUNCTION 2
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION92
+        CALL_FUNCTION 1
+        STORE_GLOBAL NoneType_bool
+534     LOAD_GLOBAL NoneType_bool
+        LOAD_GLOBAL NoneType
+        STORE_ATTR __bool__
+535     LOAD_CONSTANT "__bool__"
+        LOAD_GLOBAL NoneType_bool
+        STORE_ATTR __name__
+536     DELETE_GLOBAL NoneType_bool
+543     LOAD_GLOBAL method
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "__bool__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL method
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "__bool__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION93
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL seq_bool
+545     LOAD_CONSTANT "__bool__"
+        LOAD_GLOBAL seq_bool
+        STORE_ATTR __name__
+547     DELETE_GLOBAL seq_bool
+553     LOAD_GLOBAL method
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "__bool__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "l"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION94
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_bool
+555     DELETE_GLOBAL list_bool
+560     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _add
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "other"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION95
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL add_str_str
+562     DELETE_GLOBAL add_str_str
+566     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        MAKE_FUNCTION96
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL tuple_getitem_int
+571     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        MAKE_FUNCTION97
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_getitem_int
+576     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL slice
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION98
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_getitem_slice
+581     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION99
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_left_slice
+586     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION100
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_right_slice
+591     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION101
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_reversed
+596     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION102
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_copy
+599     LOAD_GLOBAL _getitem_in_c
+        POP_JUMP_IF_FALSE l269
+603     LOAD_GLOBAL method
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "__getitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION103
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_getitem
+608     LOAD_GLOBAL method
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "__getitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION104
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL tuple_getitem
+        JUMP_FORWARD l270
+l269:
+616     LOAD_GLOBAL method
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "__getitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL _no_trace
+        LOAD_GLOBAL _globals_to_consts
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION105
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_getitem
+654     LOAD_GLOBAL method
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "__getitem__"
+        CALL_FUNCTION 2
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION106
+        CALL_FUNCTION 1
+        STORE_GLOBAL tuple_getitem
+l270:
+682     DELETE_GLOBAL list_getitem
+686     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "value"
+        STORE_MAP
+        MAKE_FUNCTION107
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_update
+690     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL slice
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "value"
+        STORE_MAP
+        MAKE_FUNCTION108
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_setitem_slice_list_
+695     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "value"
+        STORE_MAP
+        MAKE_FUNCTION109
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_left_assign
+700     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "value"
+        STORE_MAP
+        MAKE_FUNCTION110
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_right_assign
+705     LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        MAKE_FUNCTION111
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_setitem_int
+710     LOAD_GLOBAL _no_trace
+        LOAD_GLOBAL _globals_to_consts
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL slice
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "value"
+        STORE_MAP
+        MAKE_FUNCTION112
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_setitem_slice_list
+722     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        LOAD_GLOBAL slice
+        LOAD_CONSTANT "index"
+        STORE_MAP
+        MAKE_FUNCTION113
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_setitem_slice
+725     LOAD_GLOBAL _getitem_in_c
+        POP_JUMP_IF_FALSE l271
+729     LOAD_GLOBAL method
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "__setitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION114
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_setitem
+        JUMP_FORWARD l272
+l271:
+737     LOAD_GLOBAL method
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "__setitem__"
+        CALL_FUNCTION 2
+        LOAD_GLOBAL _no_trace
+        LOAD_GLOBAL _globals_to_consts
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION115
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_setitem
+l272:
+755     DELETE_GLOBAL list_setitem
+759     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mod
+        CALL_FUNCTION 1
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "s"
+        STORE_MAP
+        LOAD_GLOBAL tuple
+        LOAD_CONSTANT "t"
+        STORE_MAP
+        MAKE_FUNCTION116
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mod_str_tuple
+761     DELETE_GLOBAL mod_str_tuple
+764     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mod
+        CALL_FUNCTION 1
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "s"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        MAKE_FUNCTION117
+        CALL_FUNCTION 1
+        STORE_GLOBAL mod
+768     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mod
+        CALL_FUNCTION 1
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "s"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "b"
+        STORE_MAP
+        MAKE_FUNCTION118
+        CALL_FUNCTION 1
+        STORE_GLOBAL mod
+772     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mod
+        CALL_FUNCTION 1
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "s"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "i"
+        STORE_MAP
+        MAKE_FUNCTION119
+        CALL_FUNCTION 1
+        STORE_GLOBAL mod
+776     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mod
+        CALL_FUNCTION 1
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "s"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "f"
+        STORE_MAP
+        MAKE_FUNCTION120
+        CALL_FUNCTION 1
+        STORE_GLOBAL mod
+779     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION121
+        STORE_GLOBAL not_
+783     LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "name"
+        STORE_MAP
+        LOAD_GLOBAL str
+        LOAD_CONSTANT "func_name"
+        STORE_MAP
+        LOAD_GLOBAL not_
+        TYPE
+        LOAD_CONSTANT "fallback"
+        STORE_MAP
+        MAKE_FUNCTION122
+        CALL_FUNCTION 1
+        STORE_GLOBAL make_unary_operator
+786     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION123
+        STORE_GLOBAL no_pos
+789     LOAD_GLOBAL make_unary_operator
+        LOAD_CONSTANT "pos"
+        LOAD_CONSTANT "__pos__"
+        LOAD_GLOBAL no_pos
+        CALL_FUNCTION 3
+        STORE_GLOBAL pos
+793     LOAD_GLOBAL _globals_to_consts
+        LOAD_GLOBAL _no_trace
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION124
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL surrogate_pos
+798     LOAD_GLOBAL tracing_function
+        LOAD_GLOBAL pos
+        LOAD_GLOBAL surrogate_pos
+        CALL_FUNCTION 2
+        DROP
+800     DELETE_GLOBAL no_pos
+801     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION125
+        STORE_GLOBAL pos
+804     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION126
+        STORE_GLOBAL no_neg
+807     LOAD_GLOBAL make_unary_operator
+        LOAD_CONSTANT "neg"
+        LOAD_CONSTANT "__neg__"
+        LOAD_GLOBAL no_neg
+        CALL_FUNCTION 3
+        STORE_GLOBAL neg
+811     LOAD_GLOBAL _globals_to_consts
+        LOAD_GLOBAL _no_trace
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION127
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL surrogate_neg
+816     LOAD_GLOBAL tracing_function
+        LOAD_GLOBAL neg
+        LOAD_GLOBAL surrogate_neg
+        CALL_FUNCTION 2
+        DROP
+818     DELETE_GLOBAL no_neg
+819     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION128
+        STORE_GLOBAL neg
+822     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION129
+        STORE_GLOBAL no_invert
+825     LOAD_GLOBAL make_unary_operator
+        LOAD_CONSTANT "invert"
+        LOAD_CONSTANT "__invert__"
+        LOAD_GLOBAL no_invert
+        CALL_FUNCTION 3
+        STORE_GLOBAL invert
+829     LOAD_GLOBAL _globals_to_consts
+        LOAD_GLOBAL _no_trace
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION130
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL surrogate_invert
+834     LOAD_GLOBAL tracing_function
+        LOAD_GLOBAL invert
+        LOAD_GLOBAL surrogate_invert
+        CALL_FUNCTION 2
+        DROP
+836     DELETE_GLOBAL no_invert
+837     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION131
+        STORE_GLOBAL invert
+840     LOAD_GLOBAL abs
+        STORE_GLOBAL abs
+842     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION132
+        STORE_GLOBAL contains
+846     LOAD_GLOBAL method
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "iadd"
+        CALL_FUNCTION 2
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL list
+        LOAD_CONSTANT "self"
+        STORE_MAP
+        MAKE_FUNCTION133
+        CALL_FUNCTION 1
+        STORE_GLOBAL list_extend
+852     LOAD_GLOBAL method
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "__index__"
+        CALL_FUNCTION 2
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION134
+        CALL_FUNCTION 1
+        STORE_GLOBAL int_index
+856     LOAD_GLOBAL _no_trace
+        LOAD_CONSTANT ()
+        BUILD_MAP 2
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION135
+        CALL_FUNCTION 1
+        STORE_GLOBAL index
+863     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION136
+        STORE_GLOBAL hex
+866     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION137
+        STORE_GLOBAL oct
+869     LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION138
+        STORE_GLOBAL bin
+872     DELETE_GLOBAL _getitem_in_c
+878     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _add
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION139
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL add_int_int
+885     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _add
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION140
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL add_int_float
+892     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _add
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION141
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL add_float_int
+899     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _add
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION142
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL add_float_float
+906     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _sub
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION143
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL sub_int_int
+913     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _sub
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION144
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL sub_int_float
+920     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _sub
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION145
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL sub_float_int
+927     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _sub
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION146
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL sub_float_float
+934     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mul
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION147
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mul_int_int
+941     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mul
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION148
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mul_int_float
+948     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mul
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION149
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mul_float_int
+955     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mul
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION150
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mul_float_float
+961     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _pow
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION151
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL pow_int_int
+967     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _pow
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION152
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL pow_int_float
+973     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _pow
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION153
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL pow_float_int
+979     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _pow
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION154
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL pow_float_float
+985     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mod
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION155
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mod_int_int
+991     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mod
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION156
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mod_int_float
+997     LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mod
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION157
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mod_float_int
+1003    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _mod
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION158
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL mod_float_float
+1009    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _floordiv
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION159
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL floordiv_int_int
+1015    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _floordiv
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION160
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL floordiv_int_float
+1021    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _floordiv
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION161
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL floordiv_float_int
+1027    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _floordiv
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION162
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL floordiv_float_float
+1033    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _truediv
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION163
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL truediv_int_int
+1039    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _truediv
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION164
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL truediv_int_float
+1045    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _truediv
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION165
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL truediv_float_int
+1051    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _truediv
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION166
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL truediv_float_float
+1058    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _and_
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION167
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL and__bool_bool
+1065    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _and_
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION168
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL and__int_int
+1072    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _or_
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION169
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL or__bool_bool
+1079    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _or_
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION170
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL or__int_int
+1086    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _xor
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION171
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL xor_bool_bool
+1093    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _xor
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION172
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL xor_int_int
+1099    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _lshift
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION173
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL lshift_int_int
+1105    LOAD_GLOBAL behaviour
+        LOAD_GLOBAL _rshift
+        CALL_FUNCTION 1
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 6
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "right"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION174
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL rshift_int_int
+1111    LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION175
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL invert_int
+1113    LOAD_GLOBAL invert_int
+        LOAD_GLOBAL int
+        STORE_ATTR __invert__
+1118    LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL bool
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION176
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL invert_bool
+1120    LOAD_GLOBAL invert_bool
+        LOAD_GLOBAL bool
+        STORE_ATTR __invert__
+1125    LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION177
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL pos_int
+1127    LOAD_GLOBAL pos_int
+        LOAD_GLOBAL int
+        STORE_ATTR __pos__
+1132    LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL int
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION178
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL neg_int
+1134    LOAD_GLOBAL neg_int
+        LOAD_GLOBAL int
+        STORE_ATTR __neg__
+1139    LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION179
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL pos_float
+1141    LOAD_GLOBAL pos_float
+        LOAD_GLOBAL float
+        STORE_ATTR __pos__
+1146    LOAD_GLOBAL _no_raise
+        LOAD_GLOBAL _pure
+        LOAD_GLOBAL c_function
+        LOAD_CONSTANT ()
+        BUILD_MAP 4
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "left"
+        STORE_MAP
+        LOAD_GLOBAL float
+        LOAD_CONSTANT "return"
+        STORE_MAP
+        MAKE_FUNCTION180
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL neg_float
+1148    LOAD_GLOBAL neg_float
+        LOAD_GLOBAL float
+        STORE_ATTR __neg__
+1153    LOAD_GLOBAL _globals_to_consts
+        LOAD_GLOBAL _no_trace
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION181
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL surrogate_inplace_add
+1160    LOAD_GLOBAL tracing_function
+        LOAD_GLOBAL _iadd
+        LOAD_GLOBAL surrogate_inplace_add
+        CALL_FUNCTION 2
+        DROP
+1161    DELETE_GLOBAL surrogate_inplace_add
+1166    LOAD_GLOBAL _globals_to_consts
+        LOAD_GLOBAL _no_trace
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION182
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL surrogate_add
+1190    LOAD_GLOBAL tracing_function
+        LOAD_GLOBAL _add
+        LOAD_GLOBAL surrogate_add
+        CALL_FUNCTION 2
+        DROP
+1191    DELETE_GLOBAL surrogate_add
+1197    LOAD_GLOBAL _globals_to_consts
+        LOAD_GLOBAL _no_trace
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION183
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL surrogate_inplace_sub
+1204    LOAD_GLOBAL tracing_function
+        LOAD_GLOBAL _isub
+        LOAD_GLOBAL surrogate_inplace_sub
+        CALL_FUNCTION 2
+        DROP
+1205    DELETE_GLOBAL surrogate_inplace_sub
+1210    LOAD_GLOBAL _globals_to_consts
+        LOAD_GLOBAL _no_trace
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION184
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL surrogate_sub
+1234    LOAD_GLOBAL tracing_function
+        LOAD_GLOBAL _sub
+        LOAD_GLOBAL surrogate_sub
+        CALL_FUNCTION 2
+        DROP
+1235    DELETE_GLOBAL surrogate_sub
+1241    LOAD_GLOBAL _globals_to_consts
+        LOAD_GLOBAL _no_trace
+        LOAD_CONSTANT ()
+        BUILD_MAP 0
+        MAKE_FUNCTION185
+        CALL_FUNCTION 1
+        CALL_FUNCTION 1
+        STORE_GLOBAL surrogate_inplace_mod
+1248    LOAD_GLOBAL tracing_function
+        LOAD_GLOBAL _imod
+        LOAD_GLOBAL surrogate_inplace_mod
+        CALL_FUNCTION 2
+   

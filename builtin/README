@@ -1,0 +1,2 @@
+The .py and .c files in this directory form the builtin modules EXCEPT opgen*.py and oplib.* which combine to create operator.*
+

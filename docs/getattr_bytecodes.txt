@@ -1,0 +1,414 @@
+
+special_from_type_or_goto: type name class_attr_or_goto;
+
+#class_attr_or_goto: Looks up attribute in class dict,
+#scanning mro until found. Jumps to target if fails.
+#Error if object is not a type.
+
+#from_dict_or_goto: Looks up attribute in object's dict.
+#Jumps to target if fails.
+
+#type: obj -> type(obj)
+#proper_subtype: a b. a != b and b in a.mro
+#bind_method: obj func -> bound_method(obj, func)
+#is_type: t -> bool True if t is a type
+#is_function: f -> bool True if f is a function
+
+macro load_attr:
+    load_special_or_goto '__getattribute__' fatal_error
+    name
+    call_simple 1 # tail call
+fatal_error:
+    #Object has a __getattribute__ method, so cannot reach here
+    load_constant internal_error
+    load_constant "No __getattribute__ method"
+    call_simple 1 # tail call
+
+def function_get:
+    load_frame 0
+    type_check function
+    branch_on_false error
+    load_frame 1
+    none
+    is
+    branch_on_true class_attr:
+    load_frame 1
+    load_frame 0
+    bind_method
+    return 
+class_attr:
+    load_frame 0
+    return
+error:
+    load_constant _function_get_error
+    load_frame 0
+    call_simple 1
+    return
+
+def generic_getattr:
+    #2 parameters (obj, name):
+    #Local variables 
+    #obj 0
+    #name 1
+    #cls 2  = type(obj)
+    #cls_attr 3  = cls.__dict__[name]
+    load_frame 0
+    type 
+    store_frame 2
+    load_frame 2
+    load_frame 1
+    class_attr_or_goto no_cls_attr
+    store_frame 3
+    load_frame 3
+    special_from_type_or_goto '__set__', no_set
+    drop
+    load_frame 3
+    special_from_type_or_goto '__get__', no_get
+    load_frame 3
+    load_frame 0
+    load_frame 2
+    call_simple 3
+    return
+no_set:
+    load_frame 0
+    load_frame 1
+    from_dict_or_goto not_in_dict
+    return
+not_in_dict:
+    #Special case function
+    load_frame 3
+    type_check function
+    branch_on_true bind_method
+    load_frame 3
+    special_from_type_or_goto '__get__', not_descriptor
+    load_frame 3
+    load_frame 0
+    load_frame 2
+    call_simple 3
+    return
+no_get:
+    load_frame 0
+    load_frame 1
+    from_dict_or_goto not_descriptor
+    return
+not_descriptor:
+    load_frame 3
+    return 
+no_cls_attr:
+    load_frame 0
+    load_frame 1
+    from_dict_or_goto try_getattr
+    return
+try_getattr:
+    load_frame 0
+    load_special_or_goto '__getattr__', error
+    load_frame 1
+    call_simple 1
+    return
+error:
+    # raise _attribute_error(cls, name)
+    load_constant _attribute_error
+    load_frame 0
+    load_frame 1
+    call_simple 2
+    raise
+bind_method:
+    load_frame 0
+    load_frame 3
+    bind_method
+    return
+
+#Local variables 
+#cls 0
+#name 1
+#meta 2
+#meta_desc 3
+#desc 4
+
+def type_getattr_public:
+    load_frame 0
+    type 
+    type_check type
+    branch_on_false not_a_type
+    load_constant type_getattr
+    load_frame 0
+    load_frame 1
+    call_simple 2
+    return
+not_a_type:
+    load_constant _set_attr_not_type_error
+    load_frame 0
+    call_simple 1
+    return   
+
+def type_getattr_private:
+    #2 parameters (cls, name)
+    #Local values
+    #cls 0
+    #name 1
+    #meta 2
+    #meta_desc 3
+    #desc 4
+    load_frame 0
+    type 
+    store_frame 2
+    load_frame 2
+    load_frame 1
+    class_attr_or_goto no_meta_attr
+    store_frame 3
+    load_frame 3
+    special_from_type_or_goto '__set__', meta_attr_no_set
+    drop
+    load_frame 3
+    special_from_type_or_goto '__get__', meta_attr_no_get
+    load_frame 3
+    load_frame 0
+    load_frame 2
+    call_simple 3
+    return
+meta_attr_no_set:
+    load_frame 0
+    load_frame 1
+    class_attr_or_goto no_attr
+    store_frame 4
+    jump class_attr
+no_attr:
+    load_frame 3
+    special_from_type_or_goto '__get__', meta_attr_not_descriptor
+    load_frame 3
+    load_frame 0
+    load_frame 2
+    call_simple 3
+    return
+meta_attr_no_get:
+    load_frame 0
+    load_frame 1
+    class_attr_or_goto meta_attr_not_descriptor
+    store_frame 4
+    jump class_attr
+meta_attr_not_descriptor:
+    load_frame 3
+    return
+no_meta_attr:
+    load_frame 0
+    load_frame 1
+    class_attr_or_goto error
+    store_frame 4
+class_attr:
+    load_frame 4
+    special_from_type_or_goto '__get__', not_descriptor
+    load_frame 4
+    none
+    load_frame 0
+    call_simple 3
+    return
+not_descriptor:
+    load_frame 4
+    return
+error:
+    # raise _attribute_error(cls, name)
+    load_constant _attribute_error
+    load_frame 0
+    load_frame 1
+    call_simple 2
+    return
+    
+def generator_next:
+    load_frame 0
+    type_check generator
+    branch_on_false error
+    load_frame 0
+    gen_in_handler
+    branch_on_true in handler
+    none
+    load_frame 0
+    gen_enter 
+    return
+in_handler:
+    load_frame 0
+    swap_exception_state
+    none
+    load_frame 0
+    gen_enter
+    load_frame 0
+    swap_exception_state
+    return
+error:
+    load_constant not_a_generator_error
+    load_frame 0
+    call_simple 1
+    return
+
+def generator_send:
+    load_frame 0
+    type_check generator
+    branch_on_false error
+    load_frame 0
+    gen_in_handler
+    branch_on_true in handler
+    load_frame 1
+    load_frame 0
+    gen_enter
+    return
+in_handler:
+    load_frame 0
+    swap_exception_state
+    load_frame 1
+    load_frame 0
+    gen_enter
+    load_frame 0
+    swap_exception_state
+    return
+error:
+    load_constant not_a_generator_error
+    load_frame 0
+    call_simple 1
+    return
+
+def type_call:
+    #3 parameters cls, args, kws
+    #cls 0
+    #args 1
+    #kws 2 
+    #obj 3 
+    load_frame 0
+    special_from_type_or_goto '__new__', new_missing
+    load_frame 0
+    load_frame 1
+    tuple_prepend
+    load_frame 2
+    f_call
+    store_frame 3
+    load_frame 3
+    type
+    load_frame 1
+    subtype
+    branch_if_false no_init
+call_init:
+    load_frame 3
+    load_special_or_goto '__init__', init_missing
+    load_frame 1
+    load_frame 2
+    f_call    
+    none
+    is 
+    branch_on_false init_returns_non_none
+no_init:
+    load_frame 3
+    return
+init_returns_non_none:
+    load_constant init_return_non_error
+    load_frame 3
+    type
+    call_simple 1
+    return
+new_missing:
+    load_constant new_missing_error
+    load_frame 0
+    call_simple 1
+    return
+init_missing:
+    load_constant init_missing_error
+    load_frame 3
+    type
+    call_simple 1
+    return
+
+def bound_method_call:
+    #3 parameters bm, args, kws
+    #bm 0
+    #args 1
+    #kws 2
+    load_frame 0
+    load_slot offsetof(bound_method, func)
+    load_frame 0
+    load_slot offsetof(bound_method, self)
+    load_frame 1
+    tuple_prepend
+    load_frame 2
+    f_call
+    return
+        
+def object_init:
+    #3 parameters cls, args, kws
+    #cls 0
+    #args 1
+    #kws 2
+    load_frame 0
+    special_from_type_or_goto '__init__', ok
+    load_constant object_init
+    is
+    branch_on_true ok
+    load_frame 0
+    special_from_type_or_goto '__new__', ok
+    load_constant object_new
+    is
+    branch_on_false warning_if_args
+#error if args:
+    load_frame 1
+    truth
+    branch_on_true error
+    load_frame 2
+    truth
+    branch_on_false ok
+error:
+    load_constant object_init_parameters_type_error
+    call_simple 1
+    return
+warning_if_args:
+    load_frame 1
+    truth
+    branch_on_true warning
+    load_frame 2
+    truth
+    branch_on_false ok
+warning:
+    load_constant object_init_parameters_warning
+    call_simple 1
+    drop
+ok:
+    none
+    return
+    
+def object_new:
+    #3 parameters cls, args, kws
+    #cls 0
+    #args 1
+    #kws 2
+    load_frame 0
+    special_from_type_or_goto '__new__', allocate
+    load_constant object_new
+    is
+    branch_on_true allocate
+    load_frame 0
+    special_from_type_or_goto '__init__', allocate
+    load_constant object_init
+    is
+    branch_on_false warning_if_args
+#error if args:
+    load_frame 1
+    truth
+    branch_on_true error
+    load_frame 2
+    truth
+    branch_on_false ok
+error:
+    load_constant object_new_parameters_type_error
+    call_simple 1
+    return
+warning_if_args:
+    load_frame 1
+    truth
+    branch_on_true warning
+    load_frame 2
+    truth
+    branch_on_false ok
+warning:
+    load_constant object_new_parameters_warning
+    call_simple 1
+    drop
+allocate:
+    load_frame 0
+    allocate_object
+    return
+

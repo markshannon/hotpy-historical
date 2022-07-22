@@ -1,0 +1,22 @@
+
+#include "hotpy.h"
+#include "specialiser.h"
+#include <malloc.h>
+
+// This pass replaces f_call, return pairs with tail_calls.
+
+
+__preamble [private] ( -- ) {
+}
+
+__postamble [private] ( -- ) {
+    gvmt_ireturn_r(NULL);
+}
+
+f_call( -- ) {
+    if (gvmt_ip()[1] == OPCODE(return)) {
+       gvmt_ip()[0] = OPCODE(tail_call);
+       gvmt_ip()[1] = OPCODE(return);
+    }
+}
+

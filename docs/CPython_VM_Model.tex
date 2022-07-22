@@ -1,0 +1,163 @@
+\documentclass[a4paper,10pt]{article}
+
+\newenvironment{myitemize}{
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+%opening
+\title{}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+In order to optimize the performance of the CPython virtual machine, the semantics of each bytecode
+must be well defined. In order to define these semantics, a model of execution is required. This paper describes such a model.
+This model is an idealized version of the CPython virtual machine. The model can support the Python language as implemented by CPython,
+but does so in subtly different ways. Before optimizing CPython, its implementation would need to be brought in line with the model.
+
+\end{abstract}
+
+\section{Overview}
+
+The VM model consists of a single, global garbage-collected heap of objects and one or more machine-level threads of execution and one or more
+Python threads. Each machine-level thread executes one Python thread at a time.
+There is no fixed relation between machine-level threads and Python threads.
+In the VM model, each machine-level thread consists of a triple of values, a \verb|thread_state| object, a data-stack and an  instruction-pointer.
+When threads are suspended, the data-stack and instruction-pointer are stored in the \verb|thread_state| object, which encapsulates the entire state of the thread.
+
+Each thread-state object corresponds one-to-one with a Python thread. This means that thread-switching can occur either when the underlying operating system switches the machine-level thread or when the VM changes the \verb|thread_state| object referred to by the machine-level thread.
+
+Machine-level threads do not map one-to-one to Python threads. Allocation of objects and garbage-collection is automatically managed; memory management details are not part of the model.
+
+\section{Objects}
+
+Although Python can support an infinite number of classes,
+the following classes are required to describe the execution model.
+
+\begin{myitemize}
+\item object
+\item type
+\item thread
+\item thread\_state
+\item frame
+\item function
+\item code\_object
+\item exception\_handler
+\end{myitemize}
+
+The following classes are required  to describe the optimisation passes.
+\begin{myitemize}
+\item dict
+\item dict\_values
+\item dict\_keys
+\item int
+\item float
+\end{myitemize}
+
+\subsection{The object class}
+The \verb|object| class is the root of the inheritance hierarchy in Python. All objects include the single \verb|class| field,
+defined in the \verb|object| class. Many objects also have a \verb|dict| field which refers to the instance dictionary for that object. Whether or not an object has a \verb|dict| field is recorded in its \verb|class|.
+
+\subsection{The type class}
+Since Python is a dynamic language, classes are objects like all other objects. All classes have \verb|type| as their \verb|class|. \verb|type| is its own class. The \verb|type| class have various fields that are required for describing objects to the garbage collector and other book-keeping details. The following fields are relevant to the VM model.
+\begin{description}
+\item[dict\_offset] Records the offset of the \verb|dict| field in instances of this class, or zero if instances do not have dictionaries.
+\item[dict] The \verb|dict| field of a \verb|type| object is special.
+It describes the attributes of all instances of the class (\verb|type| object), rather than the class itself.
+\item[mro] Abbreviation for method resolution order. An array of \verb|type| objects, used when resolving attributes. To \verb|obj.x| look for 'x' in \verb|obj.class.mro[0].dict|, then\verb| obj.class.mro[1].dict|, through to \verb|obj.class.mro[n-1].dict|. Where \verb|t.mro[0]| is \verb|t| and \verb|t.mro[n-1]| is the \verb|object| class.
+\end{description}
+
+\subsection{The thread class}
+
+Each thread object contains information about the underlying machine-thread as well as thread-local variables.
+
+The profiler and tracer are a required part of the model, as they strongly influence optimisations. Most of the state of a HotPy thread is stored in the stack of \verb|frame|s, implemented as a singly linked list. Each \verb|thread| object has a \verb|current_frame| field which refers to the currently executing frame. 
+
+\subsection{The thread\_state class}
+
+Each thread object consists of a large number of fields; many of these are necessary for Python semantics or are used by the optimisers. The fields relevent to the VM model are:
+\begin{description}
+\item[current\_frame] The frame for the currently executing function.
+\item[stack\_top] Where top of data\_stack pointer is stored when suspended.
+\item[next\_ip] Next instruction to be executed (only valid when suspended).
+\item[exception] The exception currently being handled (if any).
+\item[c\_exception] When an exception is generated in C code (rather than the interpreter), this value is set.
+\item[call\_depth] The depth of the frame stack, used to prevent run away recursion.
+\item[profiler] A callable object, usually used for proiling. It is called on function calls and returns, for each line of code executed, whenever an exception is raised.
+\item[tracer] A callable object, usually used for debugging.
+\end{description}
+
+The profiler and tracer are a required part of the model, as they strongly influence optimisations. Most of the state of a Python thread is stored in the stack of \verb|frame|s, implemented as a singly linked list. Each \verb|thread_state| object has a \verb|current_frame| field which refers to the currently executing frame.
+
+\subsection{The frame class}
+
+The following fields of the \verb|frame| class are relevant to the execution model.
+\begin{description}
+\item[length] The number of local variables.
+\item[locals\_array] The local variable array
+\item[next\_ip] A pointer to the next instruction (bytecode) to be executed.
+\item[line\_no] The current line number
+\item[stack\_base] The top of stack pointer on entry to this frame. 
+\item[exception\_handlers]  A singly linked list of exception handlers (may be empty).
+\item[scopes] Holds references to built-in, module and local scopes.
+\item[code] The code object being executed by this frame.
+It also contains a \verb|dict| for the local variables, for those frames that cannot store their locals in the locals\_array.
+\item[back] A reference to the caller frame.
+\end{description}
+
+\subsection{The function class}
+
+The \verb|function| class describes a Python function. Most of the details of the  Python function are bound up in the \verb|code_object| object which includes the actual bytecodes, as well as the number of parameters and number of local variables. The \verb|function| contains those details that cannot be determined statically from the source code, such as default values.
+The \verb|function| class has the following fields that are relevant to the HotPy VM model.
+\begin{description}
+\item[code] The code object for this function.
+\item[defaults] Default values for unspecified parameters (a tuple).
+\item[kw\_defaults] Default values for unspecified keyword-only parameters (a dict).
+\item[scopes] The built-in and module-level dictionaries for this function.
+\item[closure] If this is a nested function, this refers to the frame in which this function object was created.
+\end{description}
+
+\subsection{The code\_object class}
+
+The \verb|code_object| class describes the static parts of a Python function. The  \verb|code_object| class has the following fields:
+\begin{description}
+\item[kind] A code describing the parameter passing conventions for this function. There are four possibilities: surplus positional arguments may raise an exception or be passed in a tuple; surplus named arguments may raise an exception or be passed in a dictionary.
+\item[param\_count] The number of parameters declared for this function.
+\item[locals\_count] the number of local variables declared in this function
+\item[bytecodes] The bytecode instructions for this code\_object.
+\end{description}
+
+\subsection{The exception\_handler class}
+The \verb|exception_handler| class is not a class in the standard Python library, it is purely internal to the VM.
+
+The \verb|exception_handler| class has the following fields:
+\begin{description}
+\item[data\_stack\_depth] The number of values on the data stack
+\item[ip] The first bytecode to be executed when this handler is invoked.
+\item[next] The next \verb|exception_handler| object in the linked list.
+\end{description}
+
+\subsection{The scopes class}
+The \verb|scopes|  class holds the local, module-level and global scopes for functions and frames.
+It has the following fields:
+\begin{description}
+\item[builtins] The builtins dictionary
+\item[globals] The globals (module-level) dictionary
+\item[locals] The locals dictionary. This is NULL for scopes stored in functions and those frames which use ``fast'' locals.
+\end{description}
+
+\section{Raising Exceptions}
+
+When an exception is raised (either in C code or in Python code), its traceback is set and if \verb|thread_state->exception| is non-NULL, then the \verb|__context__| of the exception is set to \verb|thread_state->exception|. In C code the \verb|thread_state->c_exception| is set to the exception, and an error code is returned until the interpreter is reached, at which point the \verb|thread_state->c_exception| is pushed to the stack. In Python code, the exception is already on the stack.
+The 
+
+
+\end{document}

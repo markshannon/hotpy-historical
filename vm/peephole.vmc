@@ -1,0 +1,526 @@
+#include <malloc.h>
+#include "hotpy.h"
+#include "specialiser.h"
+
+//*** Various peephole optimisations ******
+//  Primarily super-instruction formation
+//  Plus a few odds and ends
+//****************************************
+
+locals {
+    R_bytelist output;
+    uint8_t* ip_start;
+    int loop_start;
+}
+
+__preamble [private] ( -- ) {
+    output = make_bytelist(128);
+    ip_start = gvmt_ip();
+    loop_start = -1;
+}
+
+__enter [private] ( -- ) {
+    int len = gvmt_opcode_lengths_interpreter[*gvmt_ip()];
+    bytelist_append_block_nolock(output, gvmt_ip(), len);
+}
+
+__postamble [private] ( -- ) {
+    gvmt_ireturn_r((GVMT_Object)output);
+}
+
+rotate( -- ) {
+    uint8_t next_op = gvmt_ip()[1];
+    if (next_op == OPCODE(rrot)) {
+        bytelist_pop(output);
+        gvmt_far_jump(gvmt_ip()+2);
+    }
+}
+
+copy( -- ) {
+    uint8_t next_op = gvmt_ip()[1];
+    if (next_op == OPCODE(drop)) {
+        bytelist_pop(output);
+        gvmt_far_jump(gvmt_ip()+2);
+    } else if (next_op == OPCODE(store_frame)) {
+        output->array->bytes[output->size-1] = OPCODE(copy_store_frame);
+        bytelist_append_nolock(output, gvmt_ip()[2]);
+        gvmt_far_jump(gvmt_ip()+3);
+    } else if (next_op == OPCODE(store_to_cache)) {
+        output->array->bytes[output->size-1] = OPCODE(copy_store_to_cache);
+        bytelist_append_nolock(output, gvmt_ip()[2]);
+        gvmt_far_jump(gvmt_ip()+3);
+    }
+}
+
+store_frame(uintptr_t #index --) {
+    uint8_t next_op = gvmt_ip()[2];
+    if ((next_op == OPCODE(load_from_cache))) {
+        int next_index = gvmt_ip()[3];
+        output->array->bytes[output->size-2] = OPCODE(store_frame_load_from_cache);
+        output->array->bytes[output->size-1] = index;
+        bytelist_append_nolock(output, next_index);
+        gvmt_far_jump(gvmt_ip()+4);
+    } else if ((next_op == OPCODE(fast_load_frame))) {
+        int next_index = gvmt_ip()[3];
+        if (next_index == index) {
+            output->array->bytes[output->size-2] = OPCODE(copy_store_frame);
+            output->array->bytes[output->size-1] = index;
+        } else {
+            output->array->bytes[output->size-2] = OPCODE(store_frame_fast_load_frame);
+            output->array->bytes[output->size-1] = index;
+            bytelist_append_nolock(output, next_index);
+        }
+        gvmt_far_jump(gvmt_ip()+4);
+    }
+}
+
+store_to_cache(uintptr_t #index --) {
+    uint8_t next_op = gvmt_ip()[2];
+    if ((next_op == OPCODE(load_from_cache))) {
+        int next_index = gvmt_ip()[3];
+        if (next_index == index) {
+            output->array->bytes[output->size-2] = OPCODE(copy_store_to_cache);
+            output->array->bytes[output->size-1] = index;
+        } else {
+            output->array->bytes[output->size-2] = OPCODE(store_to_cache_load_from_cache);
+            output->array->bytes[output->size-1] = index;
+            bytelist_append_nolock(output, next_index);
+        }
+        gvmt_far_jump(gvmt_ip()+4);
+    }
+    if ((next_op == OPCODE(fast_load_frame))) {
+        int next_index = gvmt_ip()[3];
+        output->array->bytes[output->size-2] = OPCODE(store_to_cache_fast_load_frame);
+        output->array->bytes[output->size-1] = index;
+        bytelist_append_nolock(output, next_index);
+        gvmt_far_jump(gvmt_ip()+4);
+    }
+}
+
+drop( -- ) {
+    uint8_t next_op = gvmt_ip()[1];
+    if ((next_op == OPCODE(load_from_cache))) {
+        int index = gvmt_ip()[2];
+        output->array->bytes[output->size-1] = OPCODE(drop_load_from_cache);
+        bytelist_append_nolock(output, index);
+        gvmt_far_jump(gvmt_ip()+3);
+    }
+    if ((next_op == OPCODE(fast_load_frame))) {
+        int index = gvmt_ip()[2];
+        output->array->bytes[output->size-1] = OPCODE(drop_fast_load_frame);
+        bytelist_append_nolock(output, index);
+        gvmt_far_jump(gvmt_ip()+3);
+    }
+}
+
+
+load_from_cache(uintptr_t #index --) {
+    uint8_t next_op = gvmt_ip()[2];
+    if ((next_op == OPCODE(load_from_cache))) {
+        int next_index = gvmt_ip()[3];
+        output->array->bytes[output->size-2] = OPCODE(load_from_cache_load_from_cache);
+        output->array->bytes[output->size-1] = index;
+        bytelist_append_nolock(output, next_index);
+        gvmt_far_jump(gvmt_ip()+4);
+    } else if ((next_op == OPCODE(fast_load_frame))) {
+        int next_index = gvmt_ip()[3];
+        output->array->bytes[output->size-2] = OPCODE(load_from_cache_fast_load_frame);
+        output->array->bytes[output->size-1] = index;
+        bytelist_append_nolock(output, next_index);
+        gvmt_far_jump(gvmt_ip()+4);
+    } else if (next_op == OPCODE(drop)) {
+        bytelist_pop(output);
+        bytelist_pop(output);
+        gvmt_far_jump(gvmt_ip()+3);
+    }
+}
+
+fast_load_frame(uintptr_t #index --) {
+    uint8_t next_op = gvmt_ip()[2];
+    if ((next_op == OPCODE(load_from_cache))) {
+        int next_index = gvmt_ip()[3];
+        output->array->bytes[output->size-2] = OPCODE(fast_load_frame_load_from_cache);
+        output->array->bytes[output->size-1] = index;
+        bytelist_append_nolock(output, next_index);
+        gvmt_far_jump(gvmt_ip()+4);
+    } else if ((next_op == OPCODE(fast_load_frame))) {
+        int next_index = gvmt_ip()[3];
+        output->array->bytes[output->size-2] = OPCODE(fast_load_frame_fast_load_frame);
+        output->array->bytes[output->size-1] = index;
+        bytelist_append_nolock(output, next_index);
+        gvmt_far_jump(gvmt_ip()+4);
+    } else if (next_op == OPCODE(drop)) {
+        bytelist_pop(output);
+        bytelist_pop(output);
+        gvmt_far_jump(gvmt_ip()+3);
+    }
+}
+
+jump(int16_t ##offset -- ) {
+    if (loop_start < 0) {
+        int start = gvmt_ip()-ip_start+offset;
+        offset = 3-output->size+start;
+    } else {
+        offset = 3-output->size+loop_start;
+    }
+    output->array->bytes[output->size-2] = offset >> 8;
+    output->array->bytes[output->size-1] = offset;
+}
+
+counting_end_loop(uint8_t #count, unsigned ####addr, int16_t ##offset -- ) {
+    if (loop_start < 0) {
+        int start = gvmt_ip()-ip_start+offset;
+        offset = 8-output->size+start;
+    } else {
+        offset = 8-output->size+loop_start;
+    }
+    output->array->bytes[output->size-2] = offset >> 8;
+    output->array->bytes[output->size-1] = offset;
+}
+
+nop( -- ) {
+    bytelist_pop(output);
+}
+
+loop_start_nop( -- ) {
+    bytelist_pop(output);
+    loop_start = output->size;
+}
+
+byte(int #x -- ) {
+    uint8_t next_op = gvmt_ip()[2];
+    if (next_op == OPCODE(i_add) || next_op == OPCODE(i_sub)) {
+        bytelist_pop(output);
+        bytelist_pop(output);
+        if (x != 0) {
+            if ((next_op == OPCODE(i_add)) ^ (x < 0)) {
+                bytelist_append_nolock(output, OPCODE(i_inc));
+            } else {
+                bytelist_append_nolock(output, OPCODE(i_dec));
+            }
+            if (x > 0) {
+                bytelist_append_nolock(output, x);
+            } else {
+                bytelist_append_nolock(output, -x);
+            }
+            bytelist_append_nolock(output, gvmt_ip()[3]);
+            bytelist_append_nolock(output, gvmt_ip()[4]);
+            bytelist_append_nolock(output, gvmt_ip()[5]);
+            bytelist_append_nolock(output, gvmt_ip()[6]);
+        }
+        gvmt_far_jump(gvmt_ip() + 7);
+    } else if (next_op == OPCODE(i_add_no_overflow) ||
+               next_op == OPCODE(i_sub_no_overflow)) {
+        bytelist_pop(output);
+        bytelist_pop(output);
+        if (x != 0) {
+            if ((next_op == OPCODE(i_add_no_overflow)) ^ (x < 0)) {
+                bytelist_append_nolock(output, OPCODE(i_inc_no_overflow));
+            } else {
+                bytelist_append_nolock(output, OPCODE(i_dec_no_overflow));
+            }
+            if (x > 0) {
+                bytelist_append_nolock(output, x);
+            } else {
+                bytelist_append_nolock(output, -x);
+            }
+        }
+        gvmt_far_jump(gvmt_ip() + 3);
+    } else if (next_op == OPCODE(i_mul)) {
+        bytelist_pop(output);
+        bytelist_pop(output);
+        bytelist_append_nolock(output, OPCODE(i_prod));
+        bytelist_append_nolock(output, x);
+        gvmt_far_jump(gvmt_ip() + 3);
+    }
+}
+
+true ( -- ) {
+    uint8_t next_op = gvmt_ip()[1];
+    if (next_op == OPCODE(exit_on_false)) {
+        bytelist_pop(output);
+        gvmt_far_jump(gvmt_ip() + 6);
+    }
+}
+
+false ( -- ) {
+    uint8_t next_op = gvmt_ip()[1];
+    if (next_op == OPCODE(exit_on_true)) {
+        bytelist_pop(output);
+        gvmt_far_jump(gvmt_ip() + 6);
+    }
+}
+
+// This belongs in different pass.
+pack (uintptr_t #count -- ) {
+    uint8_t next_op = gvmt_ip()[2];
+    if (next_op == OPCODE(dictionary)) {
+        output->array->bytes[output->size-2] = OPCODE(pack_params);
+        gvmt_far_jump(gvmt_ip() + 3);
+    } else if (count <= 3) {
+        if (next_op == OPCODE(unpack) && gvmt_ip()[3] == count) {
+            bytelist_pop(output);
+            bytelist_pop(output);
+            if (count == 2)
+                bytelist_append_nolock(output, OPCODE(swap));
+            else if (count == 3)
+                bytelist_append_nolock(output, OPCODE(flip3));
+            gvmt_far_jump(gvmt_ip() + 4);
+        }
+        if (next_op == OPCODE(pop_frame)) {
+            next_op = gvmt_ip()[3];
+            if (next_op == OPCODE(unpack) && gvmt_ip()[4] == count) {
+                bytelist_pop(output);
+                bytelist_pop(output);
+                if (count == 2)
+                    bytelist_append_nolock(output, OPCODE(swap));
+                else if (count == 3)
+                    bytelist_append_nolock(output, OPCODE(flip3));
+                bytelist_append_nolock(output, OPCODE(pop_frame));
+                gvmt_far_jump(gvmt_ip() + 5);
+            }
+        } else if (next_op == OPCODE(gen_yield)) {
+            next_op = gvmt_ip()[7];
+            if (next_op == OPCODE(unpack) && gvmt_ip()[8] == count) {
+                bytelist_pop(output);
+                bytelist_pop(output);
+                if (count == 2)
+                    bytelist_append_nolock(output, OPCODE(swap));
+                else if (count == 3)
+                    bytelist_append_nolock(output, OPCODE(flip3));
+                bytelist_append_nolock(output, OPCODE(gen_yield));
+                bytelist_append_nolock(output, gvmt_ip()[3]);
+                bytelist_append_nolock(output, gvmt_ip()[4]);
+                bytelist_append_nolock(output, gvmt_ip()[5]);
+                bytelist_append_nolock(output, gvmt_ip()[6]);
+                gvmt_far_jump(gvmt_ip() + 9);
+            }
+        }
+    }
+}
+
+pack_params(uintptr_t #count -- ) {
+    uint8_t next_op = gvmt_ip()[2];
+    if (next_op == OPCODE(drop)) {
+        if (count == 0) {
+            bytelist_pop(output);
+            bytelist_pop(output);
+            bytelist_append_nolock(output, OPCODE(empty_tuple));
+        } else {
+            output->array->bytes[output->size-2] = OPCODE(pack);
+        }
+        gvmt_far_jump(gvmt_ip() + 3);
+    } else {
+        if (count == 0) {
+            bytelist_pop(output);
+            bytelist_pop(output);
+            bytelist_append_nolock(output, OPCODE(empty_tuple));
+            bytelist_append_nolock(output, OPCODE(dictionary));
+        }
+    }
+}
+
+pick(uintptr_t #depth -- ) {
+    uint8_t next_op = gvmt_ip()[2];
+    if (depth == 0) {
+        bytelist_pop(output);
+        bytelist_pop(output);
+        if (next_op == OPCODE(drop)) {
+            // No op
+            gvmt_far_jump(gvmt_ip()+3);
+        } else if (next_op == OPCODE(drop_under)) {
+            // No op
+            gvmt_far_jump(gvmt_ip()+3);
+        } else if (next_op == OPCODE(pick) && gvmt_ip()[3] == 1) {
+            bytelist_append_nolock(output, OPCODE(copy));
+            bytelist_append_nolock(output, OPCODE(copy));
+            gvmt_far_jump(gvmt_ip()+4);
+        } else {
+            bytelist_append_nolock(output, OPCODE(copy));
+        }
+    } else if (depth == 1) {
+        bytelist_pop(output);
+        bytelist_pop(output);
+        if (next_op == OPCODE(drop)) {
+            // No op
+            gvmt_far_jump(gvmt_ip()+3);
+        } else if (next_op == OPCODE(drop_under)) {
+            bytelist_append_nolock(output, OPCODE(drop));
+            bytelist_append_nolock(output, OPCODE(copy));
+            gvmt_far_jump(gvmt_ip()+3);
+        } else if (next_op == OPCODE(pick) && gvmt_ip()[3] == 1) {
+            bytelist_append_nolock(output, OPCODE(two_copy));
+            gvmt_far_jump(gvmt_ip()+4);
+        } else {
+            bytelist_append_nolock(output, OPCODE(over));
+        }
+    }
+}
+
+// Returning from procdures: none, pop_frame, drop -> pop_frame.
+none( -- ) {
+    if (gvmt_ip()[1] == OPCODE(pop_frame) && gvmt_ip()[2] == OPCODE(drop)) {
+        bytelist_pop(output);
+        bytelist_append_nolock(output, OPCODE(pop_frame));
+        gvmt_far_jump(gvmt_ip() + 3);
+    }
+}
+
+swap ( -- ) {
+    // TO DO - Make this table driven.
+    uint8_t next_op = gvmt_ip()[1];
+    uint8_t replace = 0;
+    if (next_op == OPCODE(i_comp_lt)) {
+        replace = OPCODE(i_comp_gt);
+    } else if (next_op == OPCODE(i_comp_gt)) {
+        replace = OPCODE(i_comp_lt);
+    } else if (next_op == OPCODE(i_comp_le)) {
+        replace = OPCODE(i_comp_ge);
+    } else if (next_op == OPCODE(i_comp_ge)) {
+        replace = OPCODE(i_comp_le);
+    } else if (next_op == OPCODE(i_comp_eq)) {
+        replace = OPCODE(i_comp_eq);
+    } else if (next_op == OPCODE(i_comp_ne)) {
+        replace = OPCODE(i_comp_ne);
+    } else if (next_op == OPCODE(f_lt)) {
+        replace = OPCODE(f_gt);
+    } else if (next_op == OPCODE(f_gt)) {
+        replace = OPCODE(f_lt);
+    } else if (next_op == OPCODE(f_le)) {
+        replace = OPCODE(f_ge);
+    } else if (next_op == OPCODE(f_ge)) {
+        replace = OPCODE(f_le);
+    } else if (next_op == OPCODE(f_eq)) {
+        replace = OPCODE(f_eq);
+    } else if (next_op == OPCODE(f_ne)) {
+        replace = OPCODE(f_ne);
+    }
+    if (replace) {
+        bytelist_pop(output);
+        bytelist_append_nolock(output, replace);
+        gvmt_far_jump(gvmt_ip() + 2);
+    }
+    if (next_op == OPCODE(i_exit_eq)) {
+        replace = OPCODE(i_exit_eq);
+    } else if (next_op == OPCODE(i_exit_ne)) {
+        replace = OPCODE(i_exit_ne);
+    }
+    if (replace) {
+        bytelist_pop(output);
+        bytelist_append_nolock(output, replace);
+        bytelist_append_nolock(output, gvmt_ip()[2]);
+        bytelist_append_nolock(output, gvmt_ip()[3]);
+        bytelist_append_nolock(output, gvmt_ip()[4]);
+        bytelist_append_nolock(output, gvmt_ip()[5]);
+        gvmt_far_jump(gvmt_ip() + 6);
+    }
+}
+
+i_comp_eq ( -- ) {
+    uint8_t next_op = gvmt_ip()[1];
+    uint8_t new_op = 0;
+    if (next_op == OPCODE(exit_on_true)) {
+        new_op = OPCODE(i_exit_eq);
+    } else if (next_op == OPCODE(exit_on_false)) {
+        new_op = OPCODE(i_exit_ne);
+    }
+    if (new_op) {
+        bytelist_pop(output);
+        bytelist_append_nolock(output, new_op);
+        bytelist_append_nolock(output, gvmt_ip()[2]);
+        bytelist_append_nolock(output, gvmt_ip()[3]);
+        bytelist_append_nolock(output, gvmt_ip()[4]);
+        bytelist_append_nolock(output, gvmt_ip()[5]);
+        gvmt_far_jump(gvmt_ip() + 1 + OPCODE_LENGTH(exit_on_true));
+    }
+    if (next_op == OPCODE(not) || next_op == OPCODE(fast_not)) {
+        new_op = OPCODE(i_comp_ne);
+        bytelist_pop(output);
+        bytelist_append_nolock(output, new_op);
+    }
+}
+
+i_comp_ne ( -- ) {
+    uint8_t next_op = gvmt_ip()[1];
+    uint8_t new_op = 0;
+    if (next_op == OPCODE(exit_on_true)) {
+        new_op = OPCODE(i_exit_ne);
+    } else if (next_op == OPCODE(exit_on_false)) {
+        new_op = OPCODE(i_exit_eq);
+    }
+    if (new_op) {
+        bytelist_pop(output);
+        bytelist_append_nolock(output, new_op);
+        bytelist_append_nolock(output, gvmt_ip()[2]);
+        bytelist_append_nolock(output, gvmt_ip()[3]);
+        bytelist_append_nolock(output, gvmt_ip()[4]);
+        bytelist_append_nolock(output, gvmt_ip()[5]);
+        gvmt_far_jump(gvmt_ip() + 1 + OPCODE_LENGTH(exit_on_true));
+    }
+    if (next_op == OPCODE(not) || next_op == OPCODE(fast_not)) {
+        new_op = OPCODE(i_comp_eq);
+        bytelist_pop(output);
+        bytelist_append_nolock(output, new_op);
+    }
+}
+
+f_call ( -- ) {
+    // Just oddities left.
+    bytelist_pop(output);
+    bytelist_append_nolock(output, OPCODE(f_call_direct));
+}
+
+next (int ##offset -- ) {
+    assert(0 && "Next should have been replaced in tracing");
+}
+
+native_call (int #count, uint32_t ####address -- ) {
+    behaviour f = (behaviour)address;
+    if (f == PY_FUNC(array_getitem_int)) {
+        assert(count == 2);
+        bytelist_pop(output);
+        bytelist_pop(output);
+        bytelist_pop(output);
+        bytelist_pop(output);
+        bytelist_pop(output);
+        bytelist_pop(output);
+        bytelist_append_nolock(output, OPCODE(array_getitem_int));
+    } else if (f == PY_FUNC(array_setitem_int)) {
+        uint8_t next_op = gvmt_ip()[6];
+        assert(count == 3);
+        if (next_op == OPCODE(drop)) {
+            bytelist_pop(output);
+            bytelist_pop(output);
+            bytelist_pop(output);
+            bytelist_pop(output);
+            bytelist_pop(output);
+            bytelist_pop(output);
+            bytelist_append_nolock(output, OPCODE(array_setitem_int));
+            gvmt_far_jump(gvmt_ip() + OPCODE_LENGTH(native_call) +
+                                      OPCODE_LENGTH(drop));
+        }
+    }
+}
+
+fast_line(int ##line -- ) {
+    uint8_t next_op = gvmt_ip()[3];
+    if (next_op == OPCODE(set_next_ip)) {
+        output->array->bytes[output->size-3] = OPCODE(fast_line_set_next_ip);
+        bytelist_append_nolock(output, gvmt_ip()[4]);
+        bytelist_append_nolock(output, gvmt_ip()[5]);
+        bytelist_append_nolock(output, gvmt_ip()[6]);
+        bytelist_append_nolock(output, gvmt_ip()[7]);
+        gvmt_far_jump(gvmt_ip() + OPCODE_LENGTH(fast_line) +
+                                      OPCODE_LENGTH(set_next_ip));
+    }
+}
+
+line(int ##line -- ) {
+    uint8_t next_op = gvmt_ip()[3];
+    if (next_op == OPCODE(line)) {
+        output->array->bytes[output->size-2] = gvmt_ip()[4];
+        output->array->bytes[output->size-1] = gvmt_ip()[5];
+        gvmt_far_jump(gvmt_ip() + OPCODE_LENGTH(line) * 2);
+    }
+}
+

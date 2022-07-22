@@ -1,0 +1,94 @@
+\documentclass[a4paper,10pt]{article}
+
+
+%opening
+\title{A new API for Python}
+\author{Mark Shannon}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+The current API for Python, has evolved out of the CPython API. 
+It is very large, containing almost 800 functions, as well as many macros, types and data objects.
+Many assumptions about how the VM works, are embedded into the API, some explicitly, but many implicitly.
+
+This paper describes a new two-layered API for Python. 
+A simple execution model for Python is described in order to provide a reference point for the API defintion.
+A compact API, that Python VM should implement is described.
+A larger API that can be implemented as a library using the smaller API is also described.
+
+\end{abstract}
+
+\section{Execution Model}
+
+In the protable API execution model, only one VM may exist per machine process.
+The Python VM consists of zero or more threads, 
+embedded in a host program\footnote{This model applies to the stand alone interpreter as well,
+the host program is just a very thin wrapper.}.
+Python threads are not necessarily tied to machine threads.
+
+The host program must initialize the VM, and any machine threads from which API calls are made.
+The API consists mainly of two parts. The first part relates to calling inot the VM from the host.
+The second part relates to calling into the host from the VM.
+
+A Python thread can be visualised as a thread-object plus a stack of frames, representing its execution state.
+See Figure \ref{fig:thread}.
+Frames come in two types, PyFrames and CFrames. If the VM is executing, the current frame is a PyFrame. 
+If the host is executing, and was called from the VM, then the current frame is a CFrame.
+
+The Python thread is tied to the machine thread, if there are any CFrames present in the stack.
+
+\section{General Comments}
+
+The new API is a source-level API. Implementations are free to implement any or all items as macros.
+
+\section{Threading and Object references}
+
+The current API assumes that the VM is not thread safe.
+The new API allows for VM that are either thread safe or not.
+
+All objects are handled through the opaque \verb|PyReference| type.
+
+For functions where the VM calls into the host, 
+all references passed will retained until the host code returns to the VM.
+These references are local references, they become invalid once control returns to the VM.
+
+If a reference to an object needs to be retained after the code has returned then 
+its reference count needs to be incremented. 
+VM are free to implement memory management in any way the wish.
+However, object lifetime is controlled by reference count in the host space.
+
+\verb|void Py_INCREF(PyReference ref)| \\
+\verb|void Py_DECREF(PyReference ref)|
+
+It is an error if ref is null.
+If ref can be null, use the  \\
+\verb|void Py_XINCREF(PyReference ref)| \\
+\verb|void Py_XINCREF(PyReference ref)| forms.
+
+All references returned from the VM have the reference count incremented by one immediately prior to being return.
+These object will not be released unless \verb|Py_DECREF| is called.
+Values are returned ``by reference'' through \verb|PyReference*| parameters do not have their reference count change.
+
+If the VM is multi-threaded then \verb|Py_INCREF|, \verb|Py_DECREF|, \verb|Py_XINCREF| and \verb|Py_XDECREF| will be thread-safe.
+
+The reference count behaviour of functions is solely determined by the above rules.
+
+\section{Top Level API}
+
+Before any other API functions can be called, the VM must be initialized with \verb|void Py_Initialize()|.
+
+To dispose of resources used by the VM, \verb|void Py_Finalize()| can be called.
+Once \verb|void Py_Finalize()| has been called, no API function can be called until \verb|void Py_Initialize()| 
+is called again.
+
+In order to get information about the VM, call \verb|const char* Py_GetInfo(const char* what)|.
+If \verb|what| is recognised, the relevent value will be returned, otherwise NULL is returned.
+Implmentation should support at least the following values of \verb|what|: `version', `copyright', `compiler', `platform', `buildinfo'.
+
+
+\end{document}

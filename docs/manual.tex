@@ -1,0 +1,39 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{lscape}
+\usepackage{algorithmic}
+\usepackage{url}
+\usepackage{subfigure}
+
+\newenvironment{myitemize}{
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+% Title Page
+\title{The HotPy Virtual Machine Manual}
+\author{Mark Shannon}
+\date{ } 
+
+\begin{document}
+\maketitle 
+
+\begin{abstract}
+
+\end{abstract}
+
+\tableofcontents
+
+\chapter{The HotPy Virtual Machine Execution Model\label{chap:vm-model}}
+
+\input{./vm_model.tex}
+
+\chapter{The Instruction Set}
+
+\input{./instructions.tex}
+
+\end{document}

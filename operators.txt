@@ -1,0 +1,60 @@
+#Format of binary operator:
+name
+Types in table
+Left name
+Right name
+Inplace?
+
+Generates:
+
+An operator, plus behaviours for ALL combinations of types.
+lmethods and rmethods for tabled types.
+seperate dispatcher function.
+An inplace version if it exists.
+
+
+Unary operators:
+name
+Types in table
+method
+fallback
+
+Unary operators:
+Name    method          Fallback
+neg     __neg__         Error
+pos     __neg__         Error
+invert  __invert__      Error
+                        
+len     __len__         Error
+next    __next__        Error
+iter    __iter__        sequence_iter
+in      __contains__    sequence_in
+index   __index__       Error
+
+Binary operators:
+Name        Types           Lname           Rname           Inplace Fallback
+add         int,float       __add__         __radd__        Yes     Error
+sub         int,float       __sub__         __rsub__        Yes     Error
+mul         int,float       __mul__         __rmul__        Yes     Error
+truediv     int,float       __truediv__     __rtruediv__    Yes     Error
+floordiv    int,float       __floordiv__    __rfloordiv__   Yes     Error
+mod         int,float       __mod__         __rmod__        Yes     Error
+and         bool, int       __and__         __rand__        Yes     Error
+or          bool, int       __or__          __ror__         Yes     Error
+xor         bool, int       __xor__         __rxor__        Yes     Error
+lshift      int             __lshift__      __rlshift__     Yes     Error
+rshift      int             __rshift__      __rrshift__     Yes     Error
+eq          int, float      __eq__          __eq__          No      is
+ne          int, float      __ne__          __ne__          No      not is
+lt          int, float      __lt__          __gt__          No      Error
+gt          int, float      __gt__          __lt__          No      Error
+le          int, float      __le__          __ge__          No      Error
+ge          int, float      __ge__          __le__          No      Error                                                                           
+
+GetItem/SetItem/DelItem
+These 'operators' have unary lookup, but a binary table.
+Types: (list,int), (tuple,int), (list, slice), (tuple, slice), 
+Method: __getitem__/__setitem__
+Fallback: Error
+
+

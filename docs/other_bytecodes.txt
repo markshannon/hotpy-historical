@@ -1,0 +1,137 @@
+
+def truth:
+    #1 parameter o
+    load_frame 0
+    load_special_or_goto '__bool__' try_length
+    call_simple 0
+    return
+try_length:
+    load_special_or_goto '__len__' is_true
+    call_simple 0
+    index
+    0
+    #This comparison is fast as both operands are known to be ints
+    binary ne
+    return
+is_true:
+    true
+    return
+
+def iter:
+    #1 parameter
+    load_frame 0
+    load_special_or_goto '__iter__' as_sequence
+    call_simple 0
+    return
+as_sequence:
+    #Specifically exclude dicts
+    load_frame 0
+    type_check dict
+    branch_on_true error
+    load_frame 0
+    special_from_type_or_goto '__getitem__' error
+    drop
+    load_constant make_sequence_iterator
+    load_frame 0
+    call_simple 1
+    return
+error:
+    load_constant not_an_iterable_error
+    load_frame 0
+    call_simple 1
+    return
+    
+def next:
+    #1 parameter
+    load_frame 0
+    load_special_or_goto '__next__' error
+    call_simple 0
+    return
+error:
+    load_constant not_an_iterator_error
+    load_frame 0
+    call_simple 1
+    return
+    
+def getitem:
+    #2 parameters container, index 
+    load_frame 0
+    load_special_or_goto '__getitem__' error
+    load_frame 1
+    call_simple 1
+    return
+error:
+    load_constant not_subscriptable_error
+    load_frame 0
+    call_simple 1
+    return
+    
+def setitem:
+    #3 parameters container, index, value
+    load_frame 0
+    load_special_or_goto '__setitem__' error
+    load_frame 1
+    load_frame 2
+    call_simple 2
+    drop
+    return
+error:
+    load_constant not_subscriptable_error
+    load_frame 0
+    call_simple 1
+    drop
+    return
+    
+def delitem:
+    #2 parameters container, index 
+    load_frame 0
+    load_special_or_goto '__delitem__' error
+    load_frame 1
+    call_simple 1
+    return
+error:
+    load_constant no_item_deletion_error
+    load_frame 0
+    call_simple 1
+    return
+    
+def not:
+    #1 parameter
+    truth
+    fast_not
+    return
+    
+macro raise: notify_exception unwind
+  
+macro yield: save_next_ip pop_frame
+
+macro return: in_generator if load_constant "StopIteration" raise else notify_return pop_frame
+
+macro line: set_line notify_line
+
+macro call_simple:
+    pack
+    empty_dict
+    f_call
+    
+descriptor_get: # obj desc
+    #2 parameters obj desc
+    load 1
+    special_from_type_or_goto '__get__', no_get # desc obj getter
+    load 1
+    load 0
+    load 0
+    type
+    call_simple 3 # tail call
+    return
+no_get:
+    load 1
+    return
+
+#load_special_or_goto:
+# If no attr, record no_special_or_exit and jump.
+# If attr AND attr is bindable, record load_special_or_exit,
+# create bound-method and push it to the stack.
+# Otherwise, record "copy; special_from_type_or_exit", 
+# push the obj and attr to the stack and trace call to descriptor_get (above).
+    

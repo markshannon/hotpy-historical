@@ -1,0 +1,108 @@
+
+def add:
+    #2 parameters; a + b
+    #0: a
+    #1: b
+    load_frame 1
+    type
+    load_frame 0
+    type
+    proper_subtype
+    branch_if_true reverse_add
+    load_frame 0
+    load_special_or_goto '__add__', try_radd
+    load_frame 1
+    call_simple 1
+    store_frame 2
+    load_frame 2
+    load_constant NotImplemented
+    is
+    branch_on_false success
+try_radd:
+    load_frame 1
+    load_special_or_goto '__radd__', error
+    load_frame 0
+    call_simple 1
+    store_frame 2
+    load_frame 2
+    load_constant NotImplemented
+    is
+    branch_on_true error
+success:
+    load_frame 2
+    return    
+reverse_add:
+    load_frame 1
+    load_special_or_goto '__radd__', try_add
+    load_frame 0
+    call_simple 1
+    store_frame 2
+    load_frame 2
+    load_constant NotImplemented
+    is
+    branch_on_false success
+try_add:
+    load_frame 0
+    load_special_or_goto '__add__', error
+    load_frame 1
+    call_simple 1
+    store_frame 2
+    load_frame 2
+    load_constant NotImplemented
+    is
+    branch_on_false success
+error:
+    load_constant binary_operator_error
+    load_constant '+'
+    load_frame 0
+    load_frame 1
+    call_simple 3
+    return
+
+#binary_operator_error
+#C function that raises a Type Error with message of form:
+#"unsupported operand type(s) for %s: '%s' and '%s'"
+
+#Unary operators.
+
+def positive:
+    load_special_or_goto __POS__, error
+    call_simple 0
+    return
+error:
+    load_constant unary_op_error
+    load_constant "+"
+    call_simple 1
+    return
+
+def negate:
+    load_special_or_goto __NEG__, error
+    call_simple 0
+    return
+error:
+    load_constant unary_op_error
+    load_constant "-"
+    call_simple 1
+    return
+
+def invert: 
+    load_special_or_goto __INVERT__, error
+    call_simple 0
+    return
+error:
+    load_constant unary_op_error
+    load_constant "~"
+    call_simple 1
+    return
+
+def abs: 
+    load_special_or_goto __ABS__, error
+    call_simple 0
+    return
+error:
+    load_constant unary_op_error
+    load_constant "abs()"
+    call_simple 1
+    return
+
+

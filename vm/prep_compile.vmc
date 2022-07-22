@@ -1,0 +1,63 @@
+#include "hotpy.h"
+
+//*** Prepare for compilation ******
+//****************************************
+
+locals {
+    R_bytelist output;
+}
+
+__preamble [private] (int insert_check -- ) {
+    output = make_bytelist(128);
+    if (insert_check) {
+        bytelist_append_nolock(output, OPCODE(check_valid));
+    } else {
+        bytelist_append_nolock(output, OPCODE(drop));
+    }
+}
+
+__default[private] ( -- ) {
+    int len = gvmt_opcode_lengths_interpreter[*gvmt_ip()];
+    bytelist_append_block_nolock(output, gvmt_ip(), len);
+}
+
+//******** Replace illegal (for compiler) bytecodes with equivalents
+
+next(int ##offset -- ) {
+    assert(0 && "Next should have been replaced in tracing");
+    abort();
+}
+
+f_call( -- ) {
+    bytelist_append_nolock(output, OPCODE(f_call_direct));
+}
+
+//******* trace ends *******
+
+interpret (unsigned ####address -- ) {
+    int len = gvmt_opcode_lengths_interpreter[*gvmt_ip()];
+    bytelist_append_block_nolock(output, gvmt_ip(), len);
+    gvmt_ireturn_r((GVMT_Object)output);
+}
+
+trace_exit: interpret;
+
+return_exit: interpret;
+
+discard[private] (unsigned ####address -- ) {
+}
+
+recursion_exit: discard interpret;
+
+jump (int16_t ##offset -- ) {
+    bytelist_append_nolock(output, OPCODE(jump));
+    bytelist_append_short(output, offset);
+    gvmt_ireturn_r((GVMT_Object)output);
+}
+
+counting_end_loop(uint8_t #count, unsigned ####addr, int16_t ##offset -- ) {
+    bytelist_append_nolock(output, OPCODE(jump));
+    bytelist_append_short(output, offset);
+    gvmt_ireturn_r((GVMT_Object)output);
+}
+

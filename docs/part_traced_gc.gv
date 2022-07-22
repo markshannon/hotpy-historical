@@ -1,0 +1,42 @@
+digraph g {
+        
+    
+graph [ size = "7.5, 10.5", rankdir = "LR" ];
+   
+    subgraph cluster_roots {
+        label = "Roots";
+        color = "grey";
+        
+        x [ shape = "circle", label = "", color = "grey" ]
+        
+    };
+   
+    subgraph cluster_traced_roots {
+        label = "Traced\nRoots";
+        
+        y [ shape = "circle", label = "" ]
+        z [ shape = "circle", label = "" ]
+        
+    };
+
+    subgraph cluster_heap {
+        label = "Malloc Heap"
+        color = "grey";
+    
+        A  [ label = "A(1)" ]
+        B  [ label = "B(1)" ]
+        C  [ label = "C(1)" ]
+        D  [ label = "D(1)" ]
+        E  [ label = "E(0)" ]
+        F  [ label = "F(0)" ]
+    };
+    
+    
+    x -> A [ color = "grey" ]
+    y -> E 
+    z -> A 
+    A -> B [ color = "grey" ]
+    B -> C [ color = "grey" ]
+    E -> D [ color = "grey" ]
+    
+};

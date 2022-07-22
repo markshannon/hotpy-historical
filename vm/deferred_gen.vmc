@@ -1,0 +1,1185 @@
+#include "hotpy.h"
+#include "operators.h"
+#include "optimise.h"
+#include "deferred_object.h"
+#include <assert.h>
+
+// There is a lot of copy & paste code in this file
+// It needs to be refactored.
+
+locals {
+    R_deferred_state state;
+    R_bytelist out;
+    R_set pinned_objects;
+    uint8_t* ip_start;
+    int loop_second_pass;
+    int loop_start_offset;
+}
+
+__preamble[private](R_trace t -- ) {
+    state = make_deferred_state();
+    out = make_bytelist(128);
+    pinned_objects = t->pinned_objects;
+    ip_start = gvmt_ip();
+    loop_second_pass = 0;
+    loop_start_offset = 0;
+}
+
+__postamble [private] ( -- ) {
+    gvmt_ireturn_r((GVMT_Object)out);
+}
+
+__enter[private]( -- ) {
+//#ifndef NDEBUG
+//    print_deferred_stack(state, stderr);
+//    fprintf(stderr, "%s", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+//    if (gvmt_opcode_lengths_interpreter[*gvmt_ip()] > 1) {
+//        fprintf(stderr, " %d\n", gvmt_ip()[1]);
+//    } else {
+//        fprintf(stderr, "\n");
+//    }
+//#endif
+}
+
+__default[private]( -- ) {
+    int len = gvmt_opcode_lengths_interpreter[*gvmt_ip()];
+    materialise_state(state, out, gvmt_ip());
+    bytelist_append_block_nolock(out, gvmt_ip(), len);
+}
+
+loop_start_nop( -- ) {
+    loop_second_pass = 1;
+    materialise_state(state, out, gvmt_ip());
+    // Leave inplace, so peephole optimiser can fix up jump at end of loop
+    bytelist_append_nolock(out, OPCODE(loop_start_nop));
+    loop_start_offset = out->size;
+}
+
+jump(int16_t ##offset -- ) {
+    R_deferred_frame frame = deferred_peek_frame(state);
+    if (frame) {
+       frame->ip = 0;
+       frame->line_number = 0;
+    } else {
+       state->next_ip = 0;
+       state->line_number = 0;
+    }
+    materialise_state(state, out, gvmt_ip());
+    offset = loop_start_offset-out->size;
+    bytelist_append_nolock(out, OPCODE(jump));
+    bytelist_append_short(out, offset);
+}
+
+counting_end_loop(uint8_t #count, unsigned ####addr, int16_t ##offset -- ) {
+    int start;
+    R_deferred_frame frame = deferred_peek_frame(state);
+    if (frame) {
+       frame->ip = 0;
+       frame->line_number = 0;
+    } else {
+       state->next_ip = 0;
+       state->line_number = 0;
+    }
+    materialise_state(state, out, gvmt_ip());
+    start = gvmt_ip()-ip_start+offset;
+    offset = start-out->size;
+    bytelist_append_nolock(out, OPCODE(counting_end_loop));
+    bytelist_append_nolock(out, 0);
+    bytelist_append_long(out, addr);
+    bytelist_append_short(out, offset);
+}
+
+clear[private]( -- ) {
+    materialise_state(state, out, gvmt_ip());
+}
+
+drop( -- ) {
+    if (is_tos_deferred(state)) {
+        deferred_pop(state);
+    } else {
+        bytelist_append_nolock(out, OPCODE(drop));
+        deferred_pop_immediate(state);
+    }
+}
+
+copy( -- ) {
+    if (is_tos_deferred(state)) {
+        deferred_push(state, deferred_peek(state));
+    } else {
+        bytelist_append_nolock(out, OPCODE(copy));
+        deferred_push_immediate(state);
+    }
+}
+
+swap( -- ) {
+    deferred_swap(state, out);
+}
+
+over( -- ) {
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_peek(state);
+        deferred_push(state, tos);
+        deferred_push(state, nos);
+    } else {
+        bytelist_append_nolock(out, OPCODE(over));
+        deferred_push_immediate(state);
+    }
+}
+
+rotate( -- ) {
+    // Specialiser can generate rotate, rrot pairs.
+    uint8_t next_op = gvmt_ip()[1];
+    if (next_op == OPCODE(rrot)) {
+        gvmt_far_jump(gvmt_ip()+2);
+    }
+    homogenise_tos(3, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_pop(state);
+        R_deferred _3os = deferred_pop(state);
+        deferred_push(state, nos);
+        deferred_push(state, tos);
+        deferred_push(state, _3os);
+    } else {
+        bytelist_append_nolock(out, OPCODE(rotate));
+    }
+}
+
+rotate4( -- ) {
+    homogenise_tos(4, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_pop(state);
+        R_deferred _3os = deferred_pop(state);
+        R_deferred _4os = deferred_pop(state);
+        deferred_push(state, _3os);
+        deferred_push(state, nos);
+        deferred_push(state, tos);
+        deferred_push(state, _4os);
+    } else  {
+        bytelist_append_nolock(out, OPCODE(rotate4));
+    }
+}
+
+rrot( -- ) {
+    homogenise_tos(3, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_pop(state);
+        R_deferred _3os = deferred_pop(state);
+        deferred_push(state, tos);
+        deferred_push(state, _3os);
+        deferred_push(state, nos);
+    } else {
+        bytelist_append_nolock(out, OPCODE(rrot));
+    }
+}
+
+flip3( -- ) {
+    homogenise_tos(3, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_pop(state);
+        R_deferred _3os = deferred_pop(state);
+        deferred_push(state, tos);
+        deferred_push(state, nos);
+        deferred_push(state, _3os);
+    } else {
+        bytelist_append_nolock(out, OPCODE(flip3));
+    }
+}
+
+drop_under( -- ) {
+    deferred_drop_under(state, out);
+}
+
+pick(unsigned #index -- ) {
+    homogenise_tos(index+1, state, out);
+    if (is_tos_deferred(state)) {
+        deferred_push(state, deferred_pick(state, index));
+    } else {
+        bytelist_append_nolock(out, OPCODE(pick));
+        bytelist_append_nolock(out, index);
+        deferred_push_immediate(state);
+    }
+}
+
+type( -- ) {
+    if (!is_tos_deferred(state)) {
+        bytelist_append_nolock(out, OPCODE(type));
+    } else {
+        R_deferred tos = deferred_pop(state);
+        deferred_push(state, deferred_type(tos));
+    }
+}
+
+make_frame(unsigned #depth -- ) {
+    R_deferred_frame frame = NULL;
+    assert(depth == 2 || depth == 0);
+    make_tos_deferred(depth+1, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred func = deferred_pick(state, depth);
+        frame = deferred_make_frame(func);
+    } else if (debug_optimise) {
+        fprintf(stderr, "Short by %d for make_frame\n", depth+1 - LIST_SIZE(state->deferred_stack));
+    }
+    if (frame) {
+        deferred_push_frame(state, frame);
+    } else {
+        materialise_state(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(make_frame));
+        bytelist_append_nolock(out, depth);
+    }
+}
+
+prepare_bm_call( -- ) {
+    homogenise_tos(3, state, out);
+    if (is_tos_deferred(state)) {
+        deferred_prepare_bm_call(state, out, gvmt_ip());
+    } else {
+        materialise_state(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(prepare_bm_call));
+    }
+
+}
+
+set_next_ip(unsigned ####addr -- ) {
+   R_deferred_frame frame = deferred_peek_frame(state);
+   if (frame) {
+       frame->ip = (uint8_t*)addr;
+   } else {
+       state->next_ip = (uint8_t*)addr;
+   }
+}
+
+init_frame( -- ) {
+    homogenise_tos(3, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred d = deferred_pop(state);
+        R_deferred t = deferred_pop(state);
+        R_deferred func = deferred_pop(state);
+        R_deferred_frame frame = deferred_peek_frame(state);
+        if (!deferred_init_frame(frame, func, t, d)) {
+            deferred_push(state, func);
+            deferred_push(state, t);
+            deferred_push(state, d);
+            materialise_state(state, out, gvmt_ip());
+            bytelist_append_nolock(out, OPCODE(init_frame));
+        }
+    } else {
+        //fprintf(stderr, "Stack too small %d\n", LIST_SIZE(state->deferred_stack));
+        materialise_state(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(init_frame));
+    }
+}
+
+new_enter(unsigned ####addr -- ) {
+    homogenise_tos(3, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred t2;
+        R_deferred d = deferred_pop(state);
+        R_deferred t = deferred_pop(state);
+        R_deferred cls = deferred_pop(state);
+        R_object new = (R_object)gvmt_pinned_object((void*)addr);
+        t2 = deferred_tuple_prepend(cls, t);
+        if (t2) {
+            deferred_push(state, const_as_deferred(new));
+            deferred_push(state, t2);
+            deferred_push(state, d);
+        } else {
+            deferred_push(state, cls);
+            deferred_push(state, t);
+            deferred_push(state, d);
+            materialise_stack(state, out, gvmt_ip());
+            bytelist_append_nolock(out, OPCODE(new_enter));
+            bytelist_append_long(out, addr);
+        }
+    } else {
+        materialise_stack(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(new_enter));
+        bytelist_append_long(out, addr);
+    }
+}
+
+tuple_concat( -- ) {
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred t2 = deferred_pop(state);
+        R_deferred t1 = deferred_pop(state);
+        R_deferred t = deferred_tuple_concat(t1, t2);
+        if (t) {
+            deferred_push(state, t);
+        } else {
+            deferred_push(state, t1);
+            deferred_push(state, t2);
+            materialise_stack(state, out, gvmt_ip());
+            bytelist_append_nolock(out, OPCODE(tuple_concat));
+        }
+    } else {
+        materialise_stack(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(tuple_concat));
+        deferred_pop_immediate(state);
+    }
+}
+
+copy_dict( -- ) {
+    if (is_tos_deferred(state)) {
+        R_deferred d = (R_deferred)deferred_pop(state);
+        R_deferred copy = deferred_copy_dict(d);
+        if (copy) {
+            deferred_push(state, copy);
+        } else {
+            deferred_push(state, d);
+            materialise_stack(state, out, gvmt_ip());
+            bytelist_append_nolock(out, OPCODE(copy_dict));
+        }
+    } else {
+        bytelist_append_nolock(out, OPCODE(copy_dict));
+        deferred_push_immediate(state);
+    }
+}
+
+unpack_native_params(uint32_t ####address -- ) {
+    homogenise_tos(3, state, out);
+    if (is_tos_deferred(state)) {
+        R_builtin_function bf = (R_builtin_function)
+                                gvmt_pinned_object((void*)address);
+        R_deferred d = deferred_pop(state);
+        R_deferred t = deferred_pop(state);
+        R_deferred func = deferred_pop(state);
+        if (!deferred_native_params(bf, t, d, state)) {
+            deferred_push(state, func);
+            deferred_push(state, t);
+            deferred_push(state, d);
+            materialise_stack(state, out, gvmt_ip());
+            bytelist_append_nolock(out, OPCODE(unpack_native_params));
+            bytelist_append_long(out, address);
+        }
+    } else {
+        materialise_stack(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(unpack_native_params));
+        bytelist_append_long(out, address);
+    }
+}
+
+bind( -- ) {
+    R_deferred bm, func, self;
+    make_tos_deferred(2, state, out);
+    func = deferred_pop(state);
+    self = deferred_pop(state);
+    bm = deferred_bind(self, func);
+    deferred_push(state, bm);
+}
+
+fast_get(uint32_t ####address, uint32_t ####get -- ) {
+    R_deferred val;
+    R_object descriptor = (R_object)gvmt_pinned_object((void*)address);
+    assert(TYPE(descriptor)->get == (get_func)get);
+    if (TYPE(descriptor) == type_function || TYPE(descriptor) == type_builtin_function) {
+        // Bound method
+        R_deferred func = const_as_deferred(descriptor);
+        if (is_tos_deferred(state)) {
+            val = deferred_pop(state);
+            deferred_push(state, deferred_bind(val, func));
+        } else if (space_in_deferred_cache(state)) {
+            val = deferred_cache_store_item(state, out);
+            deferred_push(state, deferred_bind(val, func));
+        } else {
+            bytelist_append_nolock(out, OPCODE(fast_get));
+            bytelist_append_long(out, address);
+            bytelist_append_long(out, get);
+        }
+    } else {
+        materialise_stack(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(fast_get));
+        bytelist_append_long(out, address);
+        bytelist_append_long(out, get);
+    }
+}
+
+check_keys(unsigned ##offset, unsigned ####key, unsigned ####exit -- ) {
+    uint8_t* new_exit;
+    materialise_top(1, state, out);
+    bytelist_append_nolock(out, OPCODE(check_keys));
+    bytelist_append_short(out, offset);
+    bytelist_append_long(out, key);
+    deferred_push_immediate(state);
+    new_exit = materialise_state_on_interpreter_exit(state, (uint8_t*)exit, pinned_objects);
+    bytelist_append_long(out, (int32_t)new_exit);
+}
+
+deoptimise_check(unsigned ####addr, unsigned ####exit -- ) {
+    uint8_t* new_exit;
+    bytelist_append_nolock(out, OPCODE(deoptimise_check));
+    bytelist_append_long(out, addr);
+    new_exit = materialise_state_on_interpreter_exit(state, (uint8_t*)exit, pinned_objects);
+    bytelist_append_long(out, (int32_t)new_exit);
+}
+
+fast_frame(uint8_t #count, unsigned ####addr -- ) {
+    R_function func = (R_function)gvmt_pinned_object((void*)addr);
+    if (count <= 3) {
+        make_tos_deferred(count, state, out);
+    } else {
+        homogenise_tos(count, state, out);
+    }
+    if (!is_tos_deferred(state)) {
+        if (debug_optimise)
+            fprintf(stderr, "Short by %d for special frame\n", count - LIST_SIZE(state->deferred_stack));
+        materialise_state(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(fast_frame));
+        bytelist_append_nolock(out, count);
+        bytelist_append_long(out, addr);
+    } else {
+        int i;
+        R_deferred_frame frame;
+        frame = deferred_frame(func);
+        for (i = count-1; i >= 0; i--) {
+            deferred_frame_store_local(frame, i, (R_deferred)deferred_pop(state));
+        }
+        deferred_push_frame(state, frame);
+    }
+}
+
+ensure_value(int #index, unsigned ####addr, unsigned ####exit_addr -- ) {
+    R_object object = (R_object)gvmt_pinned_object((void*)addr);
+    R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)exit_addr);
+    void* new_exit;
+    homogenise_tos(index+1, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred val = deferred_pick(state, index);
+        if (deferred_is_constant(val, object)) {
+            /* Nothing to do */
+        } else {
+            materialise(val, out);
+            bytelist_append_nolock(out, OPCODE(ensure_value_drop));
+            bytelist_append_long(out, addr);
+            new_exit = materialise_state_on_exit(state, exit, pinned_objects);
+            bytelist_append_long(out, (int32_t)new_exit);
+            // indexth item is now a known value.
+            deferred_poke(state, index, const_as_deferred(object));
+        }
+    } else {
+        bytelist_append_nolock(out, OPCODE(ensure_value));
+        bytelist_append_nolock(out, index);
+        bytelist_append_long(out, addr);
+        new_exit = materialise_state_on_exit(state, exit, pinned_objects);
+        bytelist_append_long(out, (int32_t)new_exit);
+    }
+}
+
+two_copy( -- ) {
+    homogenise_tos(2, state, out);
+    if (!is_tos_deferred(state)) {
+        bytelist_append_nolock(out, OPCODE(two_copy));
+        deferred_push_immediate(state);
+        deferred_push_immediate(state);
+    } else {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_peek(state);
+        deferred_push(state, tos);
+        deferred_push(state, nos);
+        deferred_push(state, tos);
+    }
+}
+
+iter( -- ) {
+    // TO DO -- If tos is deferred and an iterator - Do nothing
+    materialise_state(state, out, gvmt_ip());
+    bytelist_append_nolock(out, OPCODE(iter));
+}
+
+none( -- ) {
+    deferred_push(state, const_as_deferred((R_object)None));
+}
+
+true( -- ) {
+    deferred_push(state, const_as_deferred((R_object)TRUE));
+}
+
+false( -- ) {
+    deferred_push(state, const_as_deferred((R_object)FALSE));
+}
+
+fast_load_attr(unsigned ##dict_offset, unsigned ##index, unsigned ####key_address -- ) {
+    if (is_tos_deferred(state)) {
+        R_deferred tos = (R_deferred)deferred_pop(state);
+        materialise(tos, out);
+        bytelist_append_nolock(out, OPCODE(fast_load_attr));
+        bytelist_append_short(out, dict_offset);
+        bytelist_append_short(out, index);
+        bytelist_append_long(out, key_address);
+        deferred_push_immediate(state);
+    } else {
+        bytelist_append_nolock(out, OPCODE(fast_load_attr));
+        bytelist_append_short(out, dict_offset);
+        bytelist_append_short(out, index);
+        bytelist_append_long(out, key_address);
+    }
+}
+
+fast_load_global(unsigned ####address, unsigned ##index -- ) {
+    bytelist_append_nolock(out, OPCODE(fast_load_global));
+    bytelist_append_long(out, address);
+    bytelist_append_short(out, index);
+    deferred_push_immediate(state);
+}
+
+fast_store_global(unsigned ####address, unsigned ##index -- ) {
+    materialise_top(1, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        materialise(tos, out);
+    } else {
+        deferred_pop_immediate(state);
+    }
+    bytelist_append_nolock(out, OPCODE(fast_store_global));
+    bytelist_append_long(out, address);
+    bytelist_append_short(out, index);
+}
+
+fast_store_attr(unsigned ##dict_offset, unsigned ##index, unsigned ####key_address -- ) {
+    materialise_top(2, state, out);
+    bytelist_append_nolock(out, OPCODE(fast_store_attr));
+    bytelist_append_short(out, dict_offset);
+    bytelist_append_short(out, index);
+    bytelist_append_long(out, key_address);
+}
+
+byte (int8_t #val -- ) {
+    deferred_push(state, const_as_deferred((R_object)PY_SMALL_INT(val)));
+}
+
+fast_constant[protected](unsigned ####address -- ) {
+    R_object object = (R_object)gvmt_pinned_object((void*)address);
+    deferred_push(state, const_as_deferred(object));
+}
+
+fast_line(unsigned ##number --) {
+   R_deferred_frame frame = deferred_peek_frame(state);
+   if (frame) {
+       frame->line_number = number;
+   } else {
+       state->line_number = number;
+   }
+}
+
+line(unsigned ##number --) {
+   R_deferred_frame frame = deferred_peek_frame(state);
+   if (frame) {
+       frame->line_number = number;
+   } else {
+       state->line_number = number;
+   }
+}
+
+list(uint8_t #count -- ) {
+    materialise_top(count, state, out);
+    bytelist_append_nolock(out, OPCODE(list));
+    bytelist_append_nolock(out, count);
+    deferred_push_immediate(state);
+}
+
+pack(uint8_t #count -- ) {
+    R_deferred t;
+    make_deferred(state, out);
+    t = deferred_tuple(count, state, out);
+    if (t == NULL) {
+        materialise_stack(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(pack));
+        bytelist_append_nolock(out, count);
+    } else {
+        deferred_push(state, t);
+    }
+}
+
+pack_params(uint8_t #count -- ) {
+    R_deferred t;
+    make_deferred(state, out);
+    t = deferred_tuple(count, state, out);
+    if (t == NULL) {
+        materialise_stack(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(pack));
+        bytelist_append_nolock(out, count);
+    } else {
+        deferred_push(state, t);
+    }
+    deferred_push(state, deferred_empty_dict());
+}
+
+unpack(uint8_t #count -- ) {
+    if (!is_tos_deferred(state)) {
+        materialise_state(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(unpack));
+        bytelist_append_nolock(out, count);
+    } else {
+        R_deferred t = deferred_pop(state);
+        if (!deferred_unpack(t, state)) {
+            deferred_push(state, t);
+            materialise_state(state, out, gvmt_ip());
+            bytelist_append_nolock(out, OPCODE(unpack));
+            bytelist_append_nolock(out, count);
+        }
+    }
+}
+
+pop_frame ( -- ) {
+    if (deferred_peek_frame(state) == NULL) {
+        state->line_number = 0;
+        state->next_ip = 0;
+        materialise_stack(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(pop_frame));
+    } else {
+        deferred_pop_frame(state);
+    }
+}
+
+gen_check(unsigned ####addr, unsigned ####exit -- ) {
+    void* new_exit;
+    materialise_top(1, state, out);
+    deferred_push_immediate(state);
+    new_exit = materialise_state_on_interpreter_exit(state, (uint8_t*)exit,
+                                                     pinned_objects);
+    bytelist_append_nolock(out, OPCODE(gen_check));
+    bytelist_append_long(out, addr);
+    bytelist_append_long(out, (int32_t)new_exit);
+}
+
+gen_enter[protected]( -- ) {
+    assert("Shouldn't be on trace" && 0);
+}
+
+//gen_yield(unsigned ####resume_addr -- ) {
+//    R_deferred_frame f;
+//    materialise_stack(state, out, gvmt_ip());
+//    f = deferred_pop_frame(state);
+//    assert(f == NULL);
+//    bytelist_append_nolock(out, OPCODE(gen_yield));
+//    bytelist_append_long(out, resume_addr);
+//}
+
+pop_caller_handler( -- ) {
+    if (deferred_peek_frame(state) == NULL) {
+        bytelist_append_nolock(out, OPCODE(pop_caller_handler));
+    } else {
+        R_deferred_frame frame = deferred_pop_frame(state);
+        materialise_frames(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(pop_handler));
+        deferred_push_frame(state, frame);
+    }
+}
+
+empty_tuple( -- ) {
+    deferred_push(state, deferred_tuple(0, state, out));
+}
+
+dictionary( -- ) {
+    deferred_push(state, deferred_empty_dict());
+}
+
+slice( -- ) {
+    homogenise_tos(3, state, out);
+    if (!is_tos_deferred(state)) {
+        materialise_state(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(slice));
+        deferred_pop_immediate(state);
+        deferred_pop_immediate(state);
+    } else {
+        R_deferred step = deferred_pop(state);
+        R_deferred hi = deferred_pop(state);
+        R_deferred lo = deferred_pop(state);
+        R_deferred slice = deferred_slice(lo, hi, step);
+        deferred_push(state, slice);
+    }
+}
+
+store_frame(uintptr_t #index --) {
+    R_deferred_frame f = deferred_peek_frame(state);
+    if (f == NULL) {
+        // Not safe to have more than one value on the stack, or any complex value,
+        // as it may result in stale locals being on the stack.
+        materialise_stack(state, out, gvmt_ip());
+        bytelist_append_nolock(out, OPCODE(store_frame));
+        bytelist_append_nolock(out, index);
+    } else {
+        if (is_tos_deferred(state)) {
+            R_deferred val = deferred_pop(state);
+            deferred_frame_store_local(f, index, val);
+        } else if (space_in_deferred_cache(state)) {
+            R_deferred val = deferred_cache_store_item(state, out);
+            deferred_frame_store_local(f, index, val);
+        } else {
+            materialise_state(state, out, gvmt_ip());
+            bytelist_append_nolock(out, OPCODE(store_frame));
+            bytelist_append_nolock(out, index);
+        }
+    }
+}
+
+load_from_cache(uintptr_t #index -- ) {
+    R_deferred cached = deferred_cached_item(index);
+    deferred_push(state, cached);
+}
+
+store_to_cache(uintptr_t #index -- ) {
+    if (is_tos_deferred(state)) {
+        R_deferred tos = (R_deferred)deferred_pop(state);
+        materialise(tos, out);
+    } else {
+        deferred_pop_immediate(state);
+    }
+    bytelist_append_nolock(out, OPCODE(store_to_cache));
+    bytelist_append_nolock(out, index);
+}
+
+clear_cache(uintptr_t #index -- ) {
+    printf("Clear cache in D.O.C. pass\n");
+    // bytelist_append_nolock(out, OPCODE(clear_cache));
+    // bytelist_append_nolock(out, index);
+}
+
+load_frame(uintptr_t #index --) {
+    R_deferred_frame f = deferred_peek_frame(state);
+    if (f == NULL) {
+        // Since check_initialised can raise exception,
+        // need to record code to restore state.
+        bytelist_append_nolock(out, OPCODE(check_initialised));
+        bytelist_append_nolock(out, index);
+        deferred_push(state, deferred_local(index));
+    } else {
+        deferred_push(state, deferred_frame_load_local(f, index));
+    }
+}
+
+fast_load_frame(uintptr_t #index --) {
+    R_deferred_frame f = deferred_peek_frame(state);
+    if (f == NULL) {
+        deferred_push(state, deferred_local(index));
+    } else {
+        deferred_push(state, deferred_frame_load_local(f, index));
+    }
+}
+
+native_call(int #count, uint32_t ####address -- ) {
+    //materialise_state(state, out, gvmt_ip());
+    deferred_remove_frame_to_frame_dependencies(state, out, gvmt_ip());
+    materialise_current_frame(state, out);
+    materialise_stack(state, out, gvmt_ip());
+    bytelist_append_nolock(out, OPCODE(native_call));
+    bytelist_append_nolock(out, count);
+    bytelist_append_long(out, address);
+    deferred_push_immediate(state);
+}
+
+native_call_no_prot(int #count, uint32_t ####address -- ) {
+    materialise_top(count, state, out);
+    bytelist_append_nolock(out, OPCODE(native_call));
+    bytelist_append_nolock(out, count);
+    bytelist_append_long(out, address);
+    deferred_push_immediate(state);
+}
+
+native_call_protect(int #count, uint32_t ####address, uint32_t ####on_except_addr -- ) {
+    materialise_top(count, state, out);
+    if (no_deferred_frames(state)) {
+        bytelist_append_nolock(out, OPCODE(native_call));
+        bytelist_append_nolock(out, count);
+        bytelist_append_long(out, address);
+    } else {
+        uint8_t* sequence = materialise_on_exception(state, pinned_objects);
+        assert(on_except_addr == 0);
+        bytelist_append_nolock(out, OPCODE(native_call_protect));
+        bytelist_append_nolock(out, count);
+        bytelist_append_long(out, address);
+        bytelist_append_long(out, (uint32_t)sequence);
+    }
+    deferred_push_immediate(state);
+}
+
+//trace_protect(int #stop, int ####addr -- ) {
+
+load_slot( -- ) {
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred object = deferred_pop(state);
+        R_deferred descriptor = deferred_pop(state);
+        R_deferred desc_type = deferred_type(descriptor);
+        if (deferred_is_constant(desc_type, (R_object)type_slot_descriptor)) {
+            int offset = ((R_slot_descriptor)descriptor->value)->offset;
+            R_deferred val = deferred_slot(object, offset);
+            if (val) {
+                deferred_push(state, val);
+                goto done;
+            }
+        }
+        deferred_push(state, descriptor);
+        deferred_push(state, object);
+    }
+    materialise_top(2, state, out);
+    bytelist_append_nolock(out, OPCODE(load_slot));
+    deferred_push_immediate(state);
+done: (void)0;
+}
+
+store_slot( -- ) {
+    materialise_top(3, state, out);
+    bytelist_append_nolock(out, OPCODE(store_slot));
+}
+
+load_slot_imm(unsigned #offset -- ) {
+    if (!is_tos_deferred(state)) {
+        bytelist_append_nolock(out, *gvmt_ip());
+        bytelist_append_nolock(out, offset);
+    } else {
+        R_deferred l = deferred_pop(state);
+        R_deferred slot = deferred_slot(l, offset);
+        if (slot == NULL) {
+            materialise(l, out);
+            bytelist_append_nolock(out, *gvmt_ip());
+            bytelist_append_nolock(out, offset);
+            deferred_push_immediate(state);
+        } else {
+            deferred_push(state, slot);
+        }
+    }
+}
+
+store_slot_imm(unsigned #offset -- ) {
+    materialise_top(2, state, out);
+    bytelist_append_nolock(out, *gvmt_ip());
+    bytelist_append_nolock(out, offset);
+}
+
+list_append( -- ) {
+    materialise_top(2, state, out);
+    bytelist_append_nolock(out, *gvmt_ip());
+    deferred_push_immediate(state);
+}
+
+type_ensure_drop(unsigned ####type_addr, unsigned ####exit_addr -- ) {
+    R_type type = (R_type)gvmt_pinned_object((void*)type_addr);
+    R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)exit_addr);
+    materialise_top(1, state, out);
+    bytelist_append_nolock(out, OPCODE(type_ensure_drop));
+    bytelist_append_long(out, type_addr);
+    exit_addr = (unsigned)materialise_state_on_exit(state, exit, pinned_objects);
+    bytelist_append_long(out, exit_addr);
+}
+
+type_ensure(unsigned ####type_addr, unsigned ####exit_addr -- ) {
+    R_type type = (R_type)gvmt_pinned_object((void*)type_addr);
+    R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)exit_addr);
+    materialise_top(1, state, out);
+    bytelist_append_nolock(out, OPCODE(type_ensure));
+    deferred_push_immediate(state);
+    bytelist_append_long(out, type_addr);
+    exit_addr = (unsigned)materialise_state_on_exit(state, exit, pinned_objects);
+    bytelist_append_long(out, exit_addr);
+}
+
+type_ensure2(unsigned ####type_addr, unsigned ####exit_addr -- ) {
+    R_type type = (R_type)gvmt_pinned_object((void*)type_addr);
+    R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)exit_addr);
+    // Want to get at 2nd item on stack without disturbing TOS.
+    if (!is_tos_deferred(state)) {
+        materialise_top(2, state, out);
+        bytelist_append_nolock(out, OPCODE(type_ensure2));
+        deferred_push_immediate(state);
+        deferred_push_immediate(state);
+    } else {
+        R_deferred tos = deferred_pop(state);
+        materialise_top(1, state, out);
+        bytelist_append_nolock(out, OPCODE(type_ensure));
+        deferred_push_immediate(state);
+        deferred_push(state, tos);
+    }
+    exit_addr = (unsigned)materialise_state_on_exit(state, exit, pinned_objects);
+    bytelist_append_long(out, type_addr);
+    bytelist_append_long(out, exit_addr);
+}
+
+is( -- ) {
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = (R_deferred)deferred_pop(state);
+        R_deferred nos = (R_deferred)deferred_pop(state);
+        R_deferred is = deferred_is(nos, tos);
+        deferred_push(state, is);
+    } else {
+        bytelist_append_nolock(out, OPCODE(is));
+        deferred_pop_immediate(state);
+    }
+}
+
+ensure_tagged(unsigned ####addr -- ) {
+    R_exec_link exit;
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_peek(state);
+        if (deferred_is_tagged(tos)) {
+            goto done;
+        }
+    }
+    exit = (R_exec_link)gvmt_pinned_object((void*)addr);
+    materialise_top(1, state, out);
+    bytelist_append_nolock(out, OPCODE(ensure_tagged));
+    deferred_push_immediate(state);
+    addr = (unsigned)materialise_state_on_exit(state, exit, pinned_objects);
+    bytelist_append_long(out, addr);
+done: (void)0;
+}
+
+ensure_tagged_drop(unsigned ####addr -- ) {
+    R_exec_link exit;
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        if (deferred_is_tagged(tos)) {
+            goto done;
+        }
+        deferred_push(state, tos);
+    }
+    exit = (R_exec_link)gvmt_pinned_object((void*)addr);
+    materialise_top(1, state, out);
+    bytelist_append_nolock(out, OPCODE(ensure_tagged_drop));
+    addr = (unsigned)materialise_state_on_exit(state, exit, pinned_objects);
+    bytelist_append_long(out, addr);
+done: (void)0;
+}
+
+ensure_tagged2(unsigned ####addr -- ) {
+    R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)addr);
+    // Want to get at 2nd item on stack with minimum disturbance.
+    if (!is_tos_deferred(state)) {
+        materialise_top(2, state, out);
+        bytelist_append_nolock(out, OPCODE(ensure_tagged2));
+        deferred_push_immediate(state);
+        deferred_push_immediate(state);
+    } else {
+        R_deferred tos = deferred_pop(state);
+        if (is_tos_deferred(state)) {
+            R_deferred nos = deferred_peek(state);
+            if (deferred_is_tagged(nos)) {
+                deferred_push(state, tos);
+                goto done;
+            }
+        }
+        materialise_top(1, state, out);
+        bytelist_append_nolock(out, OPCODE(ensure_tagged));
+        deferred_push_immediate(state);
+        deferred_push(state, tos);
+    }
+    addr = (unsigned)materialise_state_on_exit(state, exit, pinned_objects);
+    bytelist_append_long(out, addr);
+done: (void)0;
+}
+
+bool_exit [private](int b, int ####addr -- ) {
+    int redundant = 0;
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        if (b && deferred_is_constant(tos, (R_object)FALSE)) {
+           redundant = 1;
+        } else if (!b && deferred_is_constant(tos, (R_object)TRUE)) {
+            redundant = 1;
+        } else {
+            materialise(tos, out);
+        }
+    } else {
+        materialise_top(1, state, out);
+    }
+    if (!redundant) {
+        R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)addr);
+        bytelist_append_nolock(out, *gvmt_ip());
+        addr = (unsigned)materialise_state_on_exit(state, exit, pinned_objects);
+        bytelist_append_long(out, addr);
+    }
+}
+
+return_exit(int ####exit -- ) {
+    if (deferred_peek_frame(state) == NULL) {
+        materialise_state(state, out, gvmt_ip());
+        bytelist_append_block_nolock(out, gvmt_ip(), OPCODE_LENGTH(return_exit));
+    } else {
+        R_deferred_frame f = deferred_pop_frame(state);
+        materialise_state(state, out, gvmt_ip());
+        /** The pop_frame part is done here, so replace with a flat exit */
+        bytelist_append_nolock(out, OPCODE(trace_exit));
+        bytelist_append_block_nolock(out, gvmt_ip()+1, OPCODE_LENGTH(return_exit)-1);
+    }
+}
+
+exit_on_true: 1 bool_exit;
+
+exit_on_false: 0 bool_exit;
+
+i_cmp[private]( -- ) {
+    R_bool b = NULL;
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_pop(state);
+        b = deferred_compare(nos, tos, *gvmt_ip());
+        if (b == NULL) {
+            materialise(nos, out);
+            materialise(tos, out);
+            bytelist_append_nolock(out, *gvmt_ip());
+        } else if (b == TRUE) {
+            bytelist_append_nolock(out, OPCODE(true));
+        } else {
+            assert(b == FALSE);
+            bytelist_append_nolock(out, OPCODE(false));
+        }
+        deferred_push_immediate(state);
+    } else {
+        bytelist_append_nolock(out, *gvmt_ip());
+        deferred_pop_immediate(state);
+    }
+}
+
+i_comp_lt: i_cmp ;
+i_comp_gt: i_cmp ;
+i_comp_eq: i_cmp ;
+i_comp_ne: i_cmp ;
+i_comp_le: i_cmp ;
+i_comp_ge: i_cmp ;
+
+f_cmp[private]( -- ) {
+    materialise_top(2, state, out);
+    bytelist_append_nolock(out, *gvmt_ip());
+    deferred_push_immediate(state);
+}
+
+f_lt: f_cmp ;
+f_gt: f_cmp ;
+f_eq: f_cmp ;
+f_ne: f_cmp ;
+f_le: f_cmp ;
+f_ge: f_cmp ;
+
+subtype( -- ) {
+    materialise_top(2, state, out);
+    bytelist_append_nolock(out, *gvmt_ip());
+    deferred_push_immediate(state);
+}
+
+//has_special(int #name -- ) {
+//    materialise_top(1, state, out);
+//    bytelist_append_nolock(out, *gvmt_ip());
+//    bytelist_append_nolock(out, name);
+//    deferred_push_immediate(state);
+//}
+
+i_add(int ####addr -- ) {
+    R_exec_link exit = (R_exec_link)gvmt_pinned_object((void*)addr);
+    materialise_top(2, state, out);
+    bytelist_append_nolock(out, *gvmt_ip());
+    deferred_push_immediate(state);
+    addr = (unsigned)materialise_state_on_exit(state, exit, pinned_objects);
+    bytelist_append_long(out, addr);
+}
+
+i_sub: i_add ;
+
+i_add_no_overflow( -- ) {
+    materialise_top(2, state, out);
+    bytelist_append_nolock(out, *gvmt_ip());
+    deferred_push_immediate(state);
+}
+
+i_sub_no_overflow: i_add_no_overflow ;
+
+i_mul( -- ) {
+    materialise_top(2, state, out);
+    bytelist_append_nolock(out, *gvmt_ip());
+    deferred_push_immediate(state);
+}
+
+i_rshift: i_add_no_overflow ;
+
+i2f( -- ) {
+    if (is_tos_deferred(state)) {
+        R_deferred i = deferred_pop(state);
+        R_deferred f = deferred_i2f(i);
+        deferred_push(state, f);
+    } else {
+        bytelist_append_nolock(out, *gvmt_ip());
+    }
+}
+
+f_add( -- ) {
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_pop(state);
+        R_deferred f = deferred_f_add(nos, tos);
+        deferred_push(state, f);
+    } else {
+        bytelist_append_nolock(out, *gvmt_ip());
+        deferred_pop_immediate(state);
+    }
+}
+
+f_sub( -- ) {
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_pop(state);
+        R_deferred f = deferred_f_sub(nos, tos);
+        deferred_push(state, f);
+    } else {
+        bytelist_append_nolock(out, *gvmt_ip());
+        deferred_pop_immediate(state);
+    }
+}
+
+f_mul( -- ) {
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_pop(state);
+        R_deferred f = deferred_f_mul(nos, tos);
+        deferred_push(state, f);
+    } else {
+        bytelist_append_nolock(out, *gvmt_ip());
+        deferred_pop_immediate(state);
+    }
+}
+
+f_div( -- ) {
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred nos = deferred_pop(state);
+        R_deferred f = deferred_f_div(nos, tos);
+        deferred_push(state, f);
+    } else {
+        bytelist_append_nolock(out, *gvmt_ip());
+        deferred_pop_immediate(state);
+    }
+}
+
+f_neg( -- ) {
+    if (is_tos_deferred(state)) {
+        R_deferred tos = deferred_pop(state);
+        R_deferred f = deferred_f_neg(tos);
+        deferred_push(state, f);
+    } else {
+        bytelist_append_nolock(out, *gvmt_ip());
+    }
+}
+
+i_div( -- ) {
+    homogenise_tos(2, state, out);
+    if (is_tos_deferred(state)) {
+        R_deferred tos = (R_deferred)deferred_pop(state);
+        R_deferred nos = (R_deferred)deferred_pop(state);
+        R_deferred f = deferred_i_div(nos, tos);
+        deferred_push(state, f);
+    } else {
+        bytelist_append_nolock(out, *gvmt_ip());
+        deferred_pop_immediate(state);
+    }
+}
+
+

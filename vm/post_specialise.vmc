@@ -1,0 +1,133 @@
+#include <malloc.h>
+#include "hotpy.h"
+#include "specialiser.h"
+
+//** Specialiser produces a lot of load-drop combos; remove them **
+
+locals {
+    R_bytelist output;
+    uint8_t** stack;
+    uint8_t true;
+    int depth;
+}
+
+__preamble [private] ( -- ) {
+    output = make_bytelist(128);
+    stack = malloc(sizeof(uint8_t*) * 32);
+    depth = 0;
+    true = OPCODE(true);
+}
+
+__postamble [private] ( -- ) {
+    free(stack);
+    gvmt_ireturn_r((GVMT_Object)output);
+}
+
+__default [private] ( -- ) {
+    int i, len;
+    for (i = 0; i < depth; i++) {
+        len = gvmt_opcode_lengths_interpreter[*(stack[i])];
+        bytelist_append_block_nolock(output, stack[i], len);
+    }
+    depth = 0;
+    len = gvmt_opcode_lengths_interpreter[*gvmt_ip()];
+    bytelist_append_block_nolock(output, gvmt_ip(), len);
+}
+
+drop( -- ) {
+    if (depth) {
+        depth--;
+    } else {
+        bytelist_append_nolock(output, OPCODE(drop));
+    }
+}
+
+load_from_cache(uintptr_t #index --) {
+    stack[depth] = gvmt_ip();
+    depth++;
+}
+
+fast_load_frame(uintptr_t #index --) {
+    stack[depth] = gvmt_ip();
+    depth++;
+}
+
+nop( -- ) {
+}
+
+fast_constant(int ####addr -- ) {
+    stack[depth] = gvmt_ip();
+    depth++;
+}
+
+byte(int #x -- ) {
+    stack[depth] = gvmt_ip();
+    depth++;
+}
+
+true ( -- ) {
+    stack[depth] = gvmt_ip();
+    depth++;
+}
+
+false ( -- ) {
+    stack[depth] = gvmt_ip();
+    depth++;
+}
+
+none( -- ) {
+    stack[depth] = gvmt_ip();
+    depth++;
+}
+
+is ( -- ) {
+    int i, len;
+    if (depth >= 2) {
+        int len1 = gvmt_opcode_lengths_interpreter[*(stack[depth-2])];
+        int len2 = gvmt_opcode_lengths_interpreter[*(stack[depth-1])];
+        if (len1 == len2 && memcmp(stack[depth-2], (stack[depth-1]), len1) == 0) {
+            depth--;
+            stack[depth-1] = &true;
+            goto done;
+        }
+    }
+    for (i = 0; i < depth; i++) {
+        len = gvmt_opcode_lengths_interpreter[*(stack[i])];
+        bytelist_append_block_nolock(output, stack[i], len);
+    }
+    depth = 0;
+    bytelist_append_nolock(output, OPCODE(is));
+done:
+    (void)0;
+}
+
+exit_on_false(int ####addr -- ) {
+    if (depth && *stack[depth-1] == OPCODE(true)) {
+        depth--;
+    } else {
+        int i, len;
+        for (i = 0; i < depth; i++) {
+            len = gvmt_opcode_lengths_interpreter[*(stack[i])];
+            bytelist_append_block_nolock(output, stack[i], len);
+        }
+        depth = 0;
+        len = gvmt_opcode_lengths_interpreter[*gvmt_ip()];
+        bytelist_append_block_nolock(output, gvmt_ip(), len);
+    }
+}
+
+exit_on_true(int ####addr -- ) {
+    if (depth && *stack[depth-1] == OPCODE(false)) {
+        depth--;
+    } else {
+        int i, len;
+        for (i = 0; i < depth; i++) {
+            len = gvmt_opcode_lengths_interpreter[*(stack[i])];
+            bytelist_append_block_nolock(output, stack[i], len);
+        }
+        depth = 0;
+        len = gvmt_opcode_lengths_interpreter[*gvmt_ip()];
+        bytelist_append_block_nolock(output, gvmt_ip(), len);
+    }
+}
+

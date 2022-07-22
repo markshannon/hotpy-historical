@@ -1,0 +1,285 @@
+
+#include "stdio.h"
+#include "hotpy.h"
+#include "opcodes.h"
+#include "specialiser.h"
+
+/********* Disassembler definition ***********/
+
+locals {
+    FILE* trace;
+    R_dict cache;
+    char* other;
+    R_set to_do;
+    uint8_t* ip_start;
+    int done;
+}
+
+__preamble [private] (FILE* _trace, char* _other, R_dict _cache, R_set _to_do -- ) {
+    trace = _trace;
+    cache = _cache;
+    other = _other;
+    to_do = _to_do;
+    ip_start = gvmt_ip();
+    done = 0;
+}
+
+__exit[private]( -- ) {
+    if ((flow_graph_verbose || gvmt_ip() == ip_start) && done == 0) {
+        fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+        fprintf(trace, "%s |", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    } else {
+        done = 0;
+    }
+}
+
+skip[private]: #@ DROP ;
+
+line(unsigned ##line -- ) {
+    if (flow_graph_verbose) {
+        fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+        fprintf(trace, "line %d |", line);
+        done = 1;
+    }
+}
+
+fast_line(unsigned ##line -- ) {
+    if (flow_graph_verbose) {
+        fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+        fprintf(trace, "fast_line %d |", line);
+        done = 1;
+    }
+}
+
+/******* Function opocdes **********/
+
+end_loop(int #skip, int16_t ##offset -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>%s", index, gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    other = inter_edge(other, ip_start, index, gvmt_ip()+offset, "");
+    gvmt_ireturn_p(other);
+}
+
+start_loop[private]( -- char* label) {
+    int index = gvmt_ip()-ip_start;
+    int len = gvmt_opcode_lengths_interpreter[*gvmt_ip()];
+    other = inter_edge(other, ip_start, index, gvmt_ip()+len, "");
+    label = "exception";
+    done = 1;
+}
+
+_jump[private](int16_t ##offset, char* label -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>%s", index, gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    other = inter_edge(other, ip_start, index, gvmt_ip()+offset, label);
+    gvmt_ireturn_p(other);
+}
+
+_branch[private](int16_t ##offset, char* label -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>%s", index, gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    other = inter_edge(other, ip_start, index, gvmt_ip()+offset, label);
+    other = inter_edge(other, ip_start, index, gvmt_ip()+3, "");
+    gvmt_ireturn_p(other);
+}
+
+no_label[private]( -- char* label) {
+    label = "";
+}
+
+_true[private]( -- char* label) {
+    label = "true";
+}
+
+_false[private]( -- char* label) {
+    label = "false";
+}
+
+return( -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>%s", index, gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    gvmt_ireturn_p(other);
+}
+
+done_if: no_label _jump;
+continue: no_label _jump;
+break: no_label _jump;
+
+on_true: _true _branch;
+on_false: _false _branch;
+
+counting_end_loop: skip skip skip skip end_loop ;
+
+
+/******** Trace opcodes *********/
+
+ensure_value[protected] (int #pick, int ####val, int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+    fprintf(trace, "%s |", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    done = 1;
+    other = write_exit_node(other, ip_start, index, "fail", addr, to_do, cache);
+}
+
+check_keys[protected] (int ##op, int ####val, int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    other = write_abort_node(other, ip_start, index, "fail");
+}
+
+jump (int16_t ##op -- ) {
+    int index = gvmt_ip()-ip_start;
+    // End of trace
+    fprintf(trace, "<l%x>%s", index, gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    other = intra_edge(other, ip_start, index, index+op, "");
+    gvmt_ireturn_p(other);
+}
+
+interpret[protected] (int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "%s", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    other = write_abort_node(other, ip_start, index, "End of trace");
+    gvmt_ireturn_p(other);
+}
+
+trace_exit[protected] (int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>%s", index, gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    other = write_exit_node(other, ip_start, index, "auto", addr, to_do, cache);
+    gvmt_ireturn_p(other);
+}
+
+recursion_exit: skip skip skip skip trace_exit ;
+
+return_exit[protected] (int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>%s", index, gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    other = write_exit_node(other, ip_start, index, "auto", addr, to_do, cache);
+    gvmt_ireturn_p(other);
+}
+
+exit_on_true[protected] (int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+    fprintf(trace, "%s |", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    done = 1;
+    other = write_exit_node(other, ip_start, index, "true", addr, to_do, cache);
+}
+
+exit_on_false[protected] (int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+    fprintf(trace, "%s |", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    done = 1;
+    other = write_exit_node(other, ip_start, index, "false", addr, to_do, cache);
+}
+
+type_ensure[protected] (int ####type_addr, int ####addr -- ) {
+    R_type type = (R_type)gvmt_pinned_object((void*)type_addr);
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+    fprintf(trace, "%s %s |", gvmt_opcode_names_interpreter[*gvmt_ip()], type->tp_name);
+    done = 1;
+    other = write_exit_node(other, ip_start, index, "fail", addr, to_do, cache);
+}
+
+type_ensure2: type_ensure ;
+type_ensure_drop: type_ensure ;
+
+store_frame(int #local -- ) {
+    if (flow_graph_verbose) {
+        int index = gvmt_ip()-ip_start;
+        fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+        fprintf(trace, "%s %u |", gvmt_opcode_names_interpreter[*gvmt_ip()], local);
+        done = 1;
+    }
+}
+
+byte(int8_t #value -- ) {
+    if (flow_graph_verbose) {
+        int index = gvmt_ip()-ip_start;
+        fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+        fprintf(trace, "%s %d |", gvmt_opcode_names_interpreter[*gvmt_ip()], value);
+        done = 1;
+    }
+}
+
+binary(int #id -- ) {
+    if (flow_graph_verbose) {
+        int index = gvmt_ip()-ip_start;
+        R_str name = (R_str)ITEM(operator_names, id);
+        fprintf(trace, "<l%x> %s ", gvmt_ip()-ip_start,
+                gvmt_opcode_names_interpreter[*gvmt_ip()]);
+        py_fprint(trace, name);
+        fprintf(trace, " |");
+        done = 1;
+    }
+}
+
+unary(int #id -- ) {
+    if (flow_graph_verbose) {
+        int index = gvmt_ip()-ip_start;
+        R_str name = (R_str)ITEM(operator_names, id);
+        fprintf(trace, "<l%x> %s ", gvmt_ip()-ip_start,
+                gvmt_opcode_names_interpreter[*gvmt_ip()]);
+        py_fprint(trace, name);
+        fprintf(trace, " |");
+        done = 1;
+    }
+}
+
+fast_load_frame(int #local -- ) {
+    if (flow_graph_verbose) {
+        int index = gvmt_ip()-ip_start;
+        fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+        fprintf(trace, "%s %u |", gvmt_opcode_names_interpreter[*gvmt_ip()], local);
+        done = 1;
+    }
+}
+
+load_frame: fast_load_frame ;
+
+load_from_cache: fast_load_frame ;
+
+store_to_cache: fast_load_frame ;
+
+fast_frame(int #locals, int ####a -- ) {
+    if (flow_graph_verbose) {
+        int index = gvmt_ip()-ip_start;
+        fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+        fprintf(trace, "%s %u |", gvmt_opcode_names_interpreter[*gvmt_ip()], locals);
+        done = 1;
+    }
+}
+
+ensure_tagged[protected] (int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+    fprintf(trace, "%s |", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    done = 1;
+    other = write_exit_node(other, ip_start, index, "fail", addr, to_do, cache);
+}
+
+ensure_tagged_drop: ensure_tagged ;
+ensure_tagged2: ensure_tagged ;
+
+deoptimise_check (int ####addr, int ####addr2 -- ) {
+    int index = gvmt_ip()-ip_start;
+    other = write_abort_node(other, ip_start, index, "End of trace");
+}
+
+i_exit_eq(int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+    fprintf(trace, "%s |", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    done = 1;
+    other = write_exit_node(other, ip_start, index, "a == b", addr, to_do, cache);
+}
+
+i_exit_ne(int ####addr -- ) {
+    int index = gvmt_ip()-ip_start;
+    fprintf(trace, "<l%x>", gvmt_ip()-ip_start);
+    fprintf(trace, "%s |", gvmt_opcode_names_interpreter[*gvmt_ip()]);
+    done = 1;
+    other = write_exit_node(other, ip_start, index, "a != b", addr, to_do, cache);
+}
+
